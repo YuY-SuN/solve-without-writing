@@ -219,7 +219,19 @@
                 "tick": 1
               }
             }
-          ]
+          ],
+          "response": {
+            "type": "free_text",
+            "lines": 2
+          },
+          "answer": {
+            "value": {
+              "values": [1, 3, 4, 1, 1],
+              "max_bin": "25-30",
+              "max_value": 4
+            }
+          },
+          "explanation": "各階級の人数は 15-20m が1人、20-25m が3人、25-30m が4人、30-35m が1人、35-40m が1人です。最も人数が多い階級は 25-30m です。"
         },
         {
           "id": "p020_solid",
