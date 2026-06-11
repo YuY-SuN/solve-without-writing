@@ -1,0 +1,44 @@
+Transform the uploaded textbook page into a professional educational infographic.
+
+Do not simply reproduce the page.
+
+Extract the key concepts, relationships, vocabulary, diagrams, classifications, processes, and important facts.
+
+Reorganize the information into the clearest possible learning format.
+
+Choose automatically among:
+- infographic
+- concept map
+- flowchart
+- comparison chart
+- study guide
+- summary sheet
+- visual note page
+
+Use whichever format best matches the content.
+
+Focus on:
+- understanding
+- memorization
+- exam preparation
+- visual learning
+
+Highlight important keywords.
+Reduce unnecessary text.
+Create strong visual hierarchy.
+Use educational publishing design principles.
+
+The result should look like a premium Japanese study guide sold in bookstores.
+
+Clean layout.
+Modern infographic design.
+Publisher quality.
+Highly readable.
+Print-ready.
+
+When beneficial, generate a companion summary page that resembles a neatly organized student's review notebook.
+
+However, only include the notebook-style page if it improves understanding of the material.
+Otherwise create a single-page infographic.
+
+Prioritize clarity over symmetry.
