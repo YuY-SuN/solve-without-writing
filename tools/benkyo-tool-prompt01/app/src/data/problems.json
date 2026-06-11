@@ -1,0 +1,307 @@
+{
+  "meta": {
+    "title": "小学校の復習・中学数学導入",
+    "source": "benkyo-tool-promopt01.txt",
+    "version": "0.1.0"
+  },
+  "pages": [
+    {
+      "page": 6,
+      "problems": [
+        {
+          "id": "p008",
+          "section": {
+            "no": 8,
+            "title": "比例と反比例",
+            "category": "変化と対応"
+          },
+          "prompt": {
+            "text": "次のア〜ウのうち、ともなって変わる2つの量が比例するのはどれですか。また、反比例するのはどれですか。"
+          },
+          "items": [
+            {
+              "label": "ア",
+              "text": "時速50kmで走る自動車の、走る時間と道のり",
+              "visuals": [
+                {
+                  "type": "table",
+                  "columns": ["時間（時間）", "1", "2", "3", "4"],
+                  "rows": [["道のり（km）", "50", "100", "150", "200"]],
+                  "style": {
+                    "header": true,
+                    "compact": true
+                  }
+                }
+              ]
+            },
+            {
+              "label": "イ",
+              "text": "正方形の一辺の長さと面積"
+            },
+            {
+              "label": "ウ",
+              "text": "面積が12cm²の長方形の縦と横"
+            }
+          ],
+          "response": {
+            "type": "multi_blank",
+            "fields": [
+              { "key": "proportional", "label": "比例" },
+              { "key": "inverse_proportional", "label": "反比例" }
+            ]
+          },
+          "answer": {
+            "value": {
+              "proportional": "ア",
+              "inverse_proportional": "ウ"
+            }
+          },
+          "explanation": "時間が2倍なら道のりも2倍になるものが比例、積が一定になるものが反比例です。"
+        },
+        {
+          "id": "p010_01",
+          "section": {
+            "no": 10,
+            "title": "図形の面積",
+            "category": "平面図形"
+          },
+          "prompt": {
+            "text": "次の図形の面積を求めなさい。"
+          },
+          "items": [
+            {
+              "no": 1,
+              "label": "三角形",
+              "visuals": [
+                {
+                  "type": "geometry_2d",
+                  "shape": "triangle",
+                  "width": 240,
+                  "height": 180,
+                  "params": {
+                    "base": 9,
+                    "height": 6,
+                    "unit": "cm"
+                  },
+                  "labels": [
+                    { "text": "9 cm", "target": "base" },
+                    { "text": "6 cm", "target": "height" }
+                  ]
+                }
+              ],
+              "response": {
+                "type": "blank",
+                "unit": "cm²"
+              },
+              "answer": {
+                "formula": "9 × 6 ÷ 2",
+                "value": 27,
+                "unit": "cm²"
+              }
+            }
+          ],
+          "explanation": "三角形の面積は 底辺 × 高さ ÷ 2 です。"
+        }
+      ]
+    },
+    {
+      "page": 8,
+      "problems": [
+        {
+          "id": "p001_04",
+          "section": {
+            "no": 4,
+            "title": "数直線から数を読みとる",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の数直線上で、A、B、C、Dにあたる数を書きなさい。"
+          },
+          "visuals": [
+            {
+              "type": "number_line",
+              "width": 520,
+              "height": 120,
+              "range": {
+                "min": -6,
+                "max": 6
+              },
+              "ticks": {
+                "minor": 1,
+                "major": 5,
+                "labels": [-5, 0, 5]
+              },
+              "points": [
+                { "label": "A", "value": -5 },
+                { "label": "B", "value": -2 },
+                { "label": "C", "value": 2 },
+                { "label": "D", "value": 4 }
+              ]
+            }
+          ],
+          "response": {
+            "type": "multi_blank",
+            "fields": [
+              { "key": "A", "label": "A" },
+              { "key": "B", "label": "B" },
+              { "key": "C", "label": "C" },
+              { "key": "D", "label": "D" }
+            ]
+          },
+          "answer": {
+            "value": {
+              "A": -5,
+              "B": -2,
+              "C": 2,
+              "D": 4
+            }
+          }
+        },
+        {
+          "id": "p015_hist",
+          "section": {
+            "no": 15,
+            "title": "記録の整理",
+            "category": "資料の活用"
+          },
+          "prompt": {
+            "text": "次の度数分布をヒストグラムで表したものを確認しなさい。"
+          },
+          "items": [
+            {
+              "label": "記録表",
+              "visuals": [
+                {
+                  "type": "table",
+                  "columns": ["記録（m）", "15-20", "20-25", "25-30", "30-35", "35-40"],
+                  "rows": [["人数（人）", "1", "3", "4", "1", "1"]]
+                }
+              ]
+            }
+          ],
+          "visuals": [
+            {
+              "type": "histogram",
+              "width": 360,
+              "height": 260,
+              "xAxis": {
+                "label": "記録（m）",
+                "bins": [
+                  { "from": 15, "to": 20 },
+                  { "from": 20, "to": 25 },
+                  { "from": 25, "to": 30 },
+                  { "from": 30, "to": 35 },
+                  { "from": 35, "to": 40 }
+                ]
+              },
+              "yAxis": {
+                "label": "人数（人）",
+                "min": 0,
+                "max": 6,
+                "tick": 1
+              },
+              "values": [1, 3, 4, 1, 1]
+            },
+            {
+              "type": "graph_grid",
+              "width": 360,
+              "height": 260,
+              "xAxis": {
+                "label": "m",
+                "min": 15,
+                "max": 40,
+                "tick": 5
+              },
+              "yAxis": {
+                "label": "人",
+                "min": 0,
+                "max": 6,
+                "tick": 1
+              }
+            }
+          ],
+          "response": {
+            "type": "free_text",
+            "lines": 2
+          },
+          "answer": {
+            "value": {
+              "values": [1, 3, 4, 1, 1],
+              "max_bin": "25-30",
+              "max_value": 4
+            }
+          },
+          "explanation": "各階級の人数は 15-20m が1人、20-25m が3人、25-30m が4人、30-35m が1人、35-40m が1人です。最も人数が多い階級は 25-30m です。"
+        },
+        {
+          "id": "p020_solid",
+          "section": {
+            "no": 20,
+            "title": "立体と展開図",
+            "category": "空間図形"
+          },
+          "prompt": {
+            "text": "立方体の体積と、展開図の対応を確認しなさい。"
+          },
+          "items": [
+            {
+              "label": "立方体",
+              "visuals": [
+                {
+                  "type": "geometry_3d",
+                  "shape": "cube",
+                  "width": 240,
+                  "height": 180,
+                  "dimensions": {
+                    "width": 3,
+                    "depth": 3,
+                    "height": 3,
+                    "unit": "cm"
+                  },
+                  "labels": [
+                    { "text": "3 cm", "edge": "width" },
+                    { "text": "3 cm", "edge": "depth" },
+                    { "text": "3 cm", "edge": "height" }
+                  ]
+                }
+              ],
+              "response": {
+                "type": "blank",
+                "unit": "cm³"
+              },
+              "answer": {
+                "formula": "3 × 3 × 3",
+                "value": 27,
+                "unit": "cm³"
+              }
+            },
+            {
+              "label": "展開図",
+              "visuals": [
+                {
+                  "type": "net",
+                  "solid": "cube",
+                  "cellSize": 48,
+                  "faces": [
+                    { "id": "a", "x": 1, "y": 0, "label": "あ" },
+                    { "id": "i", "x": 2, "y": 0, "label": "い" },
+                    { "id": "u", "x": 2, "y": 1, "label": "う" },
+                    { "id": "e", "x": 3, "y": 1, "label": "え" },
+                    { "id": "o", "x": 3, "y": 2, "label": "お" },
+                    { "id": "ka", "x": 4, "y": 2, "label": "か" }
+                  ],
+                  "question": {
+                    "targetFace": "か",
+                    "relation": "perpendicular"
+                  },
+                  "answer": ["う", "え", "お"]
+                }
+              ]
+            }
+          ],
+          "explanation": "立方体の体積は 1辺 × 1辺 × 1辺 です。展開図は面を座標で管理しています。"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "defaultDatasetId": "core-math",
+  "datasets": [
+    {
+      "id": "geometry-focus",
+      "label": "図形中心セット",
+      "path": "geometry-focus.json"
+    },
+    {
+      "id": "core-math",
+      "label": "標準セット",
+      "path": "problems.json"
+    },
+    {
+      "id": "problems002",
+      "label": "小学校の復習",
+      "path": "problems002.json"
+    },
+    {
+      "id": "problems003-2",
+      "label": "正の数・負の数で量を表すこと",
+      "path": "problems003-2.json"
+    }
+  ]
+}

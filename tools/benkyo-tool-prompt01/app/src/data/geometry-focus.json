@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "title": "図形中心の確認セット",
+    "source": "handcrafted_dataset",
+    "version": "0.1.0"
+  },
+  "pages": [
+    {
+      "page": 1,
+      "problems": [
+        {
+          "id": "gf_001",
+          "section": {
+            "no": 1,
+            "title": "三角形の面積",
+            "category": "平面図形"
+          },
+          "prompt": {
+            "text": "次の三角形の面積を求めなさい。"
+          },
+          "items": [
+            {
+              "label": "三角形",
+              "visuals": [
+                {
+                  "type": "geometry_2d",
+                  "shape": "triangle",
+                  "width": 240,
+                  "height": 180,
+                  "params": {
+                    "base": 8,
+                    "height": 5,
+                    "unit": "cm"
+                  },
+                  "labels": [
+                    { "text": "8 cm", "target": "base" },
+                    { "text": "5 cm", "target": "height" }
+                  ]
+                }
+              ],
+              "response": {
+                "type": "blank",
+                "unit": "cm²"
+              },
+              "answer": {
+                "formula": "8 × 5 ÷ 2",
+                "value": 20,
+                "unit": "cm²"
+              }
+            }
+          ],
+          "explanation": "三角形の面積は 底辺 × 高さ ÷ 2 です。"
+        },
+        {
+          "id": "gf_002",
+          "section": {
+            "no": 2,
+            "title": "立方体の体積",
+            "category": "空間図形"
+          },
+          "prompt": {
+            "text": "次の立方体の体積を求めなさい。"
+          },
+          "items": [
+            {
+              "label": "立方体",
+              "visuals": [
+                {
+                  "type": "geometry_3d",
+                  "shape": "cube",
+                  "width": 240,
+                  "height": 180,
+                  "dimensions": {
+                    "width": 4,
+                    "depth": 4,
+                    "height": 4,
+                    "unit": "cm"
+                  },
+                  "labels": [
+                    { "text": "4 cm", "edge": "width" },
+                    { "text": "4 cm", "edge": "depth" },
+                    { "text": "4 cm", "edge": "height" }
+                  ]
+                }
+              ],
+              "response": {
+                "type": "blank",
+                "unit": "cm³"
+              },
+              "answer": {
+                "formula": "4 × 4 × 4",
+                "value": 64,
+                "unit": "cm³"
+              }
+            }
+          ],
+          "explanation": "立方体の体積は 1辺 × 1辺 × 1辺 です。"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,921 @@
+
+{
+"meta": {
+"title": "小学校の復習",
+"source": "uploaded_image ",
+"version": "0.1.0",
+"language": "ja"
+},
+"pages": [
+{
+"page": 6,
+"problems": [
+{
+"id": "p006_q08",
+"page": 6,
+"section": {
+"no": 8,
+"title": "比例と反比例",
+"category": "変化と対応"
+},
+"prompt": {
+"text": "次のア〜ウのうち、ともなって変わる2つの量が比例するのはどれですか。また、反比例するのはどれですか。"
+},
+"items": [
+{
+"id": "p006_q08_01",
+"no": 1,
+"label": "ア",
+"text": "時速50 kmで走る自動車の、走る時間と進む道のり",
+"visuals": [
+{
+"type": "table",
+"columns": ["時間（時間）", "1", "2", "3", "4"],
+"rows": [
+["道のり（km）", "50", "100", "150", "200"]
+],
+"style": {
+"header": true,
+"compact": true
+}
+}
+],
+"response": {
+"type": "none"
+},
+"answer": {
+"relation": "proportional"
+},
+"uncertain": false
+},
+{
+"id": "p006_q08_02",
+"no": 2,
+"label": "イ",
+"text": "500円玉で買い物をしたときの、代金とおつり",
+"visuals": [
+{
+"type": "table",
+"columns": ["代金（円）", "100", "200", "300", "400"],
+"rows": [
+["おつり（円）", "400", "300", "200", "100"]
+],
+"style": {
+"header": true,
+"compact": true
+}
+}
+],
+"response": {
+"type": "none"
+},
+"answer": {
+"relation": "neither"
+},
+"uncertain": false
+},
+{
+"id": "p006_q08_03",
+"no": 3,
+"label": "ウ",
+"text": "面積が24 cm²の長方形の、縦の長さと横の長さ",
+"visuals": [
+{
+"type": "table",
+"columns": ["縦の長さ（cm）", "1", "2", "3", "4"],
+"rows": [
+["横の長さ（cm）", "24", "12", "8", "6"]
+],
+"style": {
+"header": true,
+"compact": true
+}
+}
+],
+"response": {
+"type": "none"
+},
+"answer": {
+"relation": "inverse_proportional"
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "multi_blank",
+"fields": [
+{
+"key": "proportional",
+"label": "比例"
+},
+{
+"key": "inverse",
+"label": "反比例"
+}
+]
+},
+"answer": {
+"value": {
+"proportional": ["ア"],
+"inverse": ["ウ"]
+}
+},
+"explanation": "アは時間が2倍、3倍になると道のりも2倍、3倍になるので比例。ウは縦の長さが大きくなると横の長さは面積24 cm²を保つように小さくなり、積が一定なので反比例。イは和が500で一定であり、比例・反比例ではない。",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p006_q09",
+"page": 6,
+"section": {
+"no": 9,
+"title": "対称な図形",
+"category": "平面図形"
+},
+"prompt": {
+"text": "次のア〜エの図形のうち、線対称な図形はどれですか。また、点対称な図形はどれですか。それぞれすべて選びなさい。"
+},
+"visuals": [],
+"items": [
+{
+"id": "p006_q09_01",
+"no": 1,
+"label": "ア",
+"text": "正方形",
+"visuals": [
+{
+"type": "geometry_2d",
+"shape": "square",
+"width": 160,
+"height": 160,
+"params": {},
+"labels": []
+}
+],
+"response": {
+"type": "none"
+},
+"answer": {
+"line_symmetry": true,
+"point_symmetry": true
+},
+"uncertain": false
+},
+{
+"id": "p006_q09_02",
+"no": 2,
+"label": "イ",
+"text": "正三角形",
+"visuals": [
+{
+"type": "geometry_2d",
+"shape": "triangle",
+"width": 160,
+"height": 160,
+"params": {
+"kind": "equilateral"
+},
+"labels": []
+}
+],
+"response": {
+"type": "none"
+},
+"answer": {
+"line_symmetry": true,
+"point_symmetry": false
+},
+"uncertain": false
+},
+{
+"id": "p006_q09_03",
+"no": 3,
+"label": "ウ",
+"text": "平行四辺形",
+"visuals": [
+{
+"type": "geometry_2d",
+"shape": "parallelogram",
+"width": 180,
+"height": 140,
+"params": {},
+"labels": []
+}
+],
+"response": {
+"type": "none"
+},
+"answer": {
+"line_symmetry": false,
+"point_symmetry": true
+},
+"uncertain": false
+},
+{
+"id": "p006_q09_04",
+"no": 4,
+"label": "エ",
+"text": "ひし形",
+"visuals": [
+{
+"type": "geometry_2d",
+"shape": "rhombus",
+"width": 180,
+"height": 140,
+"params": {},
+"labels": []
+}
+],
+"response": {
+"type": "none"
+},
+"answer": {
+"line_symmetry": true,
+"point_symmetry": true
+},
+"uncertain": false
+}
+],
+"response": {
+"type": "multi_blank",
+"fields": [
+{
+"key": "line",
+"label": "線対称"
+},
+{
+"key": "point",
+"label": "点対称"
+}
+]
+},
+"answer": {
+"value": {
+"line": ["ア", "イ", "エ"],
+"point": ["ア", "ウ", "エ"]
+}
+},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p006_q10",
+"page": 6,
+"section": {
+"no": 10,
+"title": "図形の面積",
+"category": "平面図形"
+},
+"prompt": {
+"text": "次の図形の面積を求めなさい。"
+},
+"items": [
+{
+"id": "p006_q10_01",
+"no": 1,
+"label": "三角形",
+"text": "",
+"visuals": [
+{
+"type": "geometry_2d",
+"shape": "triangle",
+"width": 240,
+"height": 180,
+"params": {
+"base": 9,
+"height": 6,
+"unit": "cm"
+},
+"labels": [
+{
+"text": "9 cm",
+"target": "base"
+},
+{
+"text": "6 cm",
+"target": "height"
+}
+]
+}
+],
+"response": {
+"type": "blank",
+"unit": "cm²"
+},
+"answer": {
+"formula": "9 × 6 ÷ 2",
+"value": 27,
+"unit": "cm²"
+},
+"uncertain": false
+},
+{
+"id": "p006_q10_02",
+"no": 2,
+"label": "平行四辺形",
+"text": "",
+"visuals": [
+{
+"type": "geometry_2d",
+"shape": "parallelogram",
+"width": 240,
+"height": 180,
+"params": {
+"base": 7,
+"height": 5,
+"unit": "cm"
+},
+"labels": [
+{
+"text": "7 cm",
+"target": "base"
+},
+{
+"text": "5 cm",
+"target": "height"
+}
+]
+}
+],
+"response": {
+"type": "blank",
+"unit": "cm²"
+},
+"answer": {
+"formula": "7 × 5",
+"value": 35,
+"unit": "cm²"
+},
+"uncertain": false
+},
+{
+"id": "p006_q10_03",
+"no": 3,
+"label": "ひし形",
+"text": "",
+"visuals": [
+{
+"type": "geometry_2d",
+"shape": "rhombus",
+"width": 240,
+"height": 180,
+"params": {
+"diagonal1": 8,
+"diagonal2": 6,
+"unit": "cm"
+},
+"labels": [
+{
+"text": "8 cm",
+"target": "diagonal1"
+},
+{
+"text": "6 cm",
+"target": "diagonal2"
+}
+]
+}
+],
+"response": {
+"type": "blank",
+"unit": "cm²"
+},
+"answer": {
+"formula": "8 × 6 ÷ 2",
+"value": 24,
+"unit": "cm²"
+},
+"uncertain": false
+},
+{
+"id": "p006_q10_04",
+"no": 4,
+"label": "台形",
+"text": "",
+"visuals": [
+{
+"type": "geometry_2d",
+"shape": "trapezoid",
+"width": 240,
+"height": 180,
+"params": {
+"top": 3,
+"bottom": 7,
+"height": 5,
+"unit": "cm"
+},
+"labels": [
+{
+"text": "3 cm",
+"target": "top"
+},
+{
+"text": "7 cm",
+"target": "bottom"
+},
+{
+"text": "5 cm",
+"target": "height"
+}
+]
+}
+],
+"response": {
+"type": "blank",
+"unit": "cm²"
+},
+"answer": {
+"formula": "(3 + 7) × 5 ÷ 2",
+"value": 25,
+"unit": "cm²"
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p006_q11",
+"page": 6,
+"section": {
+"no": 11,
+"title": "立方体の展開図",
+"category": "空間図形"
+},
+"prompt": {
+"text": "右の立方体の展開図を組み立てたとき、「か」の面と垂直になる面をすべて選びなさい。"
+},
+"visuals": [
+{
+"type": "net",
+"solid": "cube",
+"cellSize": 48,
+"faces": [
+{
+"id": "a",
+"x": 0,
+"y": 0,
+"label": "あ"
+},
+{
+"id": "i",
+"x": 1,
+"y": 0,
+"label": "い"
+},
+{
+"id": "u",
+"x": 1,
+"y": 1,
+"label": "う"
+},
+{
+"id": "e",
+"x": 2,
+"y": 1,
+"label": "え"
+},
+{
+"id": "o",
+"x": 2,
+"y": 2,
+"label": "お"
+},
+{
+"id": "ka",
+"x": 3,
+"y": 2,
+"label": "か"
+}
+],
+"question": {
+"targetFace": "ka",
+"relation": "perpendicular"
+}
+}
+],
+"response": {
+"type": "choice",
+"multiple": true,
+"choices": [
+{
+"key": "あ",
+"text": "あ"
+},
+{
+"key": "い",
+"text": "い"
+},
+{
+"key": "う",
+"text": "う"
+},
+{
+"key": "え",
+"text": "え"
+},
+{
+"key": "お",
+"text": "お"
+}
+]
+},
+"answer": {
+"value": ["あ", "い", "え", "お"]
+},
+"explanation": "",
+"notes": "",
+"uncertain": false
+}
+]
+},
+{
+"page": 7,
+"problems": [
+{
+"id": "p007_q12",
+"page": 7,
+"section": {
+"no": 12,
+"title": "立体の体積",
+"category": "空間図形"
+},
+"prompt": {
+"text": "次の角柱や円柱の体積を求めなさい。"
+},
+"items": [
+{
+"id": "p007_q12_01",
+"no": 1,
+"label": "立方体",
+"text": "",
+"visuals": [
+{
+"type": "geometry_3d",
+"shape": "cube",
+"width": 240,
+"height": 180,
+"dimensions": {
+"width": 3,
+"depth": 3,
+"height": 3,
+"unit": "cm"
+},
+"labels": [
+{
+"text": "3 cm",
+"edge": "width"
+},
+{
+"text": "3 cm",
+"edge": "depth"
+},
+{
+"text": "3 cm",
+"edge": "height"
+}
+]
+}
+],
+"response": {
+"type": "blank",
+"unit": "cm³"
+},
+"answer": {
+"formula": "3 × 3 × 3",
+"value": 27,
+"unit": "cm³"
+},
+"uncertain": false
+},
+{
+"id": "p007_q12_02",
+"no": 2,
+"label": "三角柱",
+"text": "",
+"visuals": [
+{
+"type": "geometry_3d",
+"shape": "triangular_prism",
+"width": 240,
+"height": 180,
+"dimensions": {
+"base": 3,
+"height": 4,
+"length": 7,
+"unit": "cm"
+},
+"labels": [
+{
+"text": "3 cm",
+"edge": "base"
+},
+{
+"text": "4 cm",
+"edge": "height"
+},
+{
+"text": "7 cm",
+"edge": "length"
+}
+]
+}
+],
+"response": {
+"type": "blank",
+"unit": "cm³"
+},
+"answer": {
+"formula": "3 × 4 ÷ 2 × 7",
+"value": 42,
+"unit": "cm³"
+},
+"uncertain": false
+},
+{
+"id": "p007_q12_03",
+"no": 3,
+"label": "円柱",
+"text": "",
+"visuals": [
+{
+"type": "geometry_3d",
+"shape": "cylinder",
+"width": 240,
+"height": 180,
+"dimensions": {
+"radius": 2,
+"height": 5,
+"unit": "cm"
+},
+"labels": [
+{
+"text": "2 cm",
+"edge": "radius"
+},
+{
+"text": "5 cm",
+"edge": "height"
+}
+]
+}
+],
+"response": {
+"type": "blank",
+"unit": "cm³"
+},
+"answer": {
+"formula": "3.14 × 2 × 2 × 5",
+"value": 62.8,
+"unit": "cm³",
+"accepted": [62.8, "20π"]
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p007_q13",
+"page": 7,
+"section": {
+"no": 13,
+"title": "データの調べ方",
+"category": "データの活用"
+},
+"prompt": {
+"text": "次の表は、ある中学校の1年生10人のハンドボール投げの記録です。"
+},
+"visuals": [
+{
+"type": "table",
+"columns": ["番号", "記録（m）", "番号", "記録（m）"],
+"rows": [
+["①", "24", "⑥", "28"],
+["②", "26", "⑦", "19"],
+["③", "29", "⑧", "25"],
+["④", "37", "⑨", "22"],
+["⑤", "20", "⑩", "26"]
+],
+"style": {
+"header": true,
+"compact": true
+}
+}
+],
+"items": [
+{
+"id": "p007_q13_01",
+"no": 1,
+"label": "平均値",
+"text": "平均値を求めなさい。",
+"visuals": [],
+"response": {
+"type": "blank",
+"unit": "m"
+},
+"answer": {
+"formula": "(24 + 26 + 29 + 37 + 20 + 28 + 19 + 25 + 22 + 26) ÷ 10",
+"value": 25.6,
+"unit": "m"
+},
+"uncertain": false
+},
+{
+"id": "p007_q13_02",
+"no": 2,
+"label": "中央値",
+"text": "中央値を求めなさい。",
+"visuals": [],
+"response": {
+"type": "blank",
+"unit": "m"
+},
+"answer": {
+"value": 25.5,
+"unit": "m"
+},
+"uncertain": false
+},
+{
+"id": "p007_q13_03",
+"no": 3,
+"label": "最頻値",
+"text": "最頻値を求めなさい。",
+"visuals": [],
+"response": {
+"type": "blank",
+"unit": "m"
+},
+"answer": {
+"value": 26,
+"unit": "m"
+},
+"uncertain": false
+},
+{
+"id": "p007_q13_04",
+"no": 4,
+"label": "度数分布表",
+"text": "10人の記録を、下の表に整理しなさい。",
+"visuals": [
+{
+"type": "table",
+"columns": ["記録（m）", "人数（人）"],
+"rows": [
+["15〜20", { "blank": true, "key": "bin_15_20" }],
+["20〜25", { "blank": true, "key": "bin_20_25" }],
+["25〜30", { "blank": true, "key": "bin_25_30" }],
+["30〜35", { "blank": true, "key": "bin_30_35" }],
+["35〜40", { "blank": true, "key": "bin_35_40" }],
+["計", "10"]
+],
+"style": {
+"header": true,
+"compact": true
+}
+}
+],
+"response": {
+"type": "table_fill",
+"targets": [
+{
+"row": 0,
+"col": 1,
+"key": "bin_15_20"
+},
+{
+"row": 1,
+"col": 1,
+"key": "bin_20_25"
+},
+{
+"row": 2,
+"col": 1,
+"key": "bin_25_30"
+},
+{
+"row": 3,
+"col": 1,
+"key": "bin_30_35"
+},
+{
+"row": 4,
+"col": 1,
+"key": "bin_35_40"
+}
+]
+},
+"answer": {
+"value": {
+"bin_15_20": 1,
+"bin_20_25": 3,
+"bin_25_30": 5,
+"bin_30_35": 0,
+"bin_35_40": 1
+}
+},
+"uncertain": false
+},
+{
+"id": "p007_q13_05",
+"no": 5,
+"label": "ヒストグラム",
+"text": "（4）の表を、ヒストグラムに表しなさい。",
+"visuals": [
+{
+"type": "graph_grid",
+"width": 360,
+"height": 260,
+"xAxis": {
+"label": "記録（m）",
+"min": 15,
+"max": 40,
+"tick": 5
+},
+"yAxis": {
+"label": "人数（人）",
+"min": 0,
+"max": 6,
+"tick": 1
+}
+}
+],
+"response": {
+"type": "draw_graph"
+},
+"answer": {
+"value": {
+"bins": [1, 3, 5, 0, 1]
+}
+},
+"answerVisuals": [
+{
+"type": "histogram",
+"width": 360,
+"height": 260,
+"xAxis": {
+"label": "記録（m）",
+"bins": [
+{
+"from": 15,
+"to": 20
+},
+{
+"from": 20,
+"to": 25
+},
+{
+"from": 25,
+"to": 30
+},
+{
+"from": 30,
+"to": 35
+},
+{
+"from": 35,
+"to": 40
+}
+]
+},
+"yAxis": {
+"label": "人数（人）",
+"min": 0,
+"max": 6,
+"tick": 1
+},
+"values": [1, 3, 5, 0, 1]
+}
+],
+"uncertain": false
+}
+],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+}
+]
+}
+]
+}
