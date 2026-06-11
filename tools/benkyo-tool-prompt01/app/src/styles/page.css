@@ -56,12 +56,17 @@ h1 {
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .toolbar-field {
   display: grid;
   gap: 6px;
   min-width: 140px;
+}
+
+.toolbar-field-wide {
+  min-width: min(320px, 100%);
 }
 
 select,
@@ -194,5 +199,15 @@ pre {
   .topbar {
     align-items: start;
     flex-direction: column;
+  }
+
+  .toolbar {
+    width: 100%;
+    justify-content: start;
+  }
+
+  .toolbar-field,
+  .toolbar-field-wide {
+    min-width: 100%;
   }
 }
