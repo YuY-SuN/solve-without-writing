@@ -1,0 +1,925 @@
+
+## 1. 全体構成
+
+static web tool はこの構造で十分です。
+
+```txt
+app/
+  index.html
+  src/
+    main.ts
+    data/
+      problems.json
+    renderers/
+      ProblemRenderer.ts
+      TextRenderer.ts
+      VisualRenderer.ts
+      TableRenderer.ts
+      NumberLineRenderer.ts
+      Geometry2DRenderer.ts
+      Geometry3DRenderer.ts
+      GraphRenderer.ts
+      HistogramRenderer.ts
+    styles/
+      page.css
+```
+
+サーバー側は不要です。
+`problems.json` を読み込み、各問題をHTMLとCanvasで描画します。
+
+```ts
+const res = await fetch("./data/problems.json");
+const problems = await res.json();
+
+for (const problem of problems) {
+  renderProblem(problem);
+}
+```
+
+---
+
+## 2. JSONの基本設計
+
+1問をこのような単位で管理します。
+
+```json
+{
+  "id": "p008",
+  "page": 6,
+  "section": {
+    "no": 8,
+    "title": "比例と反比例",
+    "category": "変化と対応"
+  },
+  "prompt": {
+    "text": "次のア〜ウのうち、ともなって変わる2つの量が比例するのはどれですか。また、反比例するのはどれですか。"
+  },
+  "items": [
+    {
+      "label": "ア",
+      "text": "時速50kmで走る自動車の、走る時間と道のり",
+      "visuals": [
+        {
+          "type": "table",
+          "columns": ["時間（時間）", "1", "2", "3", "4"],
+          "rows": [
+            ["道のり（km）", "50", "100", "150", "200"]
+          ]
+        }
+      ]
+    }
+  ],
+  "answer": {
+    "value": {
+      "proportional": "ア",
+      "inverse_proportional": "ウ"
+    }
+  }
+}
+```
+
+重要なのは、問題文を単なる文字列に閉じ込めないことです。
+表・図形・グラフ・数直線は `visuals` に分離します。
+
+---
+
+## 3. 描画タイプの分類
+
+まず、図示問題は以下の型に分けるべきです。
+
+```ts
+type VisualType =
+  | "table"
+  | "number_line"
+  | "geometry_2d"
+  | "geometry_3d"
+  | "net"
+  | "graph_grid"
+  | "histogram"
+  | "coordinate_points"
+  | "bar_table";
+```
+
+それぞれの意味は次の通りです。
+
+| type                | 用途                 |
+| ------------------- | ------------------ |
+| `table`             | 比例表、記録表、選択肢の表      |
+| `number_line`       | 数直線、目盛り、点A/B/C/D   |
+| `geometry_2d`       | 三角形、平行四辺形、ひし形、台形など |
+| `geometry_3d`       | 立方体、三角柱、円柱など       |
+| `net`               | 立方体の展開図            |
+| `graph_grid`        | ヒストグラムや折れ線グラフ用の方眼  |
+| `histogram`         | 度数分布の棒グラフ          |
+| `coordinate_points` | 座標上の点              |
+| `bar_table`         | 表とグラフを合わせて使う問題     |
+
+---
+
+## 4. CanvasとHTMLの使い分け
+
+全部をCanvasにする必要はありません。
+むしろ、次のように分けるべきです。
+
+| 要素     | 推奨                    |
+| ------ | --------------------- |
+| 問題文    | HTML                  |
+| 答え欄    | HTML                  |
+| 表      | HTML table または Canvas |
+| 数直線    | Canvas                |
+| 平面図形   | Canvas                |
+| 立体図形   | Canvas                |
+| 展開図    | Canvas                |
+| グラフ方眼  | Canvas                |
+| ヒストグラム | Canvas                |
+
+問題文はHTMLにする理由があります。
+HTMLなら改行、ルビ、太字、数式、選択肢、アクセシビリティが扱いやすいからです。
+
+Canvasは、図形・目盛り・グラフのように座標計算が必要なものに使います。
+
+---
+
+## 5. レンダリング処理の流れ
+
+```txt
+problems.json
+   ↓
+ProblemRenderer
+   ↓
+TextRenderer      → 問題文、番号、答え欄
+VisualRenderer    → typeを見て専用Rendererへ分配
+   ↓
+Canvas描画 / HTML表描画
+```
+
+`VisualRenderer` は分岐だけを担当します。
+
+```ts
+function renderVisual(visual: VisualSpec, container: HTMLElement) {
+  switch (visual.type) {
+    case "table":
+      return renderTable(visual, container);
+
+    case "number_line":
+      return renderNumberLine(visual, container);
+
+    case "geometry_2d":
+      return renderGeometry2D(visual, container);
+
+    case "geometry_3d":
+      return renderGeometry3D(visual, container);
+
+    case "net":
+      return renderNet(visual, container);
+
+    case "graph_grid":
+      return renderGraphGrid(visual, container);
+
+    case "histogram":
+      return renderHistogram(visual, container);
+
+    default:
+      renderUnsupported(visual, container);
+  }
+}
+```
+
+この設計にしておくと、問題データが増えても描画器を追加するだけで対応できます。
+
+---
+
+## 6. 数直線のJSON設計
+
+数直線は、見た目ではなく「範囲」「目盛り」「点」で管理します。
+
+```json
+{
+  "type": "number_line",
+  "width": 420,
+  "height": 90,
+  "range": {
+    "min": -6,
+    "max": 6
+  },
+  "ticks": {
+    "minor": 1,
+    "major": 5,
+    "labels": [-5, 0, 5]
+  },
+  "points": [
+    { "label": "A", "value": -5 },
+    { "label": "B", "value": -2 },
+    { "label": "C", "value": 2 },
+    { "label": "D", "value": 4 }
+  ]
+}
+```
+
+Canvas側では、値をx座標に変換します。
+
+```ts
+function valueToX(value: number, min: number, max: number, width: number, padding: number) {
+  const ratio = (value - min) / (max - min);
+  return padding + ratio * (width - padding * 2);
+}
+```
+
+これにより、`-1〜1` の小数目盛りにも、`-6〜6` の整数目盛りにも対応できます。
+
+---
+
+## 7. 表のJSON設計
+
+表は、HTML tableで描画するのが基本です。
+理由は、テキスト選択・拡大表示・スクリーンリーダー対応が容易だからです。
+
+```json
+{
+  "type": "table",
+  "columns": ["時間（時間）", "1", "2", "3", "4"],
+  "rows": [
+    ["道のり（km）", "50", "100", "150", "200"]
+  ],
+  "style": {
+    "header": true,
+    "compact": true
+  }
+}
+```
+
+ただし、教材画像のような見た目を強く再現したい場合はCanvas描画にしてもよいです。
+その場合でも、データ構造は同じでよいです。
+
+---
+
+## 8. 平面図形のJSON設計
+
+面積問題の図形は、形そのものと寸法線を分けて持ちます。
+
+```json
+{
+  "type": "geometry_2d",
+  "shape": "triangle",
+  "width": 240,
+  "height": 180,
+  "params": {
+    "base": 9,
+    "height": 6
+  },
+  "labels": [
+    {
+      "text": "9 cm",
+      "target": "base"
+    },
+    {
+      "text": "6 cm",
+      "target": "height"
+    }
+  ],
+  "answer": {
+    "formula": "9 × 6 ÷ 2",
+    "value": 27,
+    "unit": "cm²"
+  }
+}
+```
+
+描画側は `shape` を見て図形を描きます。
+
+```ts
+switch (visual.shape) {
+  case "triangle":
+    drawTriangle(ctx, visual);
+    break;
+
+  case "parallelogram":
+    drawParallelogram(ctx, visual);
+    break;
+
+  case "rhombus":
+    drawRhombus(ctx, visual);
+    break;
+
+  case "trapezoid":
+    drawTrapezoid(ctx, visual);
+    break;
+}
+```
+
+注意点として、JSONの `base: 9` や `height: 6` は実寸ではありません。
+描画上は比率に使う値です。
+Canvas上では、たとえば `9cm` を `120px` に換算して表示します。
+
+---
+
+## 9. 立体図形のJSON設計
+
+立体は、正確な3Dレンダリングではなく、教材用の簡易投影で十分です。
+
+```json
+{
+  "type": "geometry_3d",
+  "shape": "cube",
+  "width": 240,
+  "height": 180,
+  "dimensions": {
+    "width": 3,
+    "depth": 3,
+    "height": 3,
+    "unit": "cm"
+  },
+  "labels": [
+    { "text": "3 cm", "edge": "width" },
+    { "text": "3 cm", "edge": "depth" },
+    { "text": "3 cm", "edge": "height" }
+  ],
+  "answer": {
+    "formula": "3 × 3 × 3",
+    "value": 27,
+    "unit": "cm³"
+  }
+}
+```
+
+立体図形はCanvasで描きます。
+立方体や直方体は、手前の四角形と奥の四角形をずらして線で結ぶだけで十分です。
+
+```ts
+function drawCuboid(ctx, x, y, w, h, d) {
+  // front face
+  ctx.strokeRect(x, y + d, w, h);
+
+  // back face
+  ctx.strokeRect(x + d, y, w, h);
+
+  // connecting edges
+  line(ctx, x, y + d, x + d, y);
+  line(ctx, x + w, y + d, x + w + d, y);
+  line(ctx, x, y + h + d, x + d, y + h);
+  line(ctx, x + w, y + h + d, x + w + d, y + h);
+}
+```
+
+円柱は、上下面を楕円として描き、左右を直線でつなぎます。
+
+---
+
+## 10. 展開図のJSON設計
+
+立方体の展開図は、マス目座標で管理するのが最も安定します。
+
+```json
+{
+  "type": "net",
+  "solid": "cube",
+  "cellSize": 48,
+  "faces": [
+    { "id": "a", "x": 1, "y": 0, "label": "あ" },
+    { "id": "i", "x": 2, "y": 0, "label": "い" },
+    { "id": "u", "x": 2, "y": 1, "label": "う" },
+    { "id": "e", "x": 3, "y": 1, "label": "え" },
+    { "id": "o", "x": 3, "y": 2, "label": "お" },
+    { "id": "ka", "x": 4, "y": 2, "label": "か" }
+  ],
+  "question": {
+    "targetFace": "か",
+    "relation": "perpendicular"
+  },
+  "answer": ["う", "え", "お"]
+}
+```
+
+この形式なら、展開図の形が変わっても対応できます。
+描画側は `x, y` の位置に正方形を描くだけです。
+
+---
+
+## 11. ヒストグラム・方眼グラフのJSON設計
+
+データ整理問題では、表とヒストグラムを分けて持ちます。
+
+```json
+{
+  "type": "histogram",
+  "width": 360,
+  "height": 260,
+  "xAxis": {
+    "label": "記録（m）",
+    "bins": [
+      { "from": 15, "to": 20 },
+      { "from": 20, "to": 25 },
+      { "from": 25, "to": 30 },
+      { "from": 30, "to": 35 },
+      { "from": 35, "to": 40 }
+    ]
+  },
+  "yAxis": {
+    "label": "人数（人）",
+    "min": 0,
+    "max": 6,
+    "tick": 1
+  },
+  "values": [1, 3, 4, 1, 1]
+}
+```
+
+方眼だけを出す場合は、`graph_grid` にします。
+
+```json
+{
+  "type": "graph_grid",
+  "width": 360,
+  "height": 260,
+  "xAxis": {
+    "label": "m",
+    "min": 15,
+    "max": 40,
+    "tick": 5
+  },
+  "yAxis": {
+    "label": "人",
+    "min": 0,
+    "max": 6,
+    "tick": 1
+  }
+}
+```
+
+ヒストグラムを生徒に描かせる問題なら、初期表示は `graph_grid`。
+答え表示では `histogram` に切り替える設計が自然です。
+
+---
+
+## 12. 答え欄の扱い
+
+答え欄は、描画要素ではなく問題UI側の責務にするとよいです。
+
+```json
+{
+  "response": {
+    "type": "blank",
+    "count": 1,
+    "unit": "cm²"
+  }
+}
+```
+
+複数解答ならこうします。
+
+```json
+{
+  "response": {
+    "type": "multi_blank",
+    "fields": [
+      { "key": "proportional", "label": "比例" },
+      { "key": "inverse_proportional", "label": "反比例" }
+    ]
+  }
+}
+```
+
+記述式ならこうです。
+
+```json
+{
+  "response": {
+    "type": "free_text",
+    "lines": 2
+  }
+}
+```
+
+---
+
+## 13. 実際の問題JSON例：図形問題
+
+```json
+{
+  "id": "p010_01",
+  "page": 6,
+  "section": {
+    "no": 10,
+    "title": "図形の面積",
+    "category": "平面図形"
+  },
+  "prompt": {
+    "text": "次の図形の面積を求めなさい。"
+  },
+  "items": [
+    {
+      "no": 1,
+      "label": "三角形",
+      "visuals": [
+        {
+          "type": "geometry_2d",
+          "shape": "triangle",
+          "width": 240,
+          "height": 180,
+          "params": {
+            "base": 9,
+            "height": 6,
+            "unit": "cm"
+          },
+          "labels": [
+            { "text": "9 cm", "target": "base" },
+            { "text": "6 cm", "target": "height" }
+          ]
+        }
+      ],
+      "response": {
+        "type": "blank",
+        "unit": "cm²"
+      },
+      "answer": {
+        "formula": "9 × 6 ÷ 2",
+        "value": 27,
+        "unit": "cm²"
+      }
+    }
+  ]
+}
+```
+
+---
+
+## 14. 実際の問題JSON例：数直線問題
+
+```json
+{
+  "id": "p001_04",
+  "page": 8,
+  "section": {
+    "no": 4,
+    "title": "数直線から数を読みとる",
+    "category": "正の数・負の数"
+  },
+  "prompt": {
+    "text": "次の数直線上で、A、B、C、Dにあたる数を書きなさい。"
+  },
+  "visuals": [
+    {
+      "type": "number_line",
+      "width": 520,
+      "height": 120,
+      "range": {
+        "min": -6,
+        "max": 6
+      },
+      "ticks": {
+        "minor": 1,
+        "major": 5,
+        "labels": [-5, 0, 5]
+      },
+      "points": [
+        { "label": "A", "value": -5 },
+        { "label": "B", "value": -2 },
+        { "label": "C", "value": 2 },
+        { "label": "D", "value": 4 }
+      ]
+    }
+  ],
+  "response": {
+    "type": "multi_blank",
+    "fields": [
+      { "key": "A", "label": "A" },
+      { "key": "B", "label": "B" },
+      { "key": "C", "label": "C" },
+      { "key": "D", "label": "D" }
+    ]
+  },
+  "answer": {
+    "value": {
+      "A": -5,
+      "B": -2,
+      "C": 2,
+      "D": 4
+    }
+  }
+}
+```
+
+---
+
+## 15. Canvas描画器の共通設計
+
+Canvas描画は、直接ピクセル座標を書くと破綻しやすいです。
+そこで、描画器には共通の座標変換を持たせます。
+
+```ts
+type CanvasBox = {
+  width: number;
+  height: number;
+  padding: number;
+};
+
+function createCanvas(container: HTMLElement, width: number, height: number) {
+  const canvas = document.createElement("canvas");
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+
+  const ctx = canvas.getContext("2d")!;
+  ctx.scale(dpr, dpr);
+
+  container.appendChild(canvas);
+  return { canvas, ctx };
+}
+```
+
+`devicePixelRatio` は高解像度画面への対応です。
+スマホやRetinaディスプレイでは、CSS上の1pxと実際の画素数が一致しないため、これを使わないとCanvasがぼやけます。
+
+---
+
+## 16. 描画スタイルの共通化
+
+教材として統一感を出すため、線幅やフォントは共通定義にします。
+
+```ts
+const drawingTheme = {
+  font: "14px sans-serif",
+  smallFont: "12px sans-serif",
+  stroke: "#333",
+  lightStroke: "#999",
+  gridStroke: "#d8d8d8",
+  fill: "#e8f2fb",
+  lineWidth: 1.5
+};
+```
+
+ただしJSON側に色を入れすぎない方がよいです。
+教材データと見た目のテーマが混ざると、後でデザイン変更が難しくなります。
+
+---
+
+## 17. JSONに持たせるべきもの・持たせないもの
+
+### JSONに持たせるべきもの
+
+```txt
+問題番号
+問題文
+選択肢
+図形の種類
+寸法
+表の値
+数直線の範囲
+目盛り間隔
+点の位置
+答え
+単位
+解説
+```
+
+### JSONに持たせない方がよいもの
+
+```txt
+Canvasの絶対座標
+細かい色
+教材画像そのもの
+フォントサイズの詳細
+余白の細かいpx指定
+```
+
+例外として、元教材の見た目をかなり忠実に再現したい場合だけ、`layoutHint` を持たせます。
+
+```json
+{
+  "layoutHint": {
+    "preferredWidth": 240,
+    "aspectRatio": 1.3,
+    "compact": true
+  }
+}
+```
+
+`layoutHint` は「描画の希望」です。
+問題の意味を表すデータではありません。
+
+---
+
+## 18. 問題本文の数式表現
+
+小中学生向け教材では、LaTeXを全面採用するより、まずはプレーンテキストでよいです。
+
+```json
+{
+  "text": "5/6 × 3/4"
+}
+```
+
+ただし、分数を縦組み風に見せたい場合は、式を構造化します。
+
+```json
+{
+  "expression": {
+    "type": "binary",
+    "operator": "×",
+    "left": { "type": "fraction", "numerator": 5, "denominator": 6 },
+    "right": { "type": "fraction", "numerator": 3, "denominator": 4 }
+  }
+}
+```
+
+初期実装では不要です。
+最初は `text` で持ち、必要になったら `expression` を追加する方が現実的です。
+
+---
+
+## 19. 採点まで見据える場合
+
+static表示だけなら `answer` は単純でよいです。
+
+```json
+{
+  "answer": {
+    "value": 27,
+    "unit": "cm²"
+  }
+}
+```
+
+採点まで考えるなら、許容表記を持たせます。
+
+```json
+{
+  "answer": {
+    "value": 27,
+    "unit": "cm²",
+    "accepted": ["27", "27cm²", "27 cm2", "27平方センチメートル"]
+  }
+}
+```
+
+分数の場合は、値と表示を分けます。
+
+```json
+{
+  "answer": {
+    "value": {
+      "numerator": 4,
+      "denominator": 3
+    },
+    "display": "4/3",
+    "accepted": ["4/3", "1と1/3", "1 1/3"]
+  }
+}
+```
+
+---
+
+## 20. 最小実装の優先順位
+
+最初から全タイプを完璧に作るより、以下の順番が堅いです。
+
+1. `ProblemRenderer`
+2. `TextRenderer`
+3. `TableRenderer`
+4. `NumberLineRenderer`
+5. `Geometry2DRenderer`
+6. `GraphGridRenderer`
+7. `HistogramRenderer`
+8. `Geometry3DRenderer`
+9. `NetRenderer`
+
+理由は、表・数直線・平面図形の出現頻度が高く、実装難度も低いからです。
+立体図形と展開図は後回しでよいです。描画ロジックが少し複雑になります。
+
+---
+
+## 21. 設計上の重要ポイント
+
+最も重要なのは、JSONを「画像の説明」にしないことです。
+
+悪い例：
+
+```json
+{
+  "image": "triangle.png"
+}
+```
+
+これだと検索・再利用・採点・レスポンシブ表示が難しくなります。
+
+良い例：
+
+```json
+{
+  "type": "geometry_2d",
+  "shape": "triangle",
+  "params": {
+    "base": 9,
+    "height": 6
+  }
+}
+```
+
+この形式なら、同じデータから次の出力が可能です。
+
+```txt
+Web表示
+印刷用PDF
+解答付き教材
+採点システム
+類題生成
+音声読み上げ用テキスト
+```
+
+---
+
+## 22. 推奨する問題JSONのトップレベル仕様
+
+最終的には、全体をこのように揃えるとよいです。
+
+```json
+{
+  "meta": {
+    "title": "小学校の復習・中学数学導入",
+    "source": "user_uploaded_images",
+    "version": "0.1.0"
+  },
+  "pages": [
+    {
+      "page": 6,
+      "problems": [
+        {
+          "id": "p008",
+          "section": {
+            "no": 8,
+            "title": "比例と反比例",
+            "category": "変化と対応"
+          },
+          "prompt": {
+            "text": "次のア〜ウのうち、ともなって変わる2つの量が比例するのはどれですか。また、反比例するのはどれですか。"
+          },
+          "items": [],
+          "visuals": [],
+          "response": {},
+          "answer": {},
+          "explanation": ""
+        }
+      ]
+    }
+  ]
+}
+```
+
+`pages` を残しておくと、元教材のページ構成を再現できます。
+一方で、検索やランダム出題では `problems` をフラットに扱えばよいです。
+
+---
+
+## 23. 静的Webツールとしての画面構成
+
+```txt
+[ページ選択]
+[問題一覧]
+
+┌────────────────────┐
+│ 8 比例と反比例       │
+│ 問題文               │
+│ 表・図・グラフ        │
+│ 答え欄               │
+└────────────────────┘
+
+[答えを表示]
+[解説を表示]
+```
+
+Canvasは問題カード内に配置します。
+
+```html
+<article class="problem-card">
+  <header>
+    <span class="problem-number">8</span>
+    <h2>比例と反比例</h2>
+  </header>
+
+  <div class="problem-prompt"></div>
+  <div class="problem-visuals"></div>
+  <div class="problem-response"></div>
+</article>
+```
+
+---
+
+## 24. 最終的な判断
+
+この用途では、JSONは次の3層に分ける設計が最も安定します。
+
+```txt
+1. 問題データ層
+   問題文、選択肢、答え、解説
+
+2. 視覚データ層
+   表、数直線、図形、グラフ、展開図
+
+3. 描画層
+   Canvas / HTML table / CSS
+```
+
+この分離をしておけば、画像から起こした問題データを、将来的にWeb表示・印刷・採点・類題生成へ拡張しやすくなります。
