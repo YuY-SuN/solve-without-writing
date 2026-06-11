@@ -121,3 +121,22 @@ python3 sync_index.py
 
 今後もこのリポジトリでは、機能追加ごとに `docs/` 配下の該当Markdownを同じ変更セットで更新する。
 特に、データ形式・UI操作・運用ツールを増やしたときは、利用方法と保守方法の両方を記録する。
+
+
+## Context rendering fix
+
+`problems003.json` で使い始めた `context.text` が、従来の `renderPrompt()` では描画されていなかった。
+
+対応内容:
+
+- `response.type: "choice"` を描画し、会話文問題や選択問題が画面上で成立するようにした
+- `response.type: "none"` では不要な「解答欄」を出さないようにした
+- `response.type: "draw_graph"` には作図問題であることが分かる案内を出すようにした
+- `item.context.text` も描画できるようにして、今後のデータ拡張に備えた
+- `renderPrompt()` を `problem-prompt-block` 化し、`prompt.text` の下に `context.text` を表示
+- `context` は補足文・会話文・与えられた数列を載せる用途として、枠付きのテキストブロックで描画
+- `context` 未設定の既存問題は従来どおり `prompt` のみを表示
+
+更新ファイル:
+- `tools/benkyo-tool-prompt01/app/src/renderers/TextRenderer.js`
+- `tools/benkyo-tool-prompt01/app/src/styles/page.css`
