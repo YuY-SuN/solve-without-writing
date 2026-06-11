@@ -52,6 +52,9 @@ function renderProblem(problem, options) {
       itemText.textContent = item.text;
       itemNode.appendChild(itemText);
     }
+    if (item.context?.text) {
+      itemNode.appendChild(renderPrompt({ prompt: null, context: item.context }));
+    }
     if (item.visuals?.length) {
       const itemVisuals = document.createElement("div");
       itemVisuals.className = "problem-visuals";
@@ -59,7 +62,10 @@ function renderProblem(problem, options) {
       itemNode.appendChild(itemVisuals);
     }
     if (item.response) {
-      itemNode.appendChild(renderResponse(item.response));
+      const responseNode = renderResponse(item.response);
+      if (responseNode) {
+        itemNode.appendChild(responseNode);
+      }
     }
     if (options.showAnswers && item.answer) {
       itemNode.appendChild(renderAnswer(item.answer));
@@ -70,7 +76,10 @@ function renderProblem(problem, options) {
   const footer = document.createElement("footer");
   footer.className = "problem-footer";
   if (problem.response) {
-    footer.appendChild(renderResponse(problem.response));
+    const responseNode = renderResponse(problem.response);
+    if (responseNode) {
+      footer.appendChild(responseNode);
+    }
   }
   if (options.showAnswers && problem.answer) {
     footer.appendChild(renderAnswer(problem.answer));

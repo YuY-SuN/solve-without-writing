@@ -15,6 +15,11 @@
       "id": "problems002",
       "label": "小学校の復習",
       "path": "problems002.json"
+    },
+    {
+      "id": "problems003-2",
+      "label": "正の数・負の数で量を表すこと",
+      "path": "problems003-2.json"
     }
   ]
 }

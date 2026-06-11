@@ -116,6 +116,24 @@ button {
   margin-bottom: 0;
 }
 
+.problem-prompt-block {
+  display: grid;
+  gap: 10px;
+}
+
+.problem-prompt,
+.problem-context {
+  margin-bottom: 0;
+}
+
+.problem-context {
+  padding: 12px 14px;
+  border: 1px solid #dbe4f0;
+  border-radius: 8px;
+  background: #f8fbff;
+  white-space: pre-wrap;
+}
+
 .problem-visuals,
 .problem-items {
   display: grid;
@@ -210,4 +228,37 @@ pre {
   .toolbar-field-wide {
     min-width: 100%;
   }
+}
+
+.choice-list {
+  display: grid;
+  gap: 10px;
+}
+
+.choice-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.choice-marker {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #4b5a75;
+  background: #fff;
+}
+
+.choice-marker.radio {
+  border-radius: 999px;
+}
+
+.choice-marker.checkbox {
+  border-radius: 4px;
+}
+
+.draw-graph-hint,
+.response-unsupported {
+  color: #55627a;
 }
