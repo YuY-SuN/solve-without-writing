@@ -88,6 +88,7 @@
 - 全問題セットJSONの先読み
 - 横断ページフィルタの構築
 - ページ選択時の dataset 自動切り替え
+- 解答欄の入力UIと選択肢の操作UI
 - 既存の答え表示・解説表示・問題描画の再利用
 
 ### sync_index.py responsibilities
@@ -143,3 +144,14 @@ python3 sync_index.py
 更新ファイル:
 - `tools/benkyo-tool-prompt01/app/src/renderers/TextRenderer.js`
 - `tools/benkyo-tool-prompt01/app/src/styles/page.css`
+
+
+## Interactive response inputs
+
+解答欄は表示専用ではなく、次のように操作できるようにした。
+
+- `blank` は単一テキスト入力
+- `multi_blank` は項目ごとの短いテキスト入力
+- `free_text` は 1 行なら単一入力、複数行なら textarea
+- `choice` は `multiple` に応じて checkbox または radio
+- 入力値は再描画時も消えないように `main.js` 側の状態で保持する

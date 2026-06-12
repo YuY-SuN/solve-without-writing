@@ -8,6 +8,7 @@ const state = {
   datasetCatalog: [],
   datasetsById: {},
   pageCatalog: [],
+  responseValues: {},
   dataset: null,
 };
 
@@ -130,6 +131,14 @@ function updateHeader() {
   elements.source.textContent = sourceParts.join(" / ");
 }
 
+function handleResponseChange(responseKey, valueOrUpdater) {
+  state.responseValues[responseKey] =
+    typeof valueOrUpdater === "function"
+      ? valueOrUpdater(state.responseValues[responseKey])
+      : valueOrUpdater;
+}
+
+
 function render() {
   const allProblems = getAllProblems(state.dataset);
   const pageEntry = state.selectedPageKey === "all" ? null : findPageEntry(state.selectedPageKey);
@@ -141,6 +150,8 @@ function render() {
   renderProblems(elements.problemList, visibleProblems, {
     showAnswers: state.showAnswers,
     showExplanations: state.showExplanations,
+    responseValues: state.responseValues,
+    onResponseChange: handleResponseChange,
   });
   updateToolbar();
 }
