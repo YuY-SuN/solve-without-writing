@@ -89,6 +89,7 @@
 - 横断ページフィルタの構築
 - ページ選択時の dataset 自動切り替え
 - 解答欄の入力UIと選択肢の操作UI
+- 問題単位・表示中単位の回答クリアと10件のUndo/Redo履歴
 - 既存の答え表示・解説表示・問題描画の再利用
 
 ### sync_index.py responsibilities
@@ -166,3 +167,14 @@ python3 sync_index.py
 - 保存対象は `main.js` の `responseValues`
 - 起動時に `localStorage` から復元して初期表示へ反映する
 - 保存キーは `benkyo-tool-prompt01:response-values:v1`
+
+
+## Clear and undo
+
+回答の操作として、次を追加した。
+
+- 各問題カードの `この問題をクリア` で、その問題に属する入力だけ消す
+- 上部の `表示中をクリア` で、現在表示している問題群の入力をまとめて消す
+- `ひとつもどる` / `ひとつすすむ` で、入力・削除・クリアの履歴を前後できる
+- 履歴は回答状態全体のスナップショットとして最大 10 件保持する
+- Undo/Redo 履歴も `localStorage` と整合するように更新する

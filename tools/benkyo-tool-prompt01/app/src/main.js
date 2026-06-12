@@ -1,6 +1,8 @@
 import { renderProblems } from "./renderers/ProblemRenderer.js";
 
 const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
+const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
+const MAX_HISTORY_ENTRIES = 10;
 
 const state = {
   showAnswers: false,
@@ -11,6 +13,8 @@ const state = {
   datasetsById: {},
   pageCatalog: [],
   responseValues: {},
+  undoStack: [],
+  redoStack: [],
   dataset: null,
 };
 
@@ -19,6 +23,9 @@ const elements = {
   source: document.querySelector("#app-source"),
   datasetSelect: document.querySelector("#dataset-select"),
   pageFilter: document.querySelector("#page-filter"),
+  clearVisible: document.querySelector("#clear-visible"),
+  undoClear: document.querySelector("#undo-clear"),
+  redoClear: document.querySelector("#redo-clear"),
   toggleAnswers: document.querySelector("#toggle-answers"),
   toggleExplanations: document.querySelector("#toggle-explanations"),
   problemList: document.querySelector("#problem-list"),
@@ -40,8 +47,42 @@ async function loadDataset(datasetPath) {
   return res.json();
 }
 
+function cloneSerializable(value) {
+  return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
+}
+
+function areEqual(left, right) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function trimHistory(stack) {
+  if (stack.length > MAX_HISTORY_ENTRIES) {
+    stack.splice(0, stack.length - MAX_HISTORY_ENTRIES);
+  }
+}
+
 function makePageKey(datasetId, page) {
   return `${datasetId}::${page}`;
+}
+
+function getItemResponseKey(problem, item) {
+  return item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
+}
+
+function getProblemResponseKeys(problem) {
+  const keys = [];
+
+  if (problem.response) {
+    keys.push(problem.id);
+  }
+
+  for (const item of problem.items ?? []) {
+    if (item.response) {
+      keys.push(getItemResponseKey(problem, item));
+    }
+  }
+
+  return keys;
 }
 
 function findDatasetEntry(datasetId) {
@@ -56,6 +97,19 @@ function getAllProblems(dataset) {
   return dataset.pages.flatMap((page) =>
     page.problems.map((problem) => ({ ...problem, page: page.page })),
   );
+}
+
+function getVisibleProblems() {
+  const allProblems = getAllProblems(state.dataset);
+  const pageEntry = state.selectedPageKey === "all" ? null : findPageEntry(state.selectedPageKey);
+
+  return pageEntry === null
+    ? allProblems
+    : allProblems.filter((problem) => String(problem.page) === String(pageEntry.page));
+}
+
+function getVisibleResponseKeys() {
+  return getVisibleProblems().flatMap((problem) => getProblemResponseKeys(problem));
 }
 
 function buildPageCatalog(catalog, datasetsById) {
@@ -108,6 +162,10 @@ function populatePageFilter(pageCatalog) {
 }
 
 function updateToolbar() {
+  elements.clearVisible.textContent = state.selectedPageKey === "all" ? "表示中をクリア" : "このページをクリア";
+  elements.clearVisible.disabled = getVisibleResponseKeys().length === 0;
+  elements.undoClear.disabled = state.undoStack.length === 0;
+  elements.redoClear.disabled = state.redoStack.length === 0;
   elements.toggleAnswers.textContent = state.showAnswers ? "答えを隠す" : "答えを表示";
   elements.toggleExplanations.textContent = state.showExplanations
     ? "解説を隠す"
@@ -133,57 +191,155 @@ function updateHeader() {
   elements.source.textContent = sourceParts.join(" / ");
 }
 
-function loadPersistedResponseValues() {
+function loadPersistedJson(storageKey) {
   if (typeof window === "undefined" || !window.localStorage) {
-    return {};
+    return null;
   }
 
   try {
-    const raw = window.localStorage.getItem(RESPONSE_STORAGE_KEY);
-    if (!raw) {
-      return {};
-    }
-
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
+    const raw = window.localStorage.getItem(storageKey);
+    return raw ? JSON.parse(raw) : null;
   } catch {
-    return {};
+    return null;
   }
 }
 
-function persistResponseValues() {
+function persistJson(storageKey, value) {
   if (typeof window === "undefined" || !window.localStorage) {
     return;
   }
 
   try {
-    window.localStorage.setItem(RESPONSE_STORAGE_KEY, JSON.stringify(state.responseValues));
+    if (value === null) {
+      window.localStorage.removeItem(storageKey);
+    } else {
+      window.localStorage.setItem(storageKey, JSON.stringify(value));
+    }
   } catch {
-    // Ignore storage quota and browser persistence errors.
+    // Ignore browser persistence errors.
   }
 }
 
-function handleResponseChange(responseKey, valueOrUpdater) {
-  state.responseValues[responseKey] =
-    typeof valueOrUpdater === "function"
-      ? valueOrUpdater(state.responseValues[responseKey])
-      : valueOrUpdater;
+function loadPersistedResponseValues() {
+  const parsed = loadPersistedJson(RESPONSE_STORAGE_KEY);
+  return parsed && typeof parsed === "object" ? parsed : {};
+}
+
+function persistResponseValues() {
+  persistJson(RESPONSE_STORAGE_KEY, state.responseValues);
+}
+
+function loadPersistedHistoryState() {
+  const parsed = loadPersistedJson(HISTORY_STORAGE_KEY);
+  if (!parsed || typeof parsed !== "object") {
+    return { undoStack: [], redoStack: [] };
+  }
+
+  return {
+    undoStack: Array.isArray(parsed.undoStack) ? parsed.undoStack : [],
+    redoStack: Array.isArray(parsed.redoStack) ? parsed.redoStack : [],
+  };
+}
+
+function persistHistoryState() {
+  persistJson(HISTORY_STORAGE_KEY, {
+    undoStack: state.undoStack,
+    redoStack: state.redoStack,
+  });
+}
+
+function commitResponseValues(nextResponseValues) {
+  const previous = cloneSerializable(state.responseValues);
+  const next = cloneSerializable(nextResponseValues) ?? {};
+
+  if (areEqual(previous, next)) {
+    return false;
+  }
+
+  state.undoStack.push(previous);
+  trimHistory(state.undoStack);
+  state.redoStack = [];
+  state.responseValues = next;
   persistResponseValues();
+  persistHistoryState();
+  return true;
+}
+
+function handleResponseChange(responseKey, valueOrUpdater) {
+  const currentValue = state.responseValues[responseKey];
+  const nextValue =
+    typeof valueOrUpdater === "function"
+      ? valueOrUpdater(currentValue)
+      : valueOrUpdater;
+
+  if (areEqual(currentValue, nextValue)) {
+    return;
+  }
+
+  const nextResponseValues = { ...state.responseValues };
+  nextResponseValues[responseKey] = cloneSerializable(nextValue);
+  commitResponseValues(nextResponseValues);
+}
+
+function clearResponseKeys(responseKeys) {
+  const nextResponseValues = { ...state.responseValues };
+
+  for (const responseKey of new Set(responseKeys)) {
+    delete nextResponseValues[responseKey];
+  }
+
+  if (commitResponseValues(nextResponseValues)) {
+    render();
+  }
+}
+
+function clearProblemResponses(problem) {
+  clearResponseKeys(getProblemResponseKeys(problem));
+}
+
+function clearVisibleResponses() {
+  clearResponseKeys(getVisibleResponseKeys());
+}
+
+function undoHistory() {
+  if (state.undoStack.length === 0) {
+    return;
+  }
+
+  const current = cloneSerializable(state.responseValues);
+  const previous = state.undoStack.pop();
+  state.redoStack.push(current);
+  trimHistory(state.redoStack);
+  state.responseValues = cloneSerializable(previous) ?? {};
+  persistResponseValues();
+  persistHistoryState();
+  render();
+}
+
+function redoHistory() {
+  if (state.redoStack.length === 0) {
+    return;
+  }
+
+  const current = cloneSerializable(state.responseValues);
+  const next = state.redoStack.pop();
+  state.undoStack.push(current);
+  trimHistory(state.undoStack);
+  state.responseValues = cloneSerializable(next) ?? {};
+  persistResponseValues();
+  persistHistoryState();
+  render();
 }
 
 function render() {
-  const allProblems = getAllProblems(state.dataset);
-  const pageEntry = state.selectedPageKey === "all" ? null : findPageEntry(state.selectedPageKey);
-  const visibleProblems =
-    pageEntry === null
-      ? allProblems
-      : allProblems.filter((problem) => String(problem.page) === String(pageEntry.page));
+  const visibleProblems = getVisibleProblems();
 
   renderProblems(elements.problemList, visibleProblems, {
     showAnswers: state.showAnswers,
     showExplanations: state.showExplanations,
     responseValues: state.responseValues,
     onResponseChange: handleResponseChange,
+    onClearProblem: clearProblemResponses,
   });
   updateToolbar();
 }
@@ -220,6 +376,11 @@ async function applyPageSelection(pageKey) {
 
 async function bootstrap() {
   state.responseValues = loadPersistedResponseValues();
+  const historyState = loadPersistedHistoryState();
+  state.undoStack = historyState.undoStack;
+  state.redoStack = historyState.redoStack;
+  trimHistory(state.undoStack);
+  trimHistory(state.redoStack);
 
   const catalog = await loadDatasetCatalog();
   state.datasetCatalog = catalog.datasets;
@@ -243,6 +404,18 @@ async function bootstrap() {
 
   elements.pageFilter.addEventListener("change", async (event) => {
     await applyPageSelection(event.target.value);
+  });
+
+  elements.clearVisible.addEventListener("click", () => {
+    clearVisibleResponses();
+  });
+
+  elements.undoClear.addEventListener("click", () => {
+    undoHistory();
+  });
+
+  elements.redoClear.addEventListener("click", () => {
+    redoHistory();
   });
 
   elements.toggleAnswers.addEventListener("click", () => {

@@ -84,6 +84,11 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .problem-list {
   display: grid;
   gap: 20px;
@@ -110,6 +115,12 @@ button {
   justify-content: space-between;
   align-items: start;
   margin-bottom: 16px;
+}
+
+.problem-header-side {
+  display: grid;
+  gap: 10px;
+  justify-items: end;
 }
 
 .problem-heading h2 {
@@ -213,6 +224,16 @@ textarea.response-input {
 .choice-input:focus {
   outline: 2px solid #8ab4ff;
   outline-offset: 2px;
+}
+
+.secondary-button {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #c7d2e3;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: #23406f;
+  font: inherit;
 }
 
 .response-cell {
