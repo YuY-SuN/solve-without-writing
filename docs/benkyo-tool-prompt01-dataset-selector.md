@@ -155,3 +155,14 @@ python3 sync_index.py
 - `free_text` は 1 行なら単一入力、複数行なら textarea
 - `choice` は `multiple` に応じて checkbox または radio
 - 入力値は再描画時も消えないように `main.js` 側の状態で保持する
+- 入力イベントのたびに `localStorage` を更新し、再読み込み後も復元する
+
+
+## Response persistence experiment
+
+この試作用ブランチでは、回答入力を `localStorage` に保存する。
+
+- 保存タイミングは各入力イベント発生時
+- 保存対象は `main.js` の `responseValues`
+- 起動時に `localStorage` から復元して初期表示へ反映する
+- 保存キーは `benkyo-tool-prompt01:response-values:v1`
