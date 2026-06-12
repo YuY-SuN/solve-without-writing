@@ -19,10 +19,70 @@ export function renderPrompt(problem) {
   return wrapper;
 }
 
-export function renderResponse(response) {
+function createTextInput(value, { short = false, multiline = false, onChange } = {}) {
+  const input = multiline ? document.createElement("textarea") : document.createElement("input");
+  input.className = short ? "response-input response-input-short" : "response-input";
+  input.value = value ?? "";
+
+  if (multiline) {
+    input.rows = 2;
+  } else {
+    input.type = "text";
+  }
+
+  input.addEventListener("input", (event) => {
+    onChange?.(event.target.value);
+  });
+
+  return input;
+}
+
+function createChoiceControl(choice, response, responseKey, selectedValue, onChange) {
+  const row = document.createElement("label");
+  row.className = "choice-item";
+
+  const input = document.createElement("input");
+  input.className = "choice-input";
+  input.type = response.multiple ? "checkbox" : "radio";
+  input.name = responseKey;
+  input.value = choice.key ?? choice.text ?? "";
+
+  if (response.multiple) {
+    const values = Array.isArray(selectedValue) ? selectedValue : [];
+    input.checked = values.includes(input.value);
+    input.addEventListener("change", (event) => {
+      onChange?.((currentValue) => {
+        const nextValues = new Set(Array.isArray(currentValue) ? currentValue : []);
+        if (event.target.checked) {
+          nextValues.add(input.value);
+        } else {
+          nextValues.delete(input.value);
+        }
+        return [...nextValues];
+      });
+    });
+  } else {
+    input.checked = selectedValue === input.value;
+    input.addEventListener("change", (event) => {
+      if (event.target.checked) {
+        onChange?.(input.value);
+      }
+    });
+  }
+
+  const text = document.createElement("span");
+  text.textContent = choice.text;
+
+  row.append(input, text);
+  return row;
+}
+
+export function renderResponse(response, options = {}) {
   if (!response || response.type === "none") {
     return null;
   }
+
+  const { responseKey = "response", value = null, onChange = null } = options;
 
   const wrapper = document.createElement("div");
   wrapper.className = "response-block";
@@ -35,7 +95,12 @@ export function renderResponse(response) {
   if (response.type === "blank") {
     const line = document.createElement("div");
     line.className = "response-inline";
-    line.innerHTML = `<span class="blank-field"></span>${response.unit ? `<span>${response.unit}</span>` : ""}`;
+    line.appendChild(createTextInput(value, { onChange }));
+    if (response.unit) {
+      const unit = document.createElement("span");
+      unit.textContent = response.unit;
+      line.appendChild(unit);
+    }
     wrapper.appendChild(line);
     return wrapper;
   }
@@ -44,9 +109,25 @@ export function renderResponse(response) {
     const group = document.createElement("div");
     group.className = "response-grid";
     for (const field of response.fields ?? []) {
-      const cell = document.createElement("div");
+      const cell = document.createElement("label");
       cell.className = "response-cell";
-      cell.innerHTML = `<span>${field.label}</span><span class="blank-field short"></span>`;
+
+      const fieldLabel = document.createElement("span");
+      fieldLabel.textContent = field.label;
+      cell.appendChild(fieldLabel);
+
+      const fieldValue = value && typeof value === "object" ? value[field.key] : "";
+      const input = createTextInput(fieldValue, {
+        short: true,
+        onChange: (nextValue) => {
+          onChange?.((currentValue) => {
+            const next = currentValue && typeof currentValue === "object" ? { ...currentValue } : {};
+            next[field.key] = nextValue;
+            return next;
+          });
+        },
+      });
+      cell.appendChild(input);
       group.appendChild(cell);
     }
     wrapper.appendChild(group);
@@ -56,11 +137,13 @@ export function renderResponse(response) {
   if (response.type === "free_text") {
     const lines = document.createElement("div");
     lines.className = "free-text-lines";
-    for (let index = 0; index < (response.lines ?? 2); index += 1) {
-      const line = document.createElement("span");
-      line.className = "blank-field";
-      lines.appendChild(line);
+
+    if ((response.lines ?? 2) <= 1) {
+      lines.appendChild(createTextInput(value, { onChange }));
+    } else {
+      lines.appendChild(createTextInput(value, { multiline: true, onChange }));
     }
+
     wrapper.appendChild(lines);
     return wrapper;
   }
@@ -69,14 +152,7 @@ export function renderResponse(response) {
     const list = document.createElement("div");
     list.className = "choice-list";
     for (const choice of response.choices ?? []) {
-      const row = document.createElement("label");
-      row.className = "choice-item";
-      const marker = document.createElement("span");
-      marker.className = response.multiple ? "choice-marker checkbox" : "choice-marker radio";
-      const text = document.createElement("span");
-      text.textContent = choice.text;
-      row.append(marker, text);
-      list.appendChild(row);
+      list.appendChild(createChoiceControl(choice, response, responseKey, value, onChange));
     }
     wrapper.appendChild(list);
     return wrapper;

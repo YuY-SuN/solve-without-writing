@@ -188,6 +188,33 @@ button {
   min-width: 96px;
 }
 
+.response-input {
+  width: min(100%, 360px);
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid #b8c5d9;
+  border-radius: 8px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+}
+
+.response-input-short {
+  width: 120px;
+}
+
+textarea.response-input {
+  width: 100%;
+  min-height: 88px;
+  resize: vertical;
+}
+
+.response-input:focus,
+.choice-input:focus {
+  outline: 2px solid #8ab4ff;
+  outline-offset: 2px;
+}
+
 .response-cell {
   display: flex;
   align-items: center;
@@ -239,23 +266,14 @@ pre {
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
 }
 
-.choice-marker {
-  display: inline-block;
-  flex: 0 0 auto;
+.choice-input {
+  margin: 0;
   width: 18px;
   height: 18px;
-  border: 1.5px solid #4b5a75;
-  background: #fff;
-}
-
-.choice-marker.radio {
-  border-radius: 999px;
-}
-
-.choice-marker.checkbox {
-  border-radius: 4px;
+  accent-color: #2f6fed;
 }
 
 .draw-graph-hint,

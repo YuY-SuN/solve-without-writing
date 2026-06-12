@@ -62,7 +62,12 @@ function renderProblem(problem, options) {
       itemNode.appendChild(itemVisuals);
     }
     if (item.response) {
-      const responseNode = renderResponse(item.response);
+      const responseKey = item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
+      const responseNode = renderResponse(item.response, {
+        responseKey,
+        value: options.responseValues?.[responseKey] ?? null,
+        onChange: (nextValue) => options.onResponseChange?.(responseKey, nextValue),
+      });
       if (responseNode) {
         itemNode.appendChild(responseNode);
       }
@@ -76,7 +81,11 @@ function renderProblem(problem, options) {
   const footer = document.createElement("footer");
   footer.className = "problem-footer";
   if (problem.response) {
-    const responseNode = renderResponse(problem.response);
+    const responseNode = renderResponse(problem.response, {
+      responseKey: problem.id,
+      value: options.responseValues?.[problem.id] ?? null,
+      onChange: (nextValue) => options.onResponseChange?.(problem.id, nextValue),
+    });
     if (responseNode) {
       footer.appendChild(responseNode);
     }

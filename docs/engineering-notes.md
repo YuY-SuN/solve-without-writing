@@ -104,7 +104,9 @@
 
 重要:
 - `response.type: "none"` は「解答欄を出さない」が正しい
-- `response.type: "choice"` は問題が成立するため、少なくとも選択肢の表示が必要
+- `blank` `multi_blank` `free_text` は入力可能なフォーム部品として描画する
+- 回答保持を跨ぎたい場合は `main.js` の状態に加えて `localStorage` 永続化を使う
+- `response.type: "choice"` は問題が成立するため、少なくとも選択肢の表示と選択操作が必要
 - `response.type: "draw_graph"` は直接編集UI未実装でも、作図問題だと分かる案内を出す方がよい
 - `response.type: "draw_point"` は少なくとも「点を書き込む問題」だと分かる案内を出す
 
