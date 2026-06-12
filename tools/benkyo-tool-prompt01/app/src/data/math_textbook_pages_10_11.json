@@ -1,0 +1,840 @@
+{
+  "meta": {
+    "title": "絶対値と数の大小",
+    "source": "uploaded_image",
+    "version": "0.1.0",
+    "language": "ja"
+  },
+  "pages": [
+    {
+      "page": 10,
+      "problems": [
+        {
+          "id": "p010_q00",
+          "page": 10,
+          "section": {
+            "no": 0,
+            "title": "数の大小",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の数を，小さい方から順に並べなさい。0，1，0.2，1/3，3/2"
+          },
+          "items": [],
+          "visuals": [],
+          "response": {
+            "type": "free_text",
+            "lines": 1
+          },
+          "answer": {
+            "value": [
+              0,
+              0.2,
+              {
+                "type": "fraction",
+                "numerator": 1,
+                "denominator": 3
+              },
+              1,
+              {
+                "type": "fraction",
+                "numerator": 3,
+                "denominator": 2
+              }
+            ],
+            "display": "0，0.2，1/3，1，3/2"
+          },
+          "explanation": "小数や分数を比べると，0 < 0.2 < 1/3 < 1 < 3/2 となる。",
+          "notes": "左ページ上部の『ふり返り』欄。",
+          "uncertain": false
+        },
+        {
+          "id": "p010_q01",
+          "page": 10,
+          "section": {
+            "no": 1,
+            "title": "絶対値",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の数の絶対値を書きなさい。また，次の数の符号を変えた数を書きなさい。"
+          },
+          "items": [
+            {
+              "id": "p010_q01_01",
+              "no": 1,
+              "text": "+6",
+              "visuals": [],
+              "response": {
+                "type": "multi_blank",
+                "fields": [
+                  {
+                    "key": "abs",
+                    "label": "絶対値"
+                  },
+                  {
+                    "key": "sign_changed",
+                    "label": "符号を変えた数"
+                  }
+                ]
+              },
+              "answer": {
+                "value": {
+                  "abs": 6,
+                  "sign_changed": -6
+                }
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p010_q01_02",
+              "no": 2,
+              "text": "-5.7",
+              "visuals": [],
+              "response": {
+                "type": "multi_blank",
+                "fields": [
+                  {
+                    "key": "abs",
+                    "label": "絶対値"
+                  },
+                  {
+                    "key": "sign_changed",
+                    "label": "符号を変えた数"
+                  }
+                ]
+              },
+              "answer": {
+                "value": {
+                  "abs": 5.7,
+                  "sign_changed": 5.7
+                }
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p010_q01_03",
+              "no": 3,
+              "text": "2/3",
+              "visuals": [],
+              "response": {
+                "type": "multi_blank",
+                "fields": [
+                  {
+                    "key": "abs",
+                    "label": "絶対値"
+                  },
+                  {
+                    "key": "sign_changed",
+                    "label": "符号を変えた数"
+                  }
+                ]
+              },
+              "answer": {
+                "value": {
+                  "abs": {
+                    "type": "fraction",
+                    "numerator": 2,
+                    "denominator": 3
+                  },
+                  "sign_changed": {
+                    "formula": "-2/3"
+                  }
+                },
+                "display": {
+                  "abs": "2/3",
+                  "sign_changed": "-2/3"
+                }
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "絶対値は0からの距離，符号を変えた数は正負を反転した数。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p010_q02",
+          "page": 10,
+          "section": {
+            "no": 2,
+            "title": "数の大小",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の2数のうち，大きい数はどちらですか。また，絶対値が大きい数はどちらですか。"
+          },
+          "items": [
+            {
+              "id": "p010_q02_01",
+              "no": 1,
+              "text": "4 と -5",
+              "visuals": [],
+              "response": {
+                "type": "multi_blank",
+                "fields": [
+                  {
+                    "key": "larger",
+                    "label": "大きい数"
+                  },
+                  {
+                    "key": "larger_abs",
+                    "label": "絶対値が大きい数"
+                  }
+                ]
+              },
+              "answer": {
+                "value": {
+                  "larger": 4,
+                  "larger_abs": -5
+                }
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p010_q02_02",
+              "no": 2,
+              "text": "-4 と -2",
+              "visuals": [],
+              "response": {
+                "type": "multi_blank",
+                "fields": [
+                  {
+                    "key": "larger",
+                    "label": "大きい数"
+                  },
+                  {
+                    "key": "larger_abs",
+                    "label": "絶対値が大きい数"
+                  }
+                ]
+              },
+              "answer": {
+                "value": {
+                  "larger": -2,
+                  "larger_abs": -4
+                }
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "正の数は負の数より大きく，負の数同士では0に近い方が大きい。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p010_q03",
+          "page": 10,
+          "section": {
+            "no": 3,
+            "title": "数の大小",
+            "category": "不等号"
+          },
+          "prompt": {
+            "text": "次の□に不等号を書き入れて，2数の大小を表しなさい。"
+          },
+          "items": [
+            {
+              "id": "p010_q03_01",
+              "no": 1,
+              "text": "3 □ 4",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": "<"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p010_q03_02",
+              "no": 2,
+              "text": "-2 □ -5",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": ">"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p010_q03_03",
+              "no": 3,
+              "text": "-0.6 □ -3.6",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": ">"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p010_q03_04",
+              "no": 4,
+              "text": "-4/7 □ -1/7",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": "<"
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "負の数では，絶対値が小さい方が大きい数になる。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p010_q04",
+          "page": 10,
+          "section": {
+            "no": 4,
+            "title": "数直線を使って",
+            "category": "数直線"
+          },
+          "prompt": {
+            "text": "次の例にならい，数直線を使って，下の(1)〜(3)の数を求めなさい。"
+          },
+          "context": {
+            "text": "例：2より3大きい数は5である。"
+          },
+          "items": [
+            {
+              "id": "p010_q04_01",
+              "no": 1,
+              "text": "2より5小さい数",
+              "visuals": [
+                {
+                  "type": "number_line",
+                  "width": 520,
+                  "height": 120,
+                  "range": {
+                    "min": -5,
+                    "max": 5
+                  },
+                  "ticks": {
+                    "minor": 1,
+                    "major": 1,
+                    "labels": [-5, 0, 2, 5]
+                  },
+                  "points": []
+                }
+              ],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -3
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p010_q04_02",
+              "no": 2,
+              "text": "2より-5大きい数",
+              "visuals": [
+                {
+                  "type": "number_line",
+                  "width": 520,
+                  "height": 120,
+                  "range": {
+                    "min": -5,
+                    "max": 5
+                  },
+                  "ticks": {
+                    "minor": 1,
+                    "major": 1,
+                    "labels": [-5, 0, 2, 5]
+                  },
+                  "points": []
+                }
+              ],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -3
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p010_q04_03",
+              "no": 3,
+              "text": "-1より-4小さい数",
+              "visuals": [
+                {
+                  "type": "number_line",
+                  "width": 520,
+                  "height": 120,
+                  "range": {
+                    "min": -5,
+                    "max": 5
+                  },
+                  "ticks": {
+                    "minor": 1,
+                    "major": 1,
+                    "labels": [-5, -1, 0, 5]
+                  },
+                  "points": []
+                }
+              ],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -5
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "number_line",
+              "width": 520,
+              "height": 120,
+              "range": {
+                "min": -1,
+                "max": 5
+              },
+              "ticks": {
+                "minor": 1,
+                "major": 1,
+                "labels": [0, 2, 5]
+              },
+              "points": [
+                {
+                  "label": "始点",
+                  "value": 2
+                },
+                {
+                  "label": "終点",
+                  "value": 5
+                }
+              ]
+            }
+          ],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "『aよりb大きい数』は a+b，『aよりb小さい数』は a-b と考えられる。",
+          "notes": "例の数直線もあわせて構造化した。",
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "page": 11,
+      "problems": [
+        {
+          "id": "p011_q01",
+          "page": 11,
+          "section": {
+            "no": 1,
+            "title": "絶対値",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の数をすべて書きなさい。"
+          },
+          "items": [
+            {
+              "id": "p011_q01_01",
+              "no": 1,
+              "text": "絶対値が7の数",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": [7, -7],
+                "display": "7，-7"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p011_q01_02",
+              "no": 2,
+              "text": "絶対値が4以上6以下の整数",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": [-6, -5, -4, 4, 5, 6],
+                "display": "-6，-5，-4，4，5，6"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p011_q01_03",
+              "no": 3,
+              "text": "絶対値が9/4以下の整数",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": [-2, -1, 0, 1, 2],
+                "display": "-2，-1，0，1，2"
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "絶対値の条件に合う数を正負の両方から考える。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p011_q02",
+          "page": 11,
+          "section": {
+            "no": 2,
+            "title": "数の大小",
+            "category": "不等号"
+          },
+          "prompt": {
+            "text": "次の数の大小を，不等号を使って表しなさい。"
+          },
+          "items": [
+            {
+              "id": "p011_q02_01",
+              "no": 1,
+              "text": "-0.1，-1",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": "-0.1 > -1"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p011_q02_02",
+              "no": 2,
+              "text": "-1/7，-1/8",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": "-1/7 < -1/8"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p011_q02_03",
+              "no": 3,
+              "text": "-3，+2，-8",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": "-8 < -3 < +2"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p011_q02_04",
+              "no": 4,
+              "text": "0.02，0，-0.2",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": "-0.2 < 0 < 0.02"
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "数直線上で左にある数ほど小さい。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p011_q03",
+          "page": 11,
+          "section": {
+            "no": 3,
+            "title": "絶対値と数の大小",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の数について，下の問いに答えなさい。0.2，-0.7，0，-1.3，1/4，-6/5"
+          },
+          "items": [
+            {
+              "id": "p011_q03_01",
+              "no": 1,
+              "text": "絶対値がもっとも大きい数はどれですか。",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -1.3
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p011_q03_02",
+              "no": 2,
+              "text": "小さい方から順に並べなさい。",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": [
+                  -1.3,
+                  {
+                    "formula": "-6/5"
+                  },
+                  -0.7,
+                  0,
+                  0.2,
+                  {
+                    "formula": "1/4"
+                  }
+                ],
+                "display": "-1.3，-6/5，-0.7，0，0.2，1/4"
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "1/4=0.25，-6/5=-1.2 と考えると大小を比べやすい。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p011_q04",
+          "page": 11,
+          "section": {
+            "no": 4,
+            "title": "数直線を使って",
+            "category": "数直線"
+          },
+          "prompt": {
+            "text": "下の数直線を使って，次の□にあてはまる数を書きなさい。"
+          },
+          "items": [
+            {
+              "id": "p011_q04_01",
+              "no": 1,
+              "text": "□より4大きい数は，2である。",
+              "visuals": [
+                {
+                  "type": "number_line",
+                  "width": 520,
+                  "height": 120,
+                  "range": {
+                    "min": -6,
+                    "max": 6
+                  },
+                  "ticks": {
+                    "minor": 1,
+                    "major": 1,
+                    "labels": [-5, -1, 0, 1, 5]
+                  },
+                  "points": []
+                }
+              ],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -2
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p011_q04_02",
+              "no": 2,
+              "text": "-1より-5小さい数は，□である。",
+              "visuals": [
+                {
+                  "type": "number_line",
+                  "width": 520,
+                  "height": 120,
+                  "range": {
+                    "min": -6,
+                    "max": 6
+                  },
+                  "ticks": {
+                    "minor": 1,
+                    "major": 1,
+                    "labels": [-5, -1, 0, 1, 5]
+                  },
+                  "points": []
+                }
+              ],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -6
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p011_q04_03",
+              "no": 3,
+              "text": "3より□大きい数は，-5である。",
+              "visuals": [
+                {
+                  "type": "number_line",
+                  "width": 520,
+                  "height": 120,
+                  "range": {
+                    "min": -6,
+                    "max": 6
+                  },
+                  "ticks": {
+                    "minor": 1,
+                    "major": 1,
+                    "labels": [-5, -1, 0, 1, 5]
+                  },
+                  "points": []
+                }
+              ],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -8
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "number_line",
+              "width": 520,
+              "height": 120,
+              "range": {
+                "min": -6,
+                "max": 6
+              },
+              "ticks": {
+                "minor": 1,
+                "major": 1,
+                "labels": [-5, -1, 0, 1, 5]
+              },
+              "points": []
+            }
+          ],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "(1) は x+4=2，(2) は -1+(-5)，(3) は 3+x=-5 と考える。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p011_q05",
+          "page": 11,
+          "section": {
+            "no": 5,
+            "title": "学びを深めよう",
+            "category": "数直線"
+          },
+          "prompt": {
+            "text": "次の数直線上で，点Aと点Bの絶対値が等しいとき，点Cと絶対値が等しくなるような点Dの位置を，数直線上にかきなさい。"
+          },
+          "items": [],
+          "visuals": [
+            {
+              "type": "number_line",
+              "width": 520,
+              "height": 120,
+              "range": {
+                "min": -8,
+                "max": 8
+              },
+              "ticks": {
+                "minor": 1,
+                "major": 1,
+                "labels": []
+              },
+              "points": [
+                {
+                  "label": "A",
+                  "value": -4
+                },
+                {
+                  "label": "B",
+                  "value": 4
+                },
+                {
+                  "label": "C",
+                  "value": -6
+                }
+              ]
+            }
+          ],
+          "response": {
+            "type": "draw_point"
+          },
+          "answer": {
+            "value": {
+              "D": 6
+            },
+            "relation": "点Dは点Cの原点対称の位置"
+          },
+          "explanation": "AとBの絶対値が等しいので，AとBは原点をはさんで対称にある。したがって，Cと絶対値が等しい点Dも，Cを原点対称に移した位置になる。",
+          "notes": "画像ではこの数直線に数値表示がなく，A・B・Cの正確な目盛り値は読み取りにくい。JSONでは『AとBが原点対称，Cと絶対値が等しい点をDとする』という関係を再現するため，対称な代表値 A=-4, B=4, C=-6, D=6 で構造化した。",
+          "uncertain": true
+        }
+      ]
+    }
+  ]
+}

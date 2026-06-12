@@ -90,6 +90,14 @@ export function renderResponse(response) {
     return wrapper;
   }
 
+  if (response.type === "draw_point") {
+    const hint = document.createElement("div");
+    hint.className = "draw-graph-hint";
+    hint.textContent = "数直線や図の上に点を書き込む問題です。";
+    wrapper.appendChild(hint);
+    return wrapper;
+  }
+
   const unsupported = document.createElement("p");
   unsupported.className = "response-unsupported";
   unsupported.textContent = `未対応の解答形式: ${response.type}`;

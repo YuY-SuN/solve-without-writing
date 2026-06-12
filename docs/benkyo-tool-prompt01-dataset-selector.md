@@ -132,6 +132,7 @@ python3 sync_index.py
 - `response.type: "choice"` を描画し、会話文問題や選択問題が画面上で成立するようにした
 - `response.type: "none"` では不要な「解答欄」を出さないようにした
 - `response.type: "draw_graph"` には作図問題であることが分かる案内を出すようにした
+- `response.type: "draw_point"` には点を書き込む問題であることが分かる案内を出すようにした
 - `item.context.text` も描画できるようにして、今後のデータ拡張に備えた
 - `renderPrompt()` を `problem-prompt-block` 化し、`prompt.text` の下に `context.text` を表示
 - `context` は補足文・会話文・与えられた数列を載せる用途として、枠付きのテキストブロックで描画

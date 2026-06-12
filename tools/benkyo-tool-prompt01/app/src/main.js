@@ -20,7 +20,7 @@ const elements = {
 };
 
 async function loadDatasetCatalog() {
-  const res = await fetch("./src/data/index.json");
+  const res = await fetch("./src/data/index.json", { cache: "no-store" });
   if (!res.ok) {
     throw new Error(`Failed to load data index: ${res.status}`);
   }
@@ -28,7 +28,7 @@ async function loadDatasetCatalog() {
 }
 
 async function loadDataset(datasetPath) {
-  const res = await fetch(`./src/data/${datasetPath}`);
+  const res = await fetch(`./src/data/${datasetPath}`, { cache: "no-store" });
   if (!res.ok) {
     throw new Error(`Failed to load dataset ${datasetPath}: ${res.status}`);
   }
