@@ -7,6 +7,11 @@
       "path": "geometry-focus.json"
     },
     {
+      "id": "math-textbook-pages-10-11",
+      "label": "絶対値と数の大小",
+      "path": "math_textbook_pages_10_11.json"
+    },
+    {
       "id": "core-math",
       "label": "標準セット",
       "path": "problems.json"
