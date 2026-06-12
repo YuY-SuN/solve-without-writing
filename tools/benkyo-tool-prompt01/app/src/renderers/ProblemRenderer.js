@@ -1,6 +1,10 @@
 import { renderPrompt, renderResponse, renderAnswer, renderExplanation } from "./TextRenderer.js";
 import { renderVisualList } from "./VisualRenderer.js";
 
+function getItemResponseKey(problem, item) {
+  return item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
+}
+
 export function renderProblems(container, problems, options) {
   container.innerHTML = "";
 
@@ -30,7 +34,22 @@ function renderProblem(problem, options) {
     <span>${problem.page}ページ</span>
   `;
 
-  header.append(heading, meta);
+  const headerSide = document.createElement("div");
+  headerSide.className = "problem-header-side";
+  headerSide.appendChild(meta);
+
+  if (options.onClearProblem) {
+    const clearButton = document.createElement("button");
+    clearButton.type = "button";
+    clearButton.className = "secondary-button";
+    clearButton.textContent = "この問題をクリア";
+    clearButton.addEventListener("click", () => {
+      options.onClearProblem(problem);
+    });
+    headerSide.appendChild(clearButton);
+  }
+
+  header.append(heading, headerSide);
 
   const prompt = renderPrompt(problem);
   const visuals = document.createElement("div");
@@ -62,7 +81,7 @@ function renderProblem(problem, options) {
       itemNode.appendChild(itemVisuals);
     }
     if (item.response) {
-      const responseKey = item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
+      const responseKey = getItemResponseKey(problem, item);
       const responseNode = renderResponse(item.response, {
         responseKey,
         value: options.responseValues?.[responseKey] ?? null,
