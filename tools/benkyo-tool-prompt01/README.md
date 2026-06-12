@@ -43,7 +43,7 @@ python3 -m http.server 4173
 
 ## データ追加
 
-上部の「問題セット」コンボボックスは `src/data/index.json` を読みます。新しい問題JSONを追加したら、`src/data/` で次を実行してください。
+上部の「問題セット」コンボボックスと「ページ」コンボボックスは `src/data/index.json` を起点に全 dataset を読み、ページを横断して選べるようにしています。新しい問題JSONを追加したら、`src/data/` で次を実行してください。
 
 ```bash
 cd tools/benkyo-tool-prompt01/app/src/data

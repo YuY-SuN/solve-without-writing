@@ -27,9 +27,11 @@
 ### Dataset loading
 
 - アプリは単一JSON固定ではなく、`src/data/index.json` を読んで問題セット一覧を構築する
-- 上部ツールバーのコンボボックスから問題セットを切り替える
+- 上部ツールバーの「問題セット」コンボボックスから dataset 全体を切り替える
+- 上部ツールバーの「ページ」コンボボックスから全 dataset を横断して特定ページへ直接切り替える
 - `index.json` の各要素は少なくとも `id` `label` `path` を持つ
 - `defaultDatasetId` が初期表示セットになる
+- ページ選択肢は dataset ごとの再構築ではなく、起動時に全 dataset を読んで横断生成する
 
 ### Dataset index sync
 
