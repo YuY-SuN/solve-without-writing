@@ -1,5 +1,7 @@
 import { renderProblems } from "./renderers/ProblemRenderer.js";
 
+const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
+
 const state = {
   showAnswers: false,
   showExplanations: false,
@@ -131,13 +133,43 @@ function updateHeader() {
   elements.source.textContent = sourceParts.join(" / ");
 }
 
+function loadPersistedResponseValues() {
+  if (typeof window === "undefined" || !window.localStorage) {
+    return {};
+  }
+
+  try {
+    const raw = window.localStorage.getItem(RESPONSE_STORAGE_KEY);
+    if (!raw) {
+      return {};
+    }
+
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function persistResponseValues() {
+  if (typeof window === "undefined" || !window.localStorage) {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(RESPONSE_STORAGE_KEY, JSON.stringify(state.responseValues));
+  } catch {
+    // Ignore storage quota and browser persistence errors.
+  }
+}
+
 function handleResponseChange(responseKey, valueOrUpdater) {
   state.responseValues[responseKey] =
     typeof valueOrUpdater === "function"
       ? valueOrUpdater(state.responseValues[responseKey])
       : valueOrUpdater;
+  persistResponseValues();
 }
-
 
 function render() {
   const allProblems = getAllProblems(state.dataset);
@@ -187,6 +219,8 @@ async function applyPageSelection(pageKey) {
 }
 
 async function bootstrap() {
+  state.responseValues = loadPersistedResponseValues();
+
   const catalog = await loadDatasetCatalog();
   state.datasetCatalog = catalog.datasets;
 
