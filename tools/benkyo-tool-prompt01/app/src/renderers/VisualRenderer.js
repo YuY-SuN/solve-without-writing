@@ -6,19 +6,19 @@ import { renderGraphGrid } from "./GraphRenderer.js";
 import { renderHistogram } from "./HistogramRenderer.js";
 import { renderNet } from "./NetRenderer.js";
 
-export function renderVisualList(visuals, container) {
+export function renderVisualList(visuals, container, options = {}) {
   for (const visual of visuals) {
     const panel = document.createElement("div");
     panel.className = "visual-panel";
-    renderVisual(visual, panel);
+    renderVisual(visual, panel, options);
     container.appendChild(panel);
   }
 }
 
-export function renderVisual(visual, container) {
+export function renderVisual(visual, container, options = {}) {
   switch (visual.type) {
     case "table":
-      return renderTable(visual, container);
+      return renderTable(visual, container, options);
     case "number_line":
       return renderNumberLine(visual, container);
     case "geometry_2d":
