@@ -54,7 +54,12 @@ function renderProblem(problem, options) {
   const prompt = renderPrompt(problem);
   const visuals = document.createElement("div");
   visuals.className = "problem-visuals";
-  renderVisualList(problem.visuals ?? [], visuals);
+  renderVisualList(problem.visuals ?? [], visuals, {
+    response: problem.response,
+    responseKey: problem.id,
+    value: options.responseValues?.[problem.id] ?? null,
+    onChange: (nextValue) => options.onResponseChange?.(problem.id, nextValue),
+  });
 
   const items = document.createElement("div");
   items.className = "problem-items";
@@ -74,14 +79,19 @@ function renderProblem(problem, options) {
     if (item.context?.text) {
       itemNode.appendChild(renderPrompt({ prompt: null, context: item.context }));
     }
+    const responseKey = item.response ? getItemResponseKey(problem, item) : null;
     if (item.visuals?.length) {
       const itemVisuals = document.createElement("div");
       itemVisuals.className = "problem-visuals";
-      renderVisualList(item.visuals, itemVisuals);
+      renderVisualList(item.visuals, itemVisuals, {
+        response: item.response,
+        responseKey,
+        value: responseKey ? options.responseValues?.[responseKey] ?? null : null,
+        onChange: responseKey ? (nextValue) => options.onResponseChange?.(responseKey, nextValue) : null,
+      });
       itemNode.appendChild(itemVisuals);
     }
     if (item.response) {
-      const responseKey = getItemResponseKey(problem, item);
       const responseNode = renderResponse(item.response, {
         responseKey,
         value: options.responseValues?.[responseKey] ?? null,

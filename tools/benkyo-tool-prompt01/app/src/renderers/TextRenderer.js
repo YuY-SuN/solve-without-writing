@@ -158,6 +158,14 @@ export function renderResponse(response, options = {}) {
     return wrapper;
   }
 
+  if (response.type === "table_fill") {
+    const hint = document.createElement("p");
+    hint.className = "response-hint";
+    hint.textContent = "表の空欄セルに直接入力してください。";
+    wrapper.appendChild(hint);
+    return wrapper;
+  }
+
   if (response.type === "draw_graph") {
     const hint = document.createElement("div");
     hint.className = "draw-graph-hint";
