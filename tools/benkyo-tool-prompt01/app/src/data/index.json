@@ -12,6 +12,16 @@
       "path": "math_textbook_pages_10_11.json"
     },
     {
+      "id": "math-textbook-pages-12-13",
+      "label": "3 正の数・負の数の加法",
+      "path": "math_textbook_pages_12_13.json"
+    },
+    {
+      "id": "math-textbook-pages-14-15",
+      "label": "正の数・負の数の減法",
+      "path": "math_textbook_pages_14_15.json"
+    },
+    {
       "id": "core-math",
       "label": "標準セット",
       "path": "problems.json"

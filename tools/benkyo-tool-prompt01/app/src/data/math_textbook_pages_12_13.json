@@ -1,0 +1,533 @@
+{
+  "meta": {
+    "title": "3 正の数・負の数の加法",
+    "source": "uploaded_image",
+    "version": "0.1.0",
+    "language": "ja"
+  },
+  "pages": [
+    {
+      "page": 12,
+      "problems": [
+        {
+          "id": "p012_q01",
+          "page": 12,
+          "section": {
+            "no": 1,
+            "title": "同符号の2数の和",
+            "category": "正の数・負の数の加法"
+          },
+          "prompt": {
+            "text": "□にあてはまる符号、□にあてはまる数を、それぞれ書きなさい。"
+          },
+          "items": [
+            {
+              "id": "p012_q01_01",
+              "no": 1,
+              "text": "（−6）＋（−7）＝□（6＋7）＝□",
+              "response": {
+                "type": "multi_blank",
+                "fields": [
+                  {
+                    "key": "sign",
+                    "label": "符号"
+                  },
+                  {
+                    "key": "value",
+                    "label": "数"
+                  }
+                ]
+              },
+              "answer": {
+                "value": {
+                  "sign": "−",
+                  "value": 13
+                }
+              },
+              "uncertain": true,
+              "notes": "式の数値は画像から（−6）＋（−7）と読めるが、細部がやや不鮮明。"
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "context": {
+            "text": "同符号の2数の和なので、符号はもとの2数と同じで、絶対値の和を求める。"
+          },
+          "explanation": "同符号の加法では、符号はそのままにして、絶対値どうしをたす。",
+          "notes": "",
+          "uncertain": true
+        },
+        {
+          "id": "p012_q02",
+          "page": 12,
+          "section": {
+            "no": 2,
+            "title": "同符号の2数の和",
+            "category": "正の数・負の数の加法"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p012_q02_01",
+              "no": 1,
+              "text": "（−1）＋（−6）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -7
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p012_q02_02",
+              "no": 2,
+              "text": "（−5）＋（−9）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -14
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p012_q02_03",
+              "no": 3,
+              "text": "（−10）＋（−8）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -18
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p012_q02_04",
+              "no": 4,
+              "text": "（−24）＋（−36）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -60
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p012_q02_05",
+              "no": 5,
+              "text": "（−45）＋（−45）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -90
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "同符号の加法なので、絶対値をたして負の符号をつける。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p012_q03",
+          "page": 12,
+          "section": {
+            "no": 3,
+            "title": "異符号の2数の和",
+            "category": "正の数・負の数の加法"
+          },
+          "prompt": {
+            "text": "□にあてはまる符号、□にあてはまる数を、それぞれ書きなさい。"
+          },
+          "items": [
+            {
+              "id": "p012_q03_01",
+              "no": 1,
+              "text": "（−6）＋（＋7）＝□（7−6）＝□",
+              "response": {
+                "type": "multi_blank",
+                "fields": [
+                  {
+                    "key": "sign",
+                    "label": "符号"
+                  },
+                  {
+                    "key": "value",
+                    "label": "数"
+                  }
+                ]
+              },
+              "answer": {
+                "value": {
+                  "sign": "＋",
+                  "value": 1
+                }
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "context": {
+            "text": "異符号の2数の和なので、絶対値の差を求め、符号は絶対値の大きい数の符号と同じにする。"
+          },
+          "explanation": "異符号の加法では、絶対値の大きい方の符号をつけ、絶対値の差を求める。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p012_q04",
+          "page": 12,
+          "section": {
+            "no": 4,
+            "title": "異符号の2数の和",
+            "category": "正の数・負の数の加法"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p012_q04_01",
+              "no": 1,
+              "text": "（−3）＋（＋7）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 4
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p012_q04_02",
+              "no": 2,
+              "text": "（＋6）＋（−8）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -2
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p012_q04_03",
+              "no": 3,
+              "text": "（＋17）＋（−10）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 7
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p012_q04_04",
+              "no": 4,
+              "text": "（＋14）＋（−28）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -14
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p012_q04_05",
+              "no": 5,
+              "text": "（−29）＋（＋31）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 2
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "異符号の加法なので、絶対値の差をとり、絶対値の大きい数の符号をつける。",
+          "notes": "",
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "page": 13,
+      "problems": [
+        {
+          "id": "p013_q01",
+          "page": 13,
+          "section": {
+            "no": 1,
+            "title": "正の数・負の数の加法",
+            "category": "整数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p013_q01_01",
+              "no": 1,
+              "text": "（＋15）＋（−22）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -7
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p013_q01_02",
+              "no": 2,
+              "text": "（−39）＋（−24）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -63
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p013_q01_03",
+              "no": 3,
+              "text": "（−19）＋（＋19）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 0
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p013_q01_04",
+              "no": 4,
+              "text": "0＋（−27）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -27
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "整数の加法の基本問題。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p013_q02",
+          "page": 13,
+          "section": {
+            "no": 2,
+            "title": "小数の和",
+            "category": "小数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p013_q02_01",
+              "no": 1,
+              "text": "（−2.6）＋（＋1.3）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -1.3
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p013_q02_02",
+              "no": 2,
+              "text": "（−1.6）＋（−5.1）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -6.7
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p013_q02_03",
+              "no": 3,
+              "text": "（＋4.7）＋（−3.7）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 1,
+                "accepted": [1, 1.0, "1", "1.0"]
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "小数でも整数と同じ考え方で符号と絶対値を処理する。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p013_q03",
+          "page": 13,
+          "section": {
+            "no": 3,
+            "title": "分数の和",
+            "category": "分数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p013_q03_01",
+              "no": 1,
+              "text": "（−4/5）＋（＋1/5）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": {
+                  "type": "fraction",
+                  "numerator": -3,
+                  "denominator": 5
+                },
+                "display": "-3/5",
+                "accepted": ["-3/5", "−3/5"]
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p013_q03_02",
+              "no": 2,
+              "text": "（＋1/3）＋（−5/6）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": {
+                  "type": "fraction",
+                  "numerator": -1,
+                  "denominator": 2
+                },
+                "display": "-1/2",
+                "accepted": ["-1/2", "−1/2"]
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p013_q03_03",
+              "no": 3,
+              "text": "（−2/9）＋（−5/6）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": {
+                  "type": "fraction",
+                  "numerator": -19,
+                  "denominator": 18
+                },
+                "display": "-19/18",
+                "accepted": ["-19/18", "−19/18", "-1 1/18", "−1 1/18", "-1と1/18", "−1と1/18"]
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "通分してから加法を行う。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p013_qc01",
+          "page": 13,
+          "section": {
+            "no": 1,
+            "title": "学びを深めよう",
+            "category": "文章題"
+          },
+          "prompt": {
+            "text": "さいころを投げ，偶数の目が出たら，出た目の数を正の点数とし，奇数の目が出たら，出た目の数を負の点数とします。さいころを2回投げたときの点数の合計がもっとも低いのは何点のときですか。"
+          },
+          "items": [],
+          "visuals": [],
+          "response": {
+            "type": "blank"
+          },
+          "answer": {
+            "value": -10
+          },
+          "explanation": "もっとも小さい点数は、2回とも5が出て、それぞれ-5点になるときで、合計は-10点。",
+          "notes": "セクションCの設問番号は画像上で明確に読み取れないため、idは便宜上 qc01 とした。",
+          "uncertain": true
+        }
+      ]
+    }
+  ]
+}

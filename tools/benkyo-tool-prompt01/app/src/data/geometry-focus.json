@@ -2,7 +2,8 @@
   "meta": {
     "title": "図形中心の確認セット",
     "source": "handcrafted_dataset",
-    "version": "0.1.0"
+    "version": "0.1.0",
+    "language": "ja"
   },
   "pages": [
     {
