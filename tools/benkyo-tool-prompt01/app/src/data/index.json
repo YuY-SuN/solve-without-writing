@@ -7,6 +7,11 @@
       "path": "geometry-focus.json"
     },
     {
+      "id": "math-textbook-page-26-27",
+      "label": "数の世界のひろがり・計算練習",
+      "path": "math_textbook_page_26_27.json"
+    },
+    {
       "id": "math-textbook-pages-10-11",
       "label": "絶対値と数の大小",
       "path": "math_textbook_pages_10_11.json"
@@ -27,14 +32,29 @@
       "path": "math_textbook_pages_18_19.json"
     },
     {
+      "id": "math-textbook-pages-32-33",
+      "label": "1章 基本問題でふり返ろう",
+      "path": "math_textbook_pages_32_33.json"
+    },
+    {
       "id": "math-workbook-pages-20-21",
       "label": "正の数・負の数の乗法，除法②",
       "path": "math_workbook_pages_20_21.json"
     },
     {
+      "id": "math-workbook-pages-24-25",
+      "label": "9 いろいろな計算",
+      "path": "math_workbook_pages_24_25.json"
+    },
+    {
       "id": "math-workbook-pages-30-31",
       "label": "11 自然数を素数の積で表す / 12 正の数・負の数の利用",
       "path": "math_workbook_pages_30_31.json"
+    },
+    {
+      "id": "math-workbook-pages-34-35",
+      "label": "章末総合テスト",
+      "path": "math_workbook_pages_34_35.json"
     },
     {
       "id": "core-math",
