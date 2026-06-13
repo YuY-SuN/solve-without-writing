@@ -1,0 +1,508 @@
+{
+  "meta": {
+    "title": "数の世界のひろがり・計算練習",
+    "source": "uploaded_image",
+    "version": "0.1.0",
+    "language": "ja"
+  },
+  "pages": [
+    {
+      "page": 26,
+      "problems": [
+        {
+          "id": "p026_q01",
+          "page": 26,
+          "section": {
+            "no": 1,
+            "title": "いろいろな計算",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p026_q01_01",
+              "no": 1,
+              "text": "(-5)^2×(-2^2)",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -100
+              },
+              "uncertain": true,
+              "notes": "画像が不鮮明で式を『(-5)^2×(-2^2)』と読んだ。演算子や指数の位置が完全には確定できない。"
+            },
+            {
+              "id": "p026_q01_02",
+              "no": 2,
+              "text": "(-2^3)÷(-4)^2",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -0.5,
+                "accepted": [
+                  "-1/2",
+                  "-0.5"
+                ]
+              },
+              "uncertain": true,
+              "notes": "画像が不鮮明で式を『(-2^3)÷(-4)^2』と読んだ。負号のかかり方が確定できない。"
+            },
+            {
+              "id": "p026_q01_03",
+              "no": 3,
+              "text": "-36÷(-6)÷(-6^2)",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": {
+                  "type": "fraction",
+                  "numerator": -1,
+                  "denominator": 6
+                },
+                "display": "-1/6",
+                "accepted": [
+                  "-1/6",
+                  "-0.1666666667"
+                ]
+              },
+              "uncertain": true,
+              "notes": "画像が不鮮明で式を『-36÷(-6)÷(-6^2)』と読んだ。最後の項の括弧や指数の位置が確定できない。"
+            },
+            {
+              "id": "p026_q01_04",
+              "no": 4,
+              "text": "(-8^2)÷(-2)^3-4",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 4
+              },
+              "uncertain": true,
+              "notes": "画像が不鮮明で式を『(-8^2)÷(-2)^3-4』と読んだ。指数と括弧の位置が確定できない。"
+            },
+            {
+              "id": "p026_q01_05",
+              "no": 5,
+              "text": "10-3^3×(-2)-(-5)",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 69
+              },
+              "uncertain": true,
+              "notes": "画像が不鮮明で式を『10-3^3×(-2)-(-5)』と読んだ。先頭が 10 か 10^? か判別しづらい。"
+            },
+            {
+              "id": "p026_q01_06",
+              "no": 6,
+              "text": "(-4)^2-(-6^2)÷2^2",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 25
+              },
+              "uncertain": true,
+              "notes": "画像が不鮮明で式を『(-4)^2-(-6^2)÷2^2』と読んだ。中央の負号と括弧の位置が確定できない。"
+            },
+            {
+              "id": "p026_q01_07",
+              "no": 7,
+              "text": "-3×{15+5×(-3)}",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 0
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p026_q01_08",
+              "no": 8,
+              "text": "6-{(-3)^2-(2-11)}",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -12
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "notes": "左ページの撮影がやや暗く、1〜6の式に不鮮明な箇所がある。",
+          "uncertain": true
+        },
+        {
+          "id": "p026_q02",
+          "page": 26,
+          "section": {
+            "no": 2,
+            "title": "分配法則",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "分配法則を使って，次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p026_q02_01",
+              "no": 1,
+              "text": "(100-1)×(-12)",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "formula": "100×(-12)-1×(-12)",
+                "value": -1188
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p026_q02_02",
+              "no": 2,
+              "text": "4.1×(-7)+4.1×(-3)",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "formula": "4.1×{(-7)+(-3)}",
+                "value": -41
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "uncertain": false
+        },
+        {
+          "id": "p026_q03",
+          "page": 26,
+          "section": {
+            "no": 3,
+            "title": "学びを深めよう",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "(-1)^543×(-1)^396 を計算しなさい。"
+          },
+          "items": [],
+          "visuals": [],
+          "response": {
+            "type": "blank"
+          },
+          "answer": {
+            "formula": "(-1)^(543+396)",
+            "value": -1
+          },
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "page": 27,
+      "problems": [
+        {
+          "id": "p027_q01",
+          "page": 27,
+          "section": {
+            "no": 10,
+            "title": "数の世界のひろがり",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の数の中から，自然数をすべて選びなさい。また，整数をすべて選んで，○でかこみなさい。"
+          },
+          "context": {
+            "text": "-30，-2，-1.5，0，1/2，1，100"
+          },
+          "items": [],
+          "visuals": [],
+          "response": {
+            "type": "free_text",
+            "lines": 2
+          },
+          "answer": {
+            "value": {
+              "natural_numbers": [
+                1,
+                100
+              ],
+              "integers": [
+                -30,
+                -2,
+                0,
+                1,
+                100
+              ]
+            }
+          },
+          "explanation": "自然数は 1, 2, 3, …。整数は負の整数，0，正の整数を合わせたもの。",
+          "uncertain": false
+        },
+        {
+          "id": "p027_q02",
+          "page": 27,
+          "section": {
+            "no": 10,
+            "title": "数の集合と四則",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算の結果について，いつも自然数になるものには○を書きなさい。計算の結果が自然数になるとは限らない場合は，その例を1つ書きなさい。"
+          },
+          "items": [
+            {
+              "id": "p027_q02_01",
+              "no": 1,
+              "text": "自然数に自然数をたす。",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": "○"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p027_q02_02",
+              "no": 2,
+              "text": "自然数から自然数をひく。",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": "例: 2-3=-1"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p027_q02_03",
+              "no": 3,
+              "text": "自然数に自然数をかける。",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": "○"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p027_q02_04",
+              "no": 4,
+              "text": "自然数を自然数でわる。",
+              "visuals": [],
+              "response": {
+                "type": "free_text",
+                "lines": 1
+              },
+              "answer": {
+                "value": "例: 1÷2=1/2"
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "uncertain": false
+        },
+        {
+          "id": "p027_q03",
+          "page": 27,
+          "section": {
+            "no": 10,
+            "title": "数の集合と四則",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "右の図は，自然数の集合，整数の集合，数全体の集合の関係について表したものです。次のア〜カの計算の結果は，図の A，B，C のいずれか1つに入ります。A，B，C に入るものを，それぞれすべて選びなさい。"
+          },
+          "items": [],
+          "visuals": [
+            {
+              "type": "table",
+              "columns": [
+                "記号",
+                "式"
+              ],
+              "rows": [
+                [
+                  "ア",
+                  "3+(-5)"
+                ],
+                [
+                  "イ",
+                  "3-(-5)"
+                ],
+                [
+                  "ウ",
+                  "3×(-5)"
+                ],
+                [
+                  "エ",
+                  "3÷(-5)"
+                ],
+                [
+                  "オ",
+                  "0×(-5)"
+                ],
+                [
+                  "カ",
+                  "0÷(-5)"
+                ]
+              ],
+              "style": {
+                "header": true,
+                "compact": true
+              }
+            }
+          ],
+          "response": {
+            "type": "multi_blank",
+            "fields": [
+              {
+                "key": "A",
+                "label": "A"
+              },
+              {
+                "key": "B",
+                "label": "B"
+              },
+              {
+                "key": "C",
+                "label": "C"
+              }
+            ]
+          },
+          "answer": {
+            "value": {
+              "A": [
+                "イ"
+              ],
+              "B": [
+                "ア",
+                "ウ",
+                "オ",
+                "カ"
+              ],
+              "C": [
+                "エ"
+              ]
+            }
+          },
+          "explanation": "A は自然数，B は整数だが自然数ではない数，C は整数ではない数に対応する。",
+          "uncertain": false
+        },
+        {
+          "id": "p027_q04",
+          "page": 27,
+          "section": {
+            "no": 10,
+            "title": "学びを深めよう",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次のア〜エの式のそれぞれについて，□1つ1つに異なる自然数を入れて計算をします。このとき，計算の結果がいつも自然数になるものをすべて選びなさい。"
+          },
+          "items": [],
+          "visuals": [
+            {
+              "type": "table",
+              "columns": [
+                "記号",
+                "式"
+              ],
+              "rows": [
+                [
+                  "ア",
+                  "□+□+□"
+                ],
+                [
+                  "イ",
+                  "□+□-□"
+                ],
+                [
+                  "ウ",
+                  "□+□×□"
+                ],
+                [
+                  "エ",
+                  "□+□÷□"
+                ]
+              ],
+              "style": {
+                "header": true,
+                "compact": true
+              }
+            }
+          ],
+          "response": {
+            "type": "choice",
+            "multiple": true,
+            "choices": [
+              {
+                "key": "ア",
+                "text": "□+□+□"
+              },
+              {
+                "key": "イ",
+                "text": "□+□-□"
+              },
+              {
+                "key": "ウ",
+                "text": "□+□×□"
+              },
+              {
+                "key": "エ",
+                "text": "□+□÷□"
+              }
+            ]
+          },
+          "answer": {
+            "value": [
+              "ア",
+              "ウ"
+            ]
+          },
+          "uncertain": false
+        }
+      ]
+    }
+  ]
+}
