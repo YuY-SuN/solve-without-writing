@@ -22,6 +22,16 @@
       "path": "math_textbook_pages_14_15.json"
     },
     {
+      "id": "math-textbook-pages-18-19",
+      "label": "6 正の数・負の数の乗法、除法①",
+      "path": "math_textbook_pages_18_19.json"
+    },
+    {
+      "id": "math-workbook-pages-20-21",
+      "label": "正の数・負の数の乗法，除法②",
+      "path": "math_workbook_pages_20_21.json"
+    },
+    {
       "id": "core-math",
       "label": "標準セット",
       "path": "problems.json"
@@ -35,6 +45,11 @@
       "id": "problems003-2",
       "label": "正の数・負の数で量を表すこと",
       "path": "problems003-2.json"
+    },
+    {
+      "id": "workbook-p-16-p-17",
+      "label": "正の数・負の数 3数以上の加法、減法",
+      "path": "workbook_p_16_p_17.json"
     }
   ]
 }

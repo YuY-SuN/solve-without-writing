@@ -1,0 +1,602 @@
+{
+"meta": {
+"title": "6 正の数・負の数の乗法、除法①",
+"source": "uploaded_image ",
+"version": "0.1.0",
+"language": "ja"
+},
+"pages": [
+{
+"page": 18,
+"problems": [
+{
+"id": "p018_q01",
+"page": 18,
+"section": {
+"no": 1,
+"title": "正の数、負の数をかけること",
+"category": "正負の数"
+},
+"prompt": {
+"text": "次の○、□にあてはまる式や数を、それぞれ書きなさい。"
+},
+"items": [
+{
+"id": "p018_q01_01",
+"no": 1,
+"text": "（−5）×2＝○（5×2）",
+"response": {
+"type": "multi_blank",
+"fields": [
+{
+"key": "sign",
+"label": "符号"
+},
+{
+"key": "value",
+"label": "結果"
+}
+]
+},
+"answer": {
+"value": {
+"sign": "−",
+"value": 10
+}
+},
+"uncertain": false
+},
+{
+"id": "p018_q01_02",
+"no": 2,
+"text": "（−6）×（−7）＝○（6×7）",
+"response": {
+"type": "multi_blank",
+"fields": [
+{
+"key": "sign",
+"label": "符号"
+},
+{
+"key": "value",
+"label": "結果"
+}
+]
+},
+"answer": {
+"value": {
+"sign": "+",
+"value": 42
+}
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p018_q02",
+"page": 18,
+"section": {
+"no": 2,
+"title": "正の数、負の数をかけるとき",
+"category": "正負の数"
+},
+"prompt": {
+"text": "次の計算をしなさい。"
+},
+"items": [
+{
+"id": "p018_q02_01",
+"no": 1,
+"text": "（−4）×3",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -12
+},
+"uncertain": false
+},
+{
+"id": "p018_q02_02",
+"no": 2,
+"text": "（−1）×8",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -8
+},
+"uncertain": false
+},
+{
+"id": "p018_q02_03",
+"no": 3,
+"text": "6×（−4）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -24
+},
+"uncertain": false
+},
+{
+"id": "p018_q02_04",
+"no": 4,
+"text": "9×（−6）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -54
+},
+"uncertain": false
+},
+{
+"id": "p018_q02_05",
+"no": 5,
+"text": "（−5）×（−7）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 35
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p018_q03",
+"page": 18,
+"section": {
+"no": 3,
+"title": "正の数、負の数をわること",
+"category": "正負の数"
+},
+"prompt": {
+"text": "次の○、□にあてはまる式や数を、それぞれ書きなさい。"
+},
+"items": [
+{
+"id": "p018_q03_01",
+"no": 1,
+"text": "（−12）÷2＝○（12÷2）",
+"response": {
+"type": "multi_blank",
+"fields": [
+{
+"key": "sign",
+"label": "符号"
+},
+{
+"key": "value",
+"label": "結果"
+}
+]
+},
+"answer": {
+"value": {
+"sign": "−",
+"value": 6
+}
+},
+"uncertain": false
+},
+{
+"id": "p018_q03_02",
+"no": 2,
+"text": "（−42）÷（−7）＝○（42÷7）",
+"response": {
+"type": "multi_blank",
+"fields": [
+{
+"key": "sign",
+"label": "符号"
+},
+{
+"key": "value",
+"label": "結果"
+}
+]
+},
+"answer": {
+"value": {
+"sign": "+",
+"value": 6
+}
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p018_q04",
+"page": 18,
+"section": {
+"no": 4,
+"title": "正の数、負の数をわるとき",
+"category": "正負の数"
+},
+"prompt": {
+"text": "次の計算をしなさい。"
+},
+"items": [
+{
+"id": "p018_q04_01",
+"no": 1,
+"text": "（−18）÷2",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -9
+},
+"uncertain": false
+},
+{
+"id": "p018_q04_02",
+"no": 2,
+"text": "（−27）÷9",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -3
+},
+"uncertain": false
+},
+{
+"id": "p018_q04_03",
+"no": 3,
+"text": "15÷（−5）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -3
+},
+"uncertain": false
+},
+{
+"id": "p018_q04_04",
+"no": 4,
+"text": "24÷（−3）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -8
+},
+"uncertain": false
+},
+{
+"id": "p018_q04_05",
+"no": 5,
+"text": "（−4）÷（−28）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": {
+"type": "fraction",
+"numerator": 1,
+"denominator": 7
+},
+"display": "1/7",
+"accepted": [
+"1/7"
+]
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+}
+]
+},
+{
+"page": 19,
+"problems": [
+{
+"id": "p019_q01",
+"page": 19,
+"section": {
+"no": 1,
+"title": "正の数・負の数の乗法",
+"category": "正負の数"
+},
+"prompt": {
+"text": "次の計算をしなさい。"
+},
+"items": [
+{
+"id": "p019_q01_01",
+"no": 1,
+"text": "4×（−24）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -96
+},
+"uncertain": false
+},
+{
+"id": "p019_q01_02",
+"no": 2,
+"text": "（−12）×（−7）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 84
+},
+"uncertain": false
+},
+{
+"id": "p019_q01_03",
+"no": 3,
+"text": "（−10）×6",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -60
+},
+"uncertain": false
+},
+{
+"id": "p019_q01_04",
+"no": 4,
+"text": "（−11）×（−9）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 99
+},
+"uncertain": false
+},
+{
+"id": "p019_q01_05",
+"no": 5,
+"text": "15×（−20）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -300
+},
+"uncertain": false
+},
+{
+"id": "p019_q01_06",
+"no": 6,
+"text": "（−320）×0",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 0
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p019_q02",
+"page": 19,
+"section": {
+"no": 2,
+"title": "正の数・負の数の除法",
+"category": "正負の数"
+},
+"prompt": {
+"text": "次の計算をしなさい。"
+},
+"items": [
+{
+"id": "p019_q02_01",
+"no": 1,
+"text": "（−54）÷3",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -18
+},
+"uncertain": false
+},
+{
+"id": "p019_q02_02",
+"no": 2,
+"text": "25÷（−25）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -1
+},
+"uncertain": false
+},
+{
+"id": "p019_q02_03",
+"no": 3,
+"text": "（−72）÷（−12）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 6
+},
+"uncertain": false
+},
+{
+"id": "p019_q02_04",
+"no": 4,
+"text": "（−630）÷6",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -105
+},
+"uncertain": false
+},
+{
+"id": "p019_q02_05",
+"no": 5,
+"text": "0÷（−15）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 0
+},
+"uncertain": false
+},
+{
+"id": "p019_q02_06",
+"no": 6,
+"text": "（−16）÷28",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": {
+"type": "fraction",
+"numerator": -4,
+"denominator": 7
+},
+"display": "-4/7",
+"accepted": [
+"-4/7"
+]
+},
+"uncertain": false
+},
+{
+"id": "p019_q02_07",
+"no": 7,
+"text": "12÷（−300）",
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": {
+"type": "fraction",
+"numerator": -1,
+"denominator": 25
+},
+"display": "-1/25",
+"accepted": [
+"-1/25"
+]
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p019_q03",
+"page": 19,
+"section": {
+"no": 3,
+"title": "学びを深めよう",
+"category": "正負の数"
+},
+"prompt": {
+"text": "ある負の数に−3をかける計算の結果として正しいものを、次のア〜オから選びなさい。"
+},
+"items": [],
+"visuals": [],
+"response": {
+"type": "choice",
+"multiple": true,
+"choices": [
+{
+"key": "ア",
+"text": "ある負の数より大きくなる。"
+},
+{
+"key": "イ",
+"text": "ある負の数より小さくなる。"
+},
+{
+"key": "ウ",
+"text": "0より大きくなる。"
+},
+{
+"key": "エ",
+"text": "0より小さくなる。"
+},
+{
+"key": "オ",
+"text": "ある負の数より大きくなるが、0より小さくならない。"
+}
+]
+},
+"answer": {
+"value": [
+"ア",
+"ウ"
+]
+},
+"explanation": "負の数に負の数をかけると正の数になるので、結果は0より大きく、もとの負の数よりも大きい。",
+"notes": "最下部の選択肢の本文は画像の解像度が低く、オは文意が判別できる範囲で構成した。",
+"uncertain": true
+}
+]
+}
+]
+}
+

@@ -1,0 +1,520 @@
+{
+  "meta": {
+    "title": "正の数・負の数 3数以上の加法、減法",
+    "source": "uploaded_image",
+    "version": "0.1.0",
+    "language": "ja"
+  },
+  "pages": [
+    {
+      "page": 16,
+      "problems": [
+        {
+          "id": "p016_q01",
+          "page": 16,
+          "section": {
+            "no": 1,
+            "title": "加法の計算法則",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の□にあてはまる数、記号を書きなさい。"
+          },
+          "items": [
+            {
+              "id": "p016_q01_01",
+              "no": 1,
+              "text": "-2+4=4+(□)",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -2
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p016_q01_02",
+              "no": 2,
+              "text": "(5+(-1))+(-4)=5+((□)+(-4))",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -1
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "(1) は加法の交換法則、(2) は加法の結合法則を用いる。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p016_q02",
+          "page": 16,
+          "section": {
+            "no": 2,
+            "title": "正の項、負の項",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の式の正の項、負の項をそれぞれ書きなさい。"
+          },
+          "items": [
+            {
+              "id": "p016_q02_01",
+              "no": 1,
+              "text": "7-4+3",
+              "response": {
+                "type": "free_text",
+                "lines": 2
+              },
+              "answer": {
+                "value": {
+                  "positive_terms": [7, 3],
+                  "negative_terms": [-4]
+                }
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p016_q02_02",
+              "no": 2,
+              "text": "-13-28+15",
+              "response": {
+                "type": "free_text",
+                "lines": 2
+              },
+              "answer": {
+                "value": {
+                  "positive_terms": [15],
+                  "negative_terms": [-13, -28]
+                }
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "減法を加法に直すと、7-4+3 は 7+(-4)+3、-13-28+15 は (-13)+(-28)+15 と見られる。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p016_q03",
+          "page": 16,
+          "section": {
+            "no": 3,
+            "title": "加法の計算順序",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "加法のきまり a+b+c では、加法の何と何について述べられていますか。"
+          },
+          "context": {
+            "text": "整数の加法は、加数の順序をかえても、結びつけ方をかえても和は変わらない。"
+          },
+          "items": [
+            {
+              "id": "p016_q03_01",
+              "no": 1,
+              "response": {
+                "type": "multi_blank",
+                "fields": [
+                  {
+                    "key": "A",
+                    "label": "ア"
+                  },
+                  {
+                    "key": "B",
+                    "label": "イ"
+                  }
+                ]
+              },
+              "answer": {
+                "value": {
+                  "A": "順序",
+                  "B": "結びつけ方"
+                }
+              },
+              "uncertain": true,
+              "notes": "設問本文の細部は画像がやや不鮮明なため、一部を文脈から補っている。"
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "加法では、加える順序を変えても、どこを先にまとめるかを変えても和は変わらない。",
+          "notes": "",
+          "uncertain": true
+        },
+        {
+          "id": "p016_q04",
+          "page": 16,
+          "section": {
+            "no": 4,
+            "title": "3数以上の加減",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p016_q04_01",
+              "no": 1,
+              "text": "4-7-6",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -9
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p016_q04_02",
+              "no": 2,
+              "text": "-9+2-(-3)",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -4
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p016_q04_03",
+              "no": 3,
+              "text": "12+(-8)+5",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 9
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p016_q04_04",
+              "no": 4,
+              "text": "2-7-(-6)+(-1)",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 0
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p016_q04_05",
+              "no": 5,
+              "text": "4-(-6)-(-5)-7",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 8
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "減法を加法に直して、正の数どうし・負の数どうしをまとめると計算しやすい。",
+          "notes": "",
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "page": 17,
+      "problems": [
+        {
+          "id": "p017_q01",
+          "page": 17,
+          "section": {
+            "no": 1,
+            "title": "3数以上の加減",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p017_q01_01",
+              "no": 1,
+              "text": "(+8)+7-(-2)-(-5)",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 22
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p017_q01_02",
+              "no": 2,
+              "text": "-8+3+2-9+10",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -2
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p017_q01_03",
+              "no": 3,
+              "text": "25-(-11)-13+(-11)",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 12
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "減法を加法に直して計算する。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p017_q02",
+          "page": 17,
+          "section": {
+            "no": 2,
+            "title": "小数の加減",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p017_q02_01",
+              "no": 1,
+              "text": "1.4-(-2.4)-0.8",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 3
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p017_q02_02",
+              "no": 2,
+              "text": "-4+0.7+(-3.5)",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -6.8
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p017_q02_03",
+              "no": 3,
+              "text": "-1.3-(-2.8)+1.8-2.9",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 0.4
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "符号に注意して、小数点をそろえて計算する。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p017_q03",
+          "page": 17,
+          "section": {
+            "no": 3,
+            "title": "分数の加減",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p017_q03_01",
+              "no": 1,
+              "text": "1/6-1/2+5/6",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": {
+                  "type": "fraction",
+                  "numerator": 1,
+                  "denominator": 2
+                },
+                "display": "1/2",
+                "accepted": [
+                  "1/2"
+                ]
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p017_q03_02",
+              "no": 2,
+              "text": "2/3-(-5/6)+1/2",
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 2
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "通分してから計算する。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p017_q04",
+          "page": 17,
+          "section": {
+            "no": 4,
+            "title": "整数の和",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "-5から7までの整数の和を求めなさい。"
+          },
+          "items": [],
+          "visuals": [],
+          "response": {
+            "type": "blank"
+          },
+          "answer": {
+            "value": 13
+          },
+          "explanation": "負の数の和は -15、0 から 7 までの和は 28 なので、28-15=13。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p017_c01",
+          "page": 17,
+          "section": {
+            "no": 1,
+            "title": "学びを深めよう",
+            "category": "整数の和"
+          },
+          "prompt": {
+            "text": "□の表で、どの縦、横、斜めの4つの数を加えても和が等しくなるように、数を書き入れなさい。"
+          },
+          "items": [],
+          "visuals": [
+            {
+              "type": "table",
+              "columns": ["", "", "", ""],
+              "rows": [
+                [
+                  { "blank": true, "key": "r1c1" },
+                  { "blank": true, "key": "r1c2" },
+                  -2,
+                  11
+                ],
+                [
+                  { "blank": true, "key": "r2c1" },
+                  6,
+                  5,
+                  { "blank": true, "key": "r2c4" }
+                ],
+                [
+                  7,
+                  2,
+                  { "blank": true, "key": "r3c3" },
+                  4
+                ],
+                [
+                  -4,
+                  { "blank": true, "key": "r4c2" },
+                  { "blank": true, "key": "r4c3" },
+                  -1
+                ]
+              ],
+              "style": {
+                "header": false,
+                "compact": true
+              }
+            }
+          ],
+          "response": {
+            "type": "table_fill",
+            "targets": [
+              { "row": 0, "col": 0, "key": "r1c1" },
+              { "row": 0, "col": 1, "key": "r1c2" },
+              { "row": 1, "col": 0, "key": "r2c1" },
+              { "row": 1, "col": 3, "key": "r2c4" },
+              { "row": 2, "col": 2, "key": "r3c3" },
+              { "row": 3, "col": 1, "key": "r4c2" },
+              { "row": 3, "col": 2, "key": "r4c3" }
+            ]
+          },
+          "answer": {
+            "value": {
+              "r1c1": 8,
+              "r1c2": -3,
+              "r2c1": 3,
+              "r2c4": 0,
+              "r3c3": 1,
+              "r4c2": 9,
+              "r4c3": 10
+            }
+          },
+          "explanation": "右上から左下の斜めの和は 11+5+2+(-4)=14 なので、どの列・行・斜めの和も 14 にそろえる。",
+          "notes": "",
+          "uncertain": false
+        }
+      ]
+    }
+  ]
+}
