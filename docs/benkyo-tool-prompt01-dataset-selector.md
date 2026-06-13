@@ -52,7 +52,8 @@
 3. 起動時に `datasets` 配列の全JSONを読み込む
 4. 全 dataset のページ一覧から横断ページコンボボックスを構築する
 5. 問題セット選択時はその dataset 全体を表示し、ページ選択時は対応する dataset と page に直接切り替える
-6. 問題カードを再描画する
+6. 最後に開いていた dataset / page の組を `localStorage` に保存し、次回起動時は有効な範囲で復元する
+7. 問題カードを再描画する
 
 ### 3. Index sync tool
 
@@ -88,6 +89,7 @@
 - 全問題セットJSONの先読み
 - 横断ページフィルタの構築
 - ページ選択時の dataset 自動切り替え
+- 最後に開いていた dataset / page 選択の永続化と復元
 - 解答欄の入力UIと選択肢の操作UI
 - 問題単位・表示中単位の回答クリアと10件のUndo/Redo履歴
 - 既存の答え表示・解説表示・問題描画の再利用
@@ -115,6 +117,7 @@ python3 sync_index.py
 
 3. 必要なら `index.json` 上で `label` や `defaultDatasetId` を調整する
 4. 静的サーバー上で問題セットコンボボックスと横断ページコンボボックスの両方に反映されたことを確認する
+5. 必要なら一度ページを選んで再読み込みし、同じページ選択が復元されることを確認する
 
 ### Notes
 
@@ -169,6 +172,17 @@ python3 sync_index.py
 - 保存対象は `main.js` の `responseValues`
 - 起動時に `localStorage` から復元して初期表示へ反映する
 - 保存キーは `benkyo-tool-prompt01:response-values:v1`
+
+## Page view persistence
+
+最後に見ていたページ選択も `localStorage` に保存する。
+
+- 保存タイミングは dataset または page の選択が変わったとき
+- 保存対象は `main.js` の `selectedDatasetId` と `selectedPageKey`
+- 起動時は保存済み `pageKey` が `pageCatalog` に存在すればそのページを開く
+- 保存済み `pageKey` が無効でも `datasetId` が有効なら、その dataset の `all` 表示へ戻す
+- dataset も無効なら `index.json` の `defaultDatasetId` か先頭 dataset を使う
+- 保存キーは `benkyo-tool-prompt01:view-selection:v1`
 
 
 ## Clear and undo

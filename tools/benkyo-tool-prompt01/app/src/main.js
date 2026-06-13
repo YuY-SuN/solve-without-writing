@@ -3,6 +3,7 @@ import { renderProblems } from "./renderers/ProblemRenderer.js";
 const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
 const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
 const COMPLETION_STORAGE_KEY = "benkyo-tool-prompt01:completed-problems:v1";
+const VIEW_SELECTION_STORAGE_KEY = "benkyo-tool-prompt01:view-selection:v1";
 const MAX_HISTORY_ENTRIES = 10;
 
 const state = {
@@ -273,6 +274,25 @@ function persistResponseValues() {
 
 function persistCompletedProblems() {
   persistJson(COMPLETION_STORAGE_KEY, state.completedProblems);
+}
+
+function loadPersistedViewSelection() {
+  const parsed = loadPersistedJson(VIEW_SELECTION_STORAGE_KEY);
+  if (!parsed || typeof parsed !== "object") {
+    return { datasetId: null, pageKey: "all" };
+  }
+
+  return {
+    datasetId: typeof parsed.datasetId === "string" ? parsed.datasetId : null,
+    pageKey: typeof parsed.pageKey === "string" ? parsed.pageKey : "all",
+  };
+}
+
+function persistViewSelection() {
+  persistJson(VIEW_SELECTION_STORAGE_KEY, {
+    datasetId: state.selectedDatasetId,
+    pageKey: state.selectedPageKey,
+  });
 }
 
 function loadPersistedHistoryState() {
@@ -617,6 +637,7 @@ async function applyDataset(datasetId, pageKey = "all") {
 
   elements.datasetSelect.value = selectedEntry.id;
   elements.pageFilter.value = pageKey;
+  persistViewSelection();
   updateHeader();
   render();
 }
@@ -638,6 +659,7 @@ async function applyPageSelection(pageKey) {
 async function bootstrap() {
   state.responseValues = loadPersistedResponseValues();
   state.completedProblems = loadPersistedCompletedProblems();
+  const persistedViewSelection = loadPersistedViewSelection();
   const historyState = loadPersistedHistoryState();
   state.undoStack = historyState.undoStack;
   state.redoStack = historyState.redoStack;
@@ -692,7 +714,23 @@ async function bootstrap() {
     render();
   });
 
-  await applyDataset(catalog.defaultDatasetId ?? state.datasetCatalog[0].id, "all");
+  const fallbackDatasetId = catalog.defaultDatasetId ?? state.datasetCatalog[0].id;
+  const hasPersistedPage =
+    persistedViewSelection.pageKey !== "all" && findPageEntry(persistedViewSelection.pageKey);
+  const hasPersistedDataset = persistedViewSelection.datasetId
+    && findDatasetEntry(persistedViewSelection.datasetId);
+
+  if (hasPersistedPage) {
+    await applyPageSelection(persistedViewSelection.pageKey);
+    return;
+  }
+
+  if (hasPersistedDataset) {
+    await applyDataset(persistedViewSelection.datasetId, "all");
+    return;
+  }
+
+  await applyDataset(fallbackDatasetId, "all");
 }
 
 bootstrap().catch((error) => {
