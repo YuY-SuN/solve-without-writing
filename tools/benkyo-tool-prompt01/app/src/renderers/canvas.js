@@ -6,10 +6,13 @@ export const drawingTheme = {
   gridStroke: "#dbe4f0",
   fill: "#dceeff",
   strongFill: "#8ec5ff",
+  accent: "#2563eb",
+  answer: "#c2410c",
+  answerFill: "rgba(251, 146, 60, 0.2)",
   lineWidth: 1.5,
 };
 
-export function createCanvas(container, width, height) {
+export function createCanvas(container, width, height, options = {}) {
   const canvas = document.createElement("canvas");
   const dpr = window.devicePixelRatio || 1;
 
@@ -17,6 +20,9 @@ export function createCanvas(container, width, height) {
   canvas.height = height * dpr;
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
+  if (options.className) {
+    canvas.className = options.className;
+  }
 
   const ctx = canvas.getContext("2d");
   ctx.scale(dpr, dpr);
@@ -32,6 +38,12 @@ export function createCanvas(container, width, height) {
 export function valueToX(value, min, max, width, padding) {
   const ratio = (value - min) / (max - min);
   return padding + ratio * (width - padding * 2);
+}
+
+export function xToValue(x, min, max, width, padding) {
+  const usableWidth = width - padding * 2;
+  const ratio = usableWidth <= 0 ? 0 : (x - padding) / usableWidth;
+  return min + (max - min) * ratio;
 }
 
 export function line(ctx, x1, y1, x2, y2) {

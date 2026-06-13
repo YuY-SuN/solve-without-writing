@@ -169,7 +169,7 @@ export function renderResponse(response, options = {}) {
   if (response.type === "draw_graph") {
     const hint = document.createElement("div");
     hint.className = "draw-graph-hint";
-    hint.textContent = "数直線やグラフ上に作図する問題です。";
+    hint.textContent = "図の上をクリックまたはドラッグして入力します。";
     wrapper.appendChild(hint);
     return wrapper;
   }
@@ -177,7 +177,7 @@ export function renderResponse(response, options = {}) {
   if (response.type === "draw_point") {
     const hint = document.createElement("div");
     hint.className = "draw-graph-hint";
-    hint.textContent = "数直線や図の上に点を書き込む問題です。";
+    hint.textContent = "図の上をクリックまたはドラッグして点を入力します。";
     wrapper.appendChild(hint);
     return wrapper;
   }

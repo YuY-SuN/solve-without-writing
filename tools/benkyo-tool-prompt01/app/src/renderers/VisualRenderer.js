@@ -20,13 +20,13 @@ export function renderVisual(visual, container, options = {}) {
     case "table":
       return renderTable(visual, container, options);
     case "number_line":
-      return renderNumberLine(visual, container);
+      return renderNumberLine(visual, container, options);
     case "geometry_2d":
       return renderGeometry2D(visual, container);
     case "geometry_3d":
       return renderGeometry3D(visual, container);
     case "graph_grid":
-      return renderGraphGrid(visual, container);
+      return renderGraphGrid(visual, container, options);
     case "histogram":
       return renderHistogram(visual, container);
     case "net":

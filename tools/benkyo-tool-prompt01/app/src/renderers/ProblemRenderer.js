@@ -5,6 +5,27 @@ function getItemResponseKey(problem, item) {
   return item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
 }
 
+function appendAnswerVisuals(node, answerVisuals) {
+  if (!answerVisuals?.length) {
+    return;
+  }
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "answer-visuals-block";
+
+  const label = document.createElement("p");
+  label.className = "answer-label";
+  label.textContent = "答えの図";
+  wrapper.appendChild(label);
+
+  const visuals = document.createElement("div");
+  visuals.className = "problem-visuals answer-visuals";
+  renderVisualList(answerVisuals, visuals);
+  wrapper.appendChild(visuals);
+
+  node.appendChild(wrapper);
+}
+
 export function renderProblems(container, problems, options) {
   container.innerHTML = "";
 
@@ -59,6 +80,8 @@ function renderProblem(problem, options) {
     responseKey: problem.id,
     value: options.responseValues?.[problem.id] ?? null,
     onChange: (nextValue) => options.onResponseChange?.(problem.id, nextValue),
+    answer: problem.answer,
+    answerVisuals: problem.answerVisuals ?? [],
   });
 
   const items = document.createElement("div");
@@ -88,6 +111,8 @@ function renderProblem(problem, options) {
         responseKey,
         value: responseKey ? options.responseValues?.[responseKey] ?? null : null,
         onChange: responseKey ? (nextValue) => options.onResponseChange?.(responseKey, nextValue) : null,
+        answer: item.answer,
+        answerVisuals: item.answerVisuals ?? [],
       });
       itemNode.appendChild(itemVisuals);
     }
@@ -103,6 +128,9 @@ function renderProblem(problem, options) {
     }
     if (options.showAnswers && item.answer) {
       itemNode.appendChild(renderAnswer(item.answer));
+    }
+    if (options.showAnswers) {
+      appendAnswerVisuals(itemNode, item.answerVisuals ?? []);
     }
     items.appendChild(itemNode);
   }
@@ -129,6 +157,9 @@ function renderProblem(problem, options) {
   article.append(header, prompt, visuals);
   if (items.childElementCount > 0) {
     article.appendChild(items);
+  }
+  if (options.showAnswers) {
+    appendAnswerVisuals(article, problem.answerVisuals ?? []);
   }
   if (footer.childElementCount > 0) {
     article.appendChild(footer);
