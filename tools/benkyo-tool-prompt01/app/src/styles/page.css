@@ -173,6 +173,9 @@ button:disabled {
   display: grid;
   gap: 4px;
   justify-items: end;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e3eaf5;
 }
 
 .problem-completion-toggle {
@@ -193,6 +196,7 @@ button:disabled {
   color: #55627a;
   font-size: 0.86rem;
   text-align: right;
+  max-width: 100%;
 }
 
 .problem-heading h2 {

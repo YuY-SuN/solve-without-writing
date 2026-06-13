@@ -218,6 +218,7 @@ python3 sync_index.py
 
 要点:
 - 完了は手動で付ける
+- `完了` チェックは各問題カードの下端に配置し、問題を見終えた流れで操作できるようにする
 - ただし、必要な `response` がすべて入力済みのときだけ完了を付けられる
 - `response` が 0 件の問題は最初から完了可能とみなす
 - 完了状態は `benkyo-tool-prompt01:completed-problems:v1` に保存する
