@@ -8,6 +8,7 @@
 
 ## Repository overview
 
+- リポジトリ全体の入口説明はルート `README.md` に置く
 - 主な対象は `tools/benkyo-tool-prompt01/`
 - 静的Webツールとして実装しており、サーバーサイドアプリは持たない
 - 画面本体は `app/index.html`
