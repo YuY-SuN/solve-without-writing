@@ -69,7 +69,7 @@
 
 ### Added or updated files
 
-- `AGENT.md`
+- `AGENTS.md`
 - `docs/benkyo-tool-prompt01-dataset-selector.md`
 - `tools/benkyo-tool-prompt01/app/index.html`
 - `tools/benkyo-tool-prompt01/app/src/main.js`
@@ -135,8 +135,8 @@ python3 sync_index.py
 
 - `response.type: "choice"` を描画し、会話文問題や選択問題が画面上で成立するようにした
 - `response.type: "none"` では不要な「解答欄」を出さないようにした
-- `response.type: "draw_graph"` には作図問題であることが分かる案内を出すようにした
-- `response.type: "draw_point"` には点を書き込む問題であることが分かる案内を出すようにした
+- `response.type: "draw_graph"` には数直線やグラフ上で直接入力できるUIを追加した
+- `response.type: "draw_point"` には点ラベルを直接配置できるUIを追加した
 - `item.context.text` も描画できるようにして、今後のデータ拡張に備えた
 - `renderPrompt()` を `problem-prompt-block` 化し、`prompt.text` の下に `context.text` を表示
 - `context` は補足文・会話文・与えられた数列を載せる用途として、枠付きのテキストブロックで描画
@@ -155,6 +155,8 @@ python3 sync_index.py
 - `multi_blank` は項目ごとの短いテキスト入力
 - `free_text` は 1 行なら単一入力、複数行なら textarea
 - `choice` は `multiple` に応じて checkbox または radio
+- `draw_graph` は数直線やグラフ上の直接操作で入力する
+- `draw_point` は点ラベルの配置で入力する
 - 入力値は再描画時も消えないように `main.js` 側の状態で保持する
 - 入力イベントのたびに `localStorage` を更新し、再読み込み後も復元する
 
@@ -178,3 +180,40 @@ python3 sync_index.py
 - `ひとつもどる` / `ひとつすすむ` で、入力・削除・クリアの履歴を前後できる
 - 履歴は回答状態全体のスナップショットとして最大 10 件保持する
 - Undo/Redo 履歴も `localStorage` と整合するように更新する
+
+
+## Interactive table response inputs
+
+`table_fill` は、表の空欄セルへ直接入力できるようにしている。
+
+要点:
+- `TableRenderer.js` が `visual.rows` 内の `blank.key` を見て入力セルを出す
+- `response.targets` がある場合は、対象セルを明示的に制限する
+- 入力値は `main.js` の `responseValues` と `localStorage` に保存される
+- 完了判定では `response.targets` に列挙された全 key が埋まっている必要がある
+
+更新ファイル:
+- `tools/benkyo-tool-prompt01/app/src/renderers/TableRenderer.js`
+- `tools/benkyo-tool-prompt01/app/src/renderers/VisualRenderer.js`
+- `tools/benkyo-tool-prompt01/app/src/renderers/ProblemRenderer.js`
+- `tools/benkyo-tool-prompt01/app/src/renderers/TextRenderer.js`
+
+## Completion progress
+
+問題ごとの手動完了フラグと、ページごとの進捗表示を追加した。
+
+要点:
+- 完了は手動で付ける
+- ただし、必要な `response` がすべて入力済みのときだけ完了を付けられる
+- `response` が 0 件の問題は最初から完了可能とみなす
+- 完了状態は `benkyo-tool-prompt01:completed-problems:v1` に保存する
+- ページごとに `完了 x/y` と `残り z問` を表示する
+
+関連doc:
+- `docs/benkyo-tool-prompt01-completion-progress-plan.md`
+
+更新ファイル:
+- `tools/benkyo-tool-prompt01/app/index.html`
+- `tools/benkyo-tool-prompt01/app/src/main.js`
+- `tools/benkyo-tool-prompt01/app/src/renderers/ProblemRenderer.js`
+- `tools/benkyo-tool-prompt01/app/src/styles/page.css`

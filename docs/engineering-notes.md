@@ -100,6 +100,7 @@
 - `choice`
 - `draw_graph`
 - `draw_point`
+- `table_fill`
 - `none`
 
 重要:
@@ -108,9 +109,10 @@
 - 回答保持を跨ぎたい場合は `main.js` の状態に加えて `localStorage` 永続化を使う
 - 回答クリアは問題単位または表示中単位で行えると使いやすい
 - Undo/Redo は回答状態全体のスナップショットを最大10件持つ形にすると実装が安定する
-- `response.type: "choice"` は問題が成立するため、少なくとも選択肢の表示と選択操作が必要
-- `response.type: "draw_graph"` は直接編集UI未実装でも、作図問題だと分かる案内を出す方がよい
-- `response.type: "draw_point"` は少なくとも「点を書き込む問題」だと分かる案内を出す
+- `response.type: "choice"` は選択肢の表示と選択操作が必要
+- `response.type: "draw_graph"` は数直線やグラフ上で直接入力でき、完了判定では answer の件数と入力件数をそろえる
+- `response.type: "draw_point"` は点ラベルごとの配置入力ができ、完了判定では answer 側キーがすべて入力されている必要がある
+- `response.type: "table_fill"` は `response.targets` と表セルの `blank.key` を結び付けてセルへ直接入力する
 
 ## Lessons learned from recent work
 
@@ -151,6 +153,14 @@
 - 「破棄」ではなく「退避」が必要な場合は `stash` を使う
 - 退避対象は必要なファイルだけに絞る
 
+### Completion progress
+
+- 問題ごとの完了状態は `main.js` で `localStorage` 保存する
+- 完了フラグの保存キーは `benkyo-tool-prompt01:completed-problems:v1`
+- 完了は手動で付けるが、その前提として問題内の必要入力がすべて埋まっている必要がある
+- `response` を持たない問題は最初から完了可能とみなす
+- ページ進捗は dataset ごとに `完了数 / 総問題数 / 残り` を集計して表示する
+
 ## Git workflow rules
 
 - GitHub 接続や push は明示的な指示があるまで行わない
@@ -165,7 +175,8 @@
 - 機能追加時は `docs/` を同じ変更セットで更新する
 - 単機能の設計・実装メモは個別docに書く
 - 横断的な知見、作業ルール、失敗しやすい点はこの `engineering-notes.md` に追記する
-- `AGENT.md` はドキュメント運用ルールの入口として保つ
+- `AGENTS.md` はドキュメント運用ルールの入口として保つ
+- feature の実装が docs を伴っていないまま残っていたら、取り込み時に同じブランチで補填してから push する
 
 ## Verification constraints
 
@@ -197,9 +208,10 @@
 
 次に着手する人は、まず次を読むと早い。
 
-- `AGENT.md`
+- `AGENTS.md`
 - `docs/engineering-notes.md`
 - `docs/benkyo-tool-prompt01-dataset-selector.md`
+- `docs/benkyo-tool-prompt01-completion-progress-plan.md`
 - `tools/benkyo-tool-prompt01/app/src/main.js`
 - `tools/benkyo-tool-prompt01/app/src/renderers/ProblemRenderer.js`
 - `tools/benkyo-tool-prompt01/app/src/renderers/TextRenderer.js`
