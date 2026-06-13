@@ -1,0 +1,516 @@
+{
+"meta": {
+"title": "章末総合テスト",
+"source": "uploaded_image \uE200filecite\uE202turn0file0\uE201",
+"version": "0.1.0",
+"language": "ja"
+},
+"pages": [
+{
+"page": 34,
+"problems": [
+{
+"id": "p034_q01",
+"page": 34,
+"section": {
+"no": 1,
+"title": "",
+"category": "正の数・負の数"
+},
+"prompt": {
+"text": "次の計算をしなさい。"
+},
+"items": [
+{
+"id": "p034_q01_01",
+"no": 1,
+"text": "3-21",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -18
+},
+"uncertain": false
+},
+{
+"id": "p034_q01_02",
+"no": 2,
+"text": "4.7-(-1.7)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 6.4
+},
+"uncertain": false
+},
+{
+"id": "p034_q01_03",
+"no": 3,
+"text": "(-8)\u00d716",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -128
+},
+"uncertain": false
+},
+{
+"id": "p034_q01_04",
+"no": 4,
+"text": "6.3\u00f7(-0.9)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -7
+},
+"uncertain": false
+},
+{
+"id": "p034_q01_05",
+"no": 5,
+"text": "-1/3+1/2-1/9",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": {
+"type": "fraction",
+"numerator": 1,
+"denominator": 18
+},
+"display": "1/18",
+"accepted": [
+"1/18"
+]
+},
+"uncertain": false
+},
+{
+"id": "p034_q01_06",
+"no": 6,
+"text": "-3/4\u00f71/4\u00d71/3",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -9,
+"notes": "画像では最後の演算子が不鮮明だが、\u00f7と読める場合の解答。"
+},
+"uncertain": true,
+"notes": "小問(6)の最後の演算子が不鮮明で、「-3/4 \u00f7 1/4 \u00f7 1/3」と読める可能性が高い。もし「-3/4 \u00f7 1/4 \u00d7 1/3」であれば答えは-1。"
+},
+{
+"id": "p034_q01_07",
+"no": 7,
+"text": "4+(-6)\u00f72",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 1
+},
+"uncertain": false
+},
+{
+"id": "p034_q01_08",
+"no": 8,
+"text": "-3+5\u00d7(-2)^2",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 17
+},
+"uncertain": false
+},
+{
+"id": "p034_q01_09",
+"no": 9,
+"text": "{3-(-2)}\u00d72-4^2",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -6
+},
+"uncertain": false
+},
+{
+"id": "p034_q01_10",
+"no": 10,
+"text": "{1.6-(0.6-1)}\u00f70.2",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 10
+},
+"uncertain": false
+},
+{
+"id": "p034_q01_11",
+"no": 11,
+"text": "(2/3+1/8)\u00d7(-24)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -19
+},
+"uncertain": false
+},
+{
+"id": "p034_q01_12",
+"no": 12,
+"text": "13\u00d7107-13\u00d77",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 1300
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+}
+]
+},
+{
+"page": 35,
+"problems": [
+{
+"id": "p035_q02",
+"page": 35,
+"section": {
+"no": 2,
+"title": "",
+"category": "正の数・負の数"
+},
+"prompt": {
+"text": "次の数の中から、下の(1)〜(3)にあてはまる数をすべて選びなさい。"
+},
+"context": {
+"text": "-0.02, -3, 1/10, 1, 0, -7/3, 11"
+},
+"items": [
+{
+"id": "p035_q02_01",
+"no": 1,
+"text": "もっとも小さい数",
+"response": {
+"type": "choice",
+"multiple": true,
+"choices": [
+{
+"key": "n1",
+"text": "-0.02"
+},
+{
+"key": "n2",
+"text": "-3"
+},
+{
+"key": "n3",
+"text": "1/10"
+},
+{
+"key": "n4",
+"text": "1"
+},
+{
+"key": "n5",
+"text": "0"
+},
+{
+"key": "n6",
+"text": "-7/3"
+},
+{
+"key": "n7",
+"text": "11"
+}
+]
+},
+"answer": {
+"value": [
+"n2"
+]
+},
+"uncertain": false
+},
+{
+"id": "p035_q02_02",
+"no": 2,
+"text": "絶対値が2より大きい数",
+"response": {
+"type": "choice",
+"multiple": true,
+"choices": [
+{
+"key": "n1",
+"text": "-0.02"
+},
+{
+"key": "n2",
+"text": "-3"
+},
+{
+"key": "n3",
+"text": "1/10"
+},
+{
+"key": "n4",
+"text": "1"
+},
+{
+"key": "n5",
+"text": "0"
+},
+{
+"key": "n6",
+"text": "-7/3"
+},
+{
+"key": "n7",
+"text": "11"
+}
+]
+},
+"answer": {
+"value": [
+"n2",
+"n6",
+"n7"
+]
+},
+"uncertain": false
+},
+{
+"id": "p035_q02_03",
+"no": 3,
+"text": "素数",
+"response": {
+"type": "choice",
+"multiple": true,
+"choices": [
+{
+"key": "n1",
+"text": "-0.02"
+},
+{
+"key": "n2",
+"text": "-3"
+},
+{
+"key": "n3",
+"text": "1/10"
+},
+{
+"key": "n4",
+"text": "1"
+},
+{
+"key": "n5",
+"text": "0"
+},
+{
+"key": "n6",
+"text": "-7/3"
+},
+{
+"key": "n7",
+"text": "11"
+}
+]
+},
+"answer": {
+"value": [
+"n7"
+]
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p035_q03",
+"page": 35,
+"section": {
+"no": 3,
+"title": "",
+"category": "正の数・負の数"
+},
+"prompt": {
+"text": "次のア〜エから、計算結果がいつも正の数になるものを選びなさい。"
+},
+"visuals": [],
+"response": {
+"type": "choice",
+"multiple": false,
+"choices": [
+{
+"key": "ア",
+"text": "正の数と負の数をたす。"
+},
+{
+"key": "イ",
+"text": "正の数から負の数をひく。"
+},
+{
+"key": "ウ",
+"text": "正の数と負の数をかける。"
+},
+{
+"key": "エ",
+"text": "正の数を負の数でわる。"
+}
+]
+},
+"answer": {
+"value": [
+"イ"
+]
+},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p035_q04",
+"page": 35,
+"section": {
+"no": 4,
+"title": "",
+"category": "倍数・公倍数"
+},
+"prompt": {
+"text": "36でわっても、60でわってもわり切ることができる自然数のうち、もっとも小さい自然数を求めなさい。"
+},
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 180
+},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p035_q05",
+"page": 35,
+"section": {
+"no": 5,
+"title": "",
+"category": "素因数分解・平方数"
+},
+"prompt": {
+"text": "次の文は正しくありません。その理由を、正しい計算とともに説明しなさい。"
+},
+"context": {
+"text": "240をできるだけ小さい自然数でわって、ある自然数の2乗にするには、5でわればよい。"
+},
+"visuals": [],
+"response": {
+"type": "free_text",
+"lines": 3
+},
+"answer": {
+"value": 15,
+"formula": "240\u00f715=16=4^2",
+"accepted": [
+"5でわっても240\u00f75=48で平方数にならない。240\u00f715=16=4^2なので、15でわるのが正しい。",
+"240=2^4\u00d73\u00d75 なので、平方数にするには 3\u00d75=15 でわる。"
+]
+},
+"explanation": "",
+"notes": "",
+"uncertain": false
+},
+{
+"id": "p035_q06",
+"page": 35,
+"section": {
+"no": 6,
+"title": "",
+"category": "文字式・平均"
+},
+"prompt": {
+"text": "ゆうたさんは、バスケットボールの試合で、1試合における目標ゴール数を決めています。次の表は、5試合の試合ごとのゴール数を、目標ゴール数より多い場合を正の数、少ない場合を負の数で表したものです。5試合のゴール数の平均は9本でした。ゆうたさんの目標ゴール数を求めなさい。"
+},
+"visuals": [
+{
+"type": "table",
+"columns": [
+"第1試合",
+"第2試合",
+"第3試合",
+"第4試合",
+"第5試合"
+],
+"rows": [
+[
+"目標ゴール数との差(本)",
+-3,
+-1,
+2,
+1,
+-4
+]
+],
+"style": {
+"header": true,
+"compact": true
+}
+}
+],
+"response": {
+"type": "blank",
+"unit": "本"
+},
+"answer": {
+"value": 10,
+"unit": "本"
+},
+"explanation": "",
+"notes": "",
+"uncertain": false
+}
+]
+}
+]
+}
+
