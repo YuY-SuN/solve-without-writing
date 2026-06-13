@@ -423,6 +423,34 @@ id はページ番号と問題番号が分かるようにしてください。
   }
 }
 
+素因数分解の階段図を埋める問題：
+
+素因数分解の階段図 `factorization_ladder` の中に空欄がある場合は、答え欄の形式として `response.type: "ladder_fill"` を使ってください。
+
+`response.targets` には、図中の空欄セルに付けた `key`、その役割、段番号を列挙してください。
+
+{
+  "response": {
+    "type": "ladder_fill",
+    "targets": [
+      {
+        "key": "q1",
+        "role": "quotient",
+        "step": 1
+      },
+      {
+        "key": "d2",
+        "role": "divisor",
+        "step": 2
+      },
+      {
+        "key": "factorization",
+        "role": "final_expression"
+      }
+    ]
+  }
+}
+
 ---
 
 # visual の共通ルール
@@ -441,9 +469,123 @@ visual は必ず `type` を持ちます。
 - `graph_grid`
 - `histogram`
 - `coordinate_points`
+- `factorization_ladder`
 
 画像をそのまま参照する `image` type は原則として使わないでください。
 ただし、再描画が困難で、かつ問題解決に必要な場合のみ、`image` を使ってよいです。その場合は `notes` に理由を書いてください。
+
+---
+
+# factorization_ladder のルール
+
+素因数分解で使われる、左に割る数、右に割られる数または商を書き、L字型の線で段階的に商を下へ進める図は、通常の数式として平文化せず、`factorization_ladder` として `visuals` に構造化してください。
+
+この型は、画像を見ずにWeb側で再描画できるように、各段の「割る数」「割られる数」「商」「空欄」「線構造」を保持します。
+
+使用例：
+
+{
+  "type": "factorization_ladder",
+  "method": "division_ladder",
+  "target": 24,
+  "steps": [
+    {
+      "step": 1,
+      "divisor": 2,
+      "dividend": 24,
+      "quotient": {
+        "blank": true,
+        "key": "q1"
+      }
+    },
+    {
+      "step": 2,
+      "divisor": {
+        "blank": true,
+        "key": "d2"
+      },
+      "dividend": {
+        "blank": true,
+        "key": "n2"
+      },
+      "quotient": 6
+    },
+    {
+      "step": 3,
+      "divisor": 2,
+      "dividend": 6,
+      "quotient": {
+        "blank": true,
+        "key": "q3"
+      },
+      "note": "商が素数になる"
+    }
+  ],
+  "finalExpression": {
+    "left": 24,
+    "right": {
+      "blank": true,
+      "key": "factorization"
+    }
+  },
+  "layout": {
+    "orientation": "vertical",
+    "lineStyle": "division_bracket",
+    "showDivisorLeft": true,
+    "showDividendRight": true,
+    "showQuotientBelow": true
+  }
+}
+
+空欄がある場合は、対応する `response.type` は `ladder_fill` とし、`response.targets` に key を列挙してください。
+
+{
+  "response": {
+    "type": "ladder_fill",
+    "targets": [
+      {
+        "key": "q1",
+        "role": "quotient",
+        "step": 1
+      },
+      {
+        "key": "d2",
+        "role": "divisor",
+        "step": 2
+      },
+      {
+        "key": "n2",
+        "role": "dividend",
+        "step": 2
+      },
+      {
+        "key": "q3",
+        "role": "quotient",
+        "step": 3
+      },
+      {
+        "key": "factorization",
+        "role": "final_expression"
+      }
+    ]
+  }
+}
+
+正答は `answer.value` に key と値の対応で入れてください。
+
+{
+  "answer": {
+    "value": {
+      "q1": 12,
+      "d2": 2,
+      "n2": 12,
+      "q3": 3,
+      "factorization": "2 × 2 × 2 × 3"
+    }
+  }
+}
+
+`factorization_ladder` を使う場合、図を単なる `prompt.text` や `explanation` にまとめてはいけません。図の中の数値、空欄、段、線の関係が再描画できるよう、必ず `visuals` に保持してください。
 
 ---
 
@@ -1148,6 +1290,7 @@ visual は必ず `type` を持ちます。
 8. 不確実な箇所には `uncertain: true` と `notes` がある。
 9. 装飾やQRコードなど不要なものをJSON化していない。
 10. 手書きの答えや途中式は、指示がない限り無視している。
+11. 素因数分解の階段図、筆算、連除法のような特殊な計算レイアウトを、通常のテキストや式だけに変換せず、専用の visual type で再現可能にしている。
 
 ---
 
