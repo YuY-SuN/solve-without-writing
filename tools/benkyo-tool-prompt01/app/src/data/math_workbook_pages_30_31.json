@@ -1,0 +1,663 @@
+{
+  "meta": {
+    "title": "11 自然数を素数の積で表す / 12 正の数・負の数の利用",
+    "source": "uploaded_image",
+    "version": "0.1.0",
+    "language": "ja"
+  },
+  "pages": [
+    {
+      "page": 30,
+      "problems": [
+        {
+          "id": "p030_q01",
+          "page": 30,
+          "section": {
+            "no": 11,
+            "title": "自然数を素数の積で表す",
+            "category": "素数"
+          },
+          "prompt": {
+            "text": "20より大きく、40より小さい素数をすべて書きなさい。"
+          },
+          "items": [],
+          "visuals": [],
+          "response": {
+            "type": "free_text",
+            "lines": 1
+          },
+          "answer": {
+            "value": [23, 29, 31, 37]
+          },
+          "explanation": "20より大きく40より小さい整数のうち、1とその数以外で割り切れない数を選ぶ。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p030_q02",
+          "page": 30,
+          "section": {
+            "no": 11,
+            "title": "自然数を素数の積で表す",
+            "category": "素因数分解"
+          },
+          "prompt": {
+            "text": "次の問いに答えなさい。"
+          },
+          "items": [
+            {
+              "id": "p030_q02_01",
+              "no": 1,
+              "text": "自然数24を、次のように素因数分解しました。□にあてはまる数や式を書きなさい。",
+              "visuals": [
+                {
+                  "type": "factorization_ladder",
+                  "method": "division_ladder",
+                  "target": 24,
+                  "steps": [
+                    {
+                      "step": 1,
+                      "divisor": 2,
+                      "dividend": 24,
+                      "quotient": {
+                        "blank": true,
+                        "key": "q1"
+                      }
+                    },
+                    {
+                      "step": 2,
+                      "divisor": {
+                        "blank": true,
+                        "key": "d2"
+                      },
+                      "dividend": {
+                        "blank": true,
+                        "key": "n2"
+                      },
+                      "quotient": 6
+                    },
+                    {
+                      "step": 3,
+                      "divisor": 2,
+                      "dividend": 6,
+                      "quotient": 3,
+                      "note": "商が素数になる"
+                    }
+                  ],
+                  "finalExpression": {
+                    "left": 24,
+                    "right": {
+                      "blank": true,
+                      "key": "factorization"
+                    }
+                  },
+                  "layout": {
+                    "orientation": "vertical",
+                    "lineStyle": "division_bracket",
+                    "showDivisorLeft": true,
+                    "showDividendRight": true,
+                    "showQuotientBelow": true
+                  }
+                }
+              ],
+              "response": {
+                "type": "ladder_fill",
+                "targets": [
+                  {
+                    "key": "q1",
+                    "role": "quotient",
+                    "step": 1
+                  },
+                  {
+                    "key": "d2",
+                    "role": "divisor",
+                    "step": 2
+                  },
+                  {
+                    "key": "n2",
+                    "role": "dividend",
+                    "step": 2
+                  },
+                  {
+                    "key": "factorization",
+                    "role": "final_expression"
+                  }
+                ]
+              },
+              "answer": {
+                "value": {
+                  "q1": 12,
+                  "d2": 2,
+                  "n2": 12,
+                  "factorization": "2×2×2×3"
+                }
+              },
+              "uncertain": false,
+              "notes": "画像の階段図は一部小さいが、24の素因数分解として再構成できる。"
+            },
+            {
+              "id": "p030_q02_02",
+              "no": 2,
+              "text": "次の自然数を、(1)の方法で素因数分解しなさい。",
+              "items": [
+                {
+                  "id": "p030_q02_02_01",
+                  "no": 1,
+                  "text": "12",
+                  "visuals": [],
+                  "response": {
+                    "type": "free_text",
+                    "lines": 1
+                  },
+                  "answer": {
+                    "value": "2×2×3"
+                  },
+                  "uncertain": false
+                },
+                {
+                  "id": "p030_q02_02_02",
+                  "no": 2,
+                  "text": "50",
+                  "visuals": [],
+                  "response": {
+                    "type": "free_text",
+                    "lines": 1
+                  },
+                  "answer": {
+                    "value": "2×5×5"
+                  },
+                  "uncertain": false
+                },
+                {
+                  "id": "p030_q02_02_03",
+                  "no": 3,
+                  "text": "56",
+                  "visuals": [],
+                  "response": {
+                    "type": "free_text",
+                    "lines": 1
+                  },
+                  "answer": {
+                    "value": "2×2×2×7"
+                  },
+                  "uncertain": false
+                },
+                {
+                  "id": "p030_q02_02_04",
+                  "no": 4,
+                  "text": "132",
+                  "visuals": [],
+                  "response": {
+                    "type": "free_text",
+                    "lines": 1
+                  },
+                  "answer": {
+                    "value": "2×2×3×11"
+                  },
+                  "uncertain": false
+                }
+              ],
+              "visuals": [],
+              "response": {
+                "type": "none"
+              },
+              "answer": {},
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p030_q03",
+          "page": 30,
+          "section": {
+            "no": 11,
+            "title": "自然数を素数の積で表す",
+            "category": "素数"
+          },
+          "prompt": {
+            "text": "次の文について、正しいものには○を、まちがっているものには×をつけなさい。"
+          },
+          "items": [
+            {
+              "id": "p030_q03_01",
+              "no": 1,
+              "text": "1は素数ではない。",
+              "visuals": [],
+              "response": {
+                "type": "choice",
+                "multiple": false,
+                "choices": [
+                  {
+                    "key": "○",
+                    "text": "正しい"
+                  },
+                  {
+                    "key": "×",
+                    "text": "まちがい"
+                  }
+                ]
+              },
+              "answer": {
+                "value": ["○"]
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p030_q03_02",
+              "no": 2,
+              "text": "素数と素数の積は、素数である。",
+              "visuals": [],
+              "response": {
+                "type": "choice",
+                "multiple": false,
+                "choices": [
+                  {
+                    "key": "○",
+                    "text": "正しい"
+                  },
+                  {
+                    "key": "×",
+                    "text": "まちがい"
+                  }
+                ]
+              },
+              "answer": {
+                "value": ["×"]
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p030_q03_03",
+              "no": 3,
+              "text": "素数のうち、偶数は2だけである。",
+              "visuals": [],
+              "response": {
+                "type": "choice",
+                "multiple": false,
+                "choices": [
+                  {
+                    "key": "○",
+                    "text": "正しい"
+                  },
+                  {
+                    "key": "×",
+                    "text": "まちがい"
+                  }
+                ]
+              },
+              "answer": {
+                "value": ["○"]
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p030_q03_04",
+              "no": 4,
+              "text": "20以下の自然数のうち、最大の素数は17である。",
+              "visuals": [],
+              "response": {
+                "type": "choice",
+                "multiple": false,
+                "choices": [
+                  {
+                    "key": "○",
+                    "text": "正しい"
+                  },
+                  {
+                    "key": "×",
+                    "text": "まちがい"
+                  }
+                ]
+              },
+              "answer": {
+                "value": ["×"]
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p030_q04",
+          "page": 30,
+          "section": {
+            "no": 11,
+            "title": "自然数を素数の積で表す",
+            "category": "素因数分解と倍数"
+          },
+          "prompt": {
+            "text": "次のア〜エの中から、21の倍数をすべて選びなさい。"
+          },
+          "items": [],
+          "visuals": [],
+          "response": {
+            "type": "choice",
+            "multiple": true,
+            "choices": [
+              {
+                "key": "ア",
+                "text": "3×7"
+              },
+              {
+                "key": "イ",
+                "text": "2×3×11"
+              },
+              {
+                "key": "ウ",
+                "text": "3×5^2×7"
+              },
+              {
+                "key": "エ",
+                "text": "2×7^4"
+              }
+            ]
+          },
+          "answer": {
+            "value": ["ア", "ウ"]
+          },
+          "explanation": "21=3×7 なので、3と7の両方を因数にもつものを選ぶ。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p030_q05",
+          "page": 30,
+          "section": {
+            "no": 11,
+            "title": "自然数を素数の積で表す",
+            "category": "学びを深めよう"
+          },
+          "prompt": {
+            "text": "198にできるだけ小さい自然数をかけて、30の倍数にするには、どんな数をかければよいですか。"
+          },
+          "items": [],
+          "visuals": [],
+          "response": {
+            "type": "blank"
+          },
+          "answer": {
+            "value": 5
+          },
+          "explanation": "198=2×3×3×11。30=2×3×5 の倍数にするには 5 を補えばよい。",
+          "notes": "",
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "page": 31,
+      "problems": [
+        {
+          "id": "p031_q01",
+          "page": 31,
+          "section": {
+            "no": 12,
+            "title": "正の数・負の数の利用",
+            "category": "平均の求め方"
+          },
+          "prompt": {
+            "text": "ある中学校の図書委員会では、読書週間に1日あたり150冊の本を貸し出すことを目標にしています。読書週間に、実際に貸し出した本の数は、次の表のようになりました。1日あたりに貸し出した本の冊数の平均を求めなさい。"
+          },
+          "items": [],
+          "visuals": [
+            {
+              "type": "table",
+              "columns": ["月", "火", "水", "木", "金"],
+              "rows": [
+                ["冊数(冊)", 153, 130, 149, 172, 151]
+              ],
+              "style": {
+                "header": true,
+                "compact": true
+              }
+            }
+          ],
+          "response": {
+            "type": "blank",
+            "unit": "冊"
+          },
+          "answer": {
+            "value": 151,
+            "unit": "冊"
+          },
+          "explanation": "(153+130+149+172+151)÷5=151。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p031_q02",
+          "page": 31,
+          "section": {
+            "no": 12,
+            "title": "正の数・負の数の利用",
+            "category": "正の数・負の数の利用"
+          },
+          "prompt": {
+            "text": "上の問題で、実際に貸し出した本の数を、目標にしていた150冊を仮平均との差し、それより多い場合は正の数、少ない場合は負の数で表し、次の表を完成させなさい。また、この表をもとに、1日あたりに貸し出した本の冊数の平均を求めなさい。"
+          },
+          "items": [
+            {
+              "id": "p031_q02_01",
+              "no": 1,
+              "text": "表を完成させなさい。",
+              "visuals": [
+                {
+                  "type": "table",
+                  "columns": ["月", "火", "水", "木", "金"],
+                  "rows": [
+                    [
+                      "仮平均との差(冊)",
+                      {
+                        "blank": true,
+                        "key": "mon_diff"
+                      },
+                      {
+                        "blank": true,
+                        "key": "tue_diff"
+                      },
+                      {
+                        "blank": true,
+                        "key": "wed_diff"
+                      },
+                      {
+                        "blank": true,
+                        "key": "thu_diff"
+                      },
+                      {
+                        "blank": true,
+                        "key": "fri_diff"
+                      }
+                    ]
+                  ],
+                  "style": {
+                    "header": true,
+                    "compact": true
+                  }
+                }
+              ],
+              "response": {
+                "type": "table_fill",
+                "targets": [
+                  {
+                    "row": 0,
+                    "col": 1,
+                    "key": "mon_diff"
+                  },
+                  {
+                    "row": 0,
+                    "col": 2,
+                    "key": "tue_diff"
+                  },
+                  {
+                    "row": 0,
+                    "col": 3,
+                    "key": "wed_diff"
+                  },
+                  {
+                    "row": 0,
+                    "col": 4,
+                    "key": "thu_diff"
+                  },
+                  {
+                    "row": 0,
+                    "col": 5,
+                    "key": "fri_diff"
+                  }
+                ]
+              },
+              "answer": {
+                "value": {
+                  "mon_diff": 3,
+                  "tue_diff": -20,
+                  "wed_diff": -1,
+                  "thu_diff": 22,
+                  "fri_diff": 1
+                }
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p031_q02_02",
+              "no": 2,
+              "text": "この表をもとに、1日あたりに貸し出した本の冊数の平均を求めなさい。",
+              "visuals": [],
+              "response": {
+                "type": "blank",
+                "unit": "冊"
+              },
+              "answer": {
+                "value": 151,
+                "unit": "冊"
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "仮平均150に対する差の平均は (3-20-1+22+1)÷5=1 なので、平均は151冊。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p031_q03",
+          "page": 31,
+          "section": {
+            "no": 12,
+            "title": "正の数・負の数の利用",
+            "category": "正の数・負の数の利用"
+          },
+          "prompt": {
+            "text": "ある店で、1日のおにぎりの販売数を、1日100個を基準にして表すと、次の表のようになりました。"
+          },
+          "visuals": [
+            {
+              "type": "table",
+              "columns": ["月", "火", "水", "木", "金", "土"],
+              "rows": [
+                ["販売数(個)", 11, 7, -6, 4, 8, -12]
+              ],
+              "style": {
+                "header": true,
+                "compact": true
+              }
+            }
+          ],
+          "items": [
+            {
+              "id": "p031_q03_01",
+              "no": 1,
+              "text": "この6日間の販売数の平均を求めなさい。",
+              "visuals": [],
+              "response": {
+                "type": "blank",
+                "unit": "個"
+              },
+              "answer": {
+                "value": 102,
+                "unit": "個"
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p031_q03_02",
+              "no": 2,
+              "text": "この6日間の総販売数を求めなさい。",
+              "visuals": [],
+              "response": {
+                "type": "blank",
+                "unit": "個"
+              },
+              "answer": {
+                "value": 612,
+                "unit": "個"
+              },
+              "uncertain": false
+            }
+          ],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "差の合計は 11+7-6+4+8-12=12。平均は100+12÷6=102、総販売数は100×6+12=612。",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p031_q04",
+          "page": 31,
+          "section": {
+            "no": 12,
+            "title": "正の数・負の数の利用",
+            "category": "学びを深めよう"
+          },
+          "prompt": {
+            "text": "次の表は、A、B、C、D、Eの5つの中学校の生徒数を表したものです。仮平均を決めて、5校の生徒数の平均を求めなさい。"
+          },
+          "items": [],
+          "visuals": [
+            {
+              "type": "table",
+              "columns": ["A", "B", "C", "D", "E"],
+              "rows": [
+                ["生徒数(人)", 303, 282, 300, 287, 298]
+              ],
+              "style": {
+                "header": true,
+                "compact": true
+              }
+            }
+          ],
+          "response": {
+            "type": "blank",
+            "unit": "人"
+          },
+          "answer": {
+            "value": 294,
+            "unit": "人"
+          },
+          "explanation": "合計は1470人、1470÷5=294。仮平均300として差を考えてもよい。",
+          "notes": "",
+          "uncertain": false
+        }
+      ]
+    }
+  ]
+}

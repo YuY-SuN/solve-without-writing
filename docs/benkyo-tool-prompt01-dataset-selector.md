@@ -258,3 +258,22 @@ python3 sync_index.py
 2. 別ブラウザや別端末では `記憶を読み込む` からその JSON を選ぶ
 3. 読み込み後は、回答・完了・履歴・最後に見ていたページが復元される
 4. 読み込み対象はこのツールが出力した JSON だけを想定する
+
+
+## Factorization ladder support
+
+`724772cb0bfb4c37cb990841f4e7c26c1c3e873c` で定義された `factorization_ladder` / `ladder_fill` を、アプリ側でも表示・入力できるようにした。
+
+要点:
+- `visual.type: "factorization_ladder"` を専用レイアウトで再描画する
+- `response.type: "ladder_fill"` の `targets` を使って、階段図内の空欄 key と入力欄を結び付ける
+- `items` の再帰ネストを描画できるようにし、`math_workbook_pages_30_31.json` の `p030_q02` のような入れ子小問をそのまま扱えるようにする
+- 再帰 `items` に対して、答え表示、解説表示、完了判定、回答クリアも同じ規則で動くようにする
+
+更新ファイル:
+- `tools/benkyo-tool-prompt01/app/src/renderers/FactorizationLadderRenderer.js`
+- `tools/benkyo-tool-prompt01/app/src/renderers/VisualRenderer.js`
+- `tools/benkyo-tool-prompt01/app/src/renderers/TextRenderer.js`
+- `tools/benkyo-tool-prompt01/app/src/renderers/ProblemRenderer.js`
+- `tools/benkyo-tool-prompt01/app/src/main.js`
+- `tools/benkyo-tool-prompt01/app/src/styles/page.css`

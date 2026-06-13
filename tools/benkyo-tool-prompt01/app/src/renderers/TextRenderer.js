@@ -166,6 +166,14 @@ export function renderResponse(response, options = {}) {
     return wrapper;
   }
 
+  if (response.type === "ladder_fill") {
+    const hint = document.createElement("p");
+    hint.className = "response-hint";
+    hint.textContent = "素因数分解の階段図の空欄に直接入力してください。";
+    wrapper.appendChild(hint);
+    return wrapper;
+  }
+
   if (response.type === "draw_graph") {
     const hint = document.createElement("div");
     hint.className = "draw-graph-hint";

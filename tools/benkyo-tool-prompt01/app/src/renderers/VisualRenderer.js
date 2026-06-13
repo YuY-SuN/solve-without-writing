@@ -5,6 +5,7 @@ import { renderGeometry3D } from "./Geometry3DRenderer.js";
 import { renderGraphGrid } from "./GraphRenderer.js";
 import { renderHistogram } from "./HistogramRenderer.js";
 import { renderNet } from "./NetRenderer.js";
+import { renderFactorizationLadder } from "./FactorizationLadderRenderer.js";
 
 export function renderVisualList(visuals, container, options = {}) {
   for (const visual of visuals) {
@@ -31,6 +32,8 @@ export function renderVisual(visual, container, options = {}) {
       return renderHistogram(visual, container);
     case "net":
       return renderNet(visual, container);
+    case "factorization_ladder":
+      return renderFactorizationLadder(visual, container, options);
     default:
       container.textContent = `Unsupported visual: ${visual.type}`;
   }

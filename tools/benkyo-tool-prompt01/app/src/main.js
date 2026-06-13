@@ -89,6 +89,22 @@ function getItemResponseKey(problem, item) {
   return item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
 }
 
+function collectResponseDescriptors(owner, items, descriptors) {
+  for (const item of items ?? []) {
+    if (item.response) {
+      descriptors.push({
+        key: getItemResponseKey(owner, item),
+        response: item.response,
+        answer: item.answer,
+      });
+    }
+
+    if (item.items?.length) {
+      collectResponseDescriptors(owner, item.items, descriptors);
+    }
+  }
+}
+
 function getProblemResponseDescriptors(problem) {
   const descriptors = [];
 
@@ -100,16 +116,7 @@ function getProblemResponseDescriptors(problem) {
     });
   }
 
-  for (const item of problem.items ?? []) {
-    if (item.response) {
-      descriptors.push({
-        key: getItemResponseKey(problem, item),
-        response: item.response,
-        answer: item.answer,
-      });
-    }
-  }
-
+  collectResponseDescriptors(problem, problem.items, descriptors);
   return descriptors;
 }
 
@@ -563,7 +570,7 @@ function isResponseComplete(response, value, answer) {
     return isNonEmptyValue(value);
   }
 
-  if (response.type === "table_fill") {
+  if (response.type === "table_fill" || response.type === "ladder_fill") {
     return (response.targets ?? []).every((target) => isNonEmptyValue(value?.[target.key]));
   }
 

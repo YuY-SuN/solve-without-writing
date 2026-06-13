@@ -26,19 +26,114 @@ function appendAnswerVisuals(node, answerVisuals) {
   node.appendChild(wrapper);
 }
 
+function itemHasAnswerContent(item) {
+  if (item.answer || (item.answerVisuals?.length ?? 0) > 0) {
+    return true;
+  }
+
+  return (item.items ?? []).some((child) => itemHasAnswerContent(child));
+}
+
+function itemHasExplanationContent(item) {
+  if (item.explanation) {
+    return true;
+  }
+
+  return (item.items ?? []).some((child) => itemHasExplanationContent(child));
+}
 
 function hasAnswerContent(problem) {
   if (problem.answer || (problem.answerVisuals?.length ?? 0) > 0) {
     return true;
   }
 
-  return (problem.items ?? []).some(
-    (item) => item.answer || (item.answerVisuals?.length ?? 0) > 0,
-  );
+  return (problem.items ?? []).some((item) => itemHasAnswerContent(item));
 }
 
 function hasExplanationContent(problem) {
-  return Boolean(problem.explanation);
+  if (problem.explanation) {
+    return true;
+  }
+
+  return (problem.items ?? []).some((item) => itemHasExplanationContent(item));
+}
+
+function renderItemNode(problem, item, options, depth = 0) {
+  const itemNode = document.createElement("section");
+  itemNode.className = "problem-item";
+  itemNode.dataset.depth = String(depth);
+
+  if (item.label || item.no) {
+    const itemTitle = document.createElement("h3");
+    itemTitle.textContent = [item.no, item.label].filter(Boolean).join(" ");
+    itemNode.appendChild(itemTitle);
+  }
+
+  if (item.text) {
+    const itemText = document.createElement("p");
+    itemText.textContent = item.text;
+    itemNode.appendChild(itemText);
+  }
+
+  if (item.context?.text) {
+    itemNode.appendChild(renderPrompt({ prompt: null, context: item.context }));
+  }
+
+  const responseKey = item.response ? getItemResponseKey(problem, item) : null;
+
+  if (item.visuals?.length) {
+    const itemVisuals = document.createElement("div");
+    itemVisuals.className = "problem-visuals";
+    renderVisualList(item.visuals, itemVisuals, {
+      response: item.response,
+      responseKey,
+      value: responseKey ? options.responseValues?.[responseKey] ?? null : null,
+      onChange: responseKey
+        ? (nextValue) => {
+            options.onResponseChange?.(responseKey, nextValue);
+            options.onStatusChange?.();
+          }
+        : null,
+      answer: item.answer,
+      answerVisuals: item.answerVisuals ?? [],
+    });
+    itemNode.appendChild(itemVisuals);
+  }
+
+  if (item.response) {
+    const responseNode = renderResponse(item.response, {
+      responseKey,
+      value: options.responseValues?.[responseKey] ?? null,
+      onChange: (nextValue) => {
+        options.onResponseChange?.(responseKey, nextValue);
+        options.onStatusChange?.();
+      },
+    });
+    if (responseNode) {
+      itemNode.appendChild(responseNode);
+    }
+  }
+
+  if (options.showAnswers && item.answer) {
+    itemNode.appendChild(renderAnswer(item.answer));
+  }
+  if (options.showAnswers) {
+    appendAnswerVisuals(itemNode, item.answerVisuals ?? []);
+  }
+  if (options.showExplanations && item.explanation) {
+    itemNode.appendChild(renderExplanation(item.explanation));
+  }
+
+  if (item.items?.length) {
+    const nestedItems = document.createElement("div");
+    nestedItems.className = "problem-items problem-items-nested";
+    for (const child of item.items) {
+      nestedItems.appendChild(renderItemNode(problem, child, options, depth + 1));
+    }
+    itemNode.appendChild(nestedItems);
+  }
+
+  return itemNode;
 }
 
 export function renderProblems(container, problems, options) {
@@ -191,60 +286,13 @@ function renderProblem(problem, options) {
   const showExplanations = options.getProblemExplanationVisibility?.(problem) ?? false;
 
   for (const item of problem.items ?? []) {
-    const itemNode = document.createElement("section");
-    itemNode.className = "problem-item";
-    if (item.label || item.no) {
-      const itemTitle = document.createElement("h3");
-      itemTitle.textContent = [item.no, item.label].filter(Boolean).join(" ");
-      itemNode.appendChild(itemTitle);
-    }
-    if (item.text) {
-      const itemText = document.createElement("p");
-      itemText.textContent = item.text;
-      itemNode.appendChild(itemText);
-    }
-    if (item.context?.text) {
-      itemNode.appendChild(renderPrompt({ prompt: null, context: item.context }));
-    }
-    const responseKey = item.response ? getItemResponseKey(problem, item) : null;
-    if (item.visuals?.length) {
-      const itemVisuals = document.createElement("div");
-      itemVisuals.className = "problem-visuals";
-      renderVisualList(item.visuals, itemVisuals, {
-        response: item.response,
-        responseKey,
-        value: responseKey ? options.responseValues?.[responseKey] ?? null : null,
-        onChange: responseKey
-          ? (nextValue) => {
-              options.onResponseChange?.(responseKey, nextValue);
-              updateCompletionAfterResponse();
-            }
-          : null,
-        answer: item.answer,
-        answerVisuals: item.answerVisuals ?? [],
-      });
-      itemNode.appendChild(itemVisuals);
-    }
-    if (item.response) {
-      const responseNode = renderResponse(item.response, {
-        responseKey,
-        value: options.responseValues?.[responseKey] ?? null,
-        onChange: (nextValue) => {
-          options.onResponseChange?.(responseKey, nextValue);
-          updateCompletionAfterResponse();
-        },
-      });
-      if (responseNode) {
-        itemNode.appendChild(responseNode);
-      }
-    }
-    if (showAnswers && item.answer) {
-      itemNode.appendChild(renderAnswer(item.answer));
-    }
-    if (showAnswers) {
-      appendAnswerVisuals(itemNode, item.answerVisuals ?? []);
-    }
-    items.appendChild(itemNode);
+    items.appendChild(renderItemNode(problem, item, {
+      responseValues: options.responseValues,
+      onResponseChange: options.onResponseChange,
+      onStatusChange: updateCompletionAfterResponse,
+      showAnswers,
+      showExplanations,
+    }));
   }
 
   const footer = document.createElement("footer");

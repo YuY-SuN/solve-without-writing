@@ -32,6 +32,11 @@
       "path": "math_workbook_pages_20_21.json"
     },
     {
+      "id": "math-workbook-pages-30-31",
+      "label": "11 自然数を素数の積で表す / 12 正の数・負の数の利用",
+      "path": "math_workbook_pages_30_31.json"
+    },
+    {
       "id": "core-math",
       "label": "標準セット",
       "path": "problems.json"

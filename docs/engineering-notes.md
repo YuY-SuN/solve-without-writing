@@ -91,6 +91,7 @@
 - `graph_grid`
 - `histogram`
 - `net`
+- `factorization_ladder`
 
 図やグラフは Canvas、表は HTML table を基本にする。
 
@@ -104,6 +105,7 @@
 - `draw_graph`
 - `draw_point`
 - `table_fill`
+- `ladder_fill`
 - `none`
 
 重要:
@@ -118,6 +120,8 @@
 - `response.type: "draw_graph"` は数直線やグラフ上で直接入力でき、完了判定では answer の件数と入力件数をそろえる
 - `response.type: "draw_point"` は点ラベルごとの配置入力ができ、完了判定では answer 側キーがすべて入力されている必要がある
 - `response.type: "table_fill"` は `response.targets` と表セルの `blank.key` を結び付けてセルへ直接入力する
+- `response.type: "ladder_fill"` は `factorization_ladder` 内の空欄 key を `response.targets` で列挙し、階段図の入力欄へ直接結び付ける
+- `items` は1段とは限らず、教材によっては小問の中にさらに `items` が入るので、描画・完了判定・回答クリアは再帰構造を前提にする
 
 ## Lessons learned from recent work
 

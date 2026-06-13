@@ -458,3 +458,89 @@ pre {
   color: #23406f;
   font: inherit;
 }
+
+
+.problem-items-nested {
+  margin-top: 12px;
+}
+
+.problem-item[data-depth="1"] {
+  background: #fdfefe;
+  border-style: dashed;
+}
+
+.problem-item[data-depth="2"],
+.problem-item[data-depth="3"] {
+  background: #f8fbff;
+  border-color: #d7e2f0;
+}
+
+.factorization-ladder {
+  display: grid;
+  gap: 10px;
+  align-items: start;
+}
+
+.factorization-ladder-step {
+  display: grid;
+  grid-template-columns: minmax(48px, auto) 18px minmax(140px, auto);
+  gap: 10px;
+  align-items: start;
+}
+
+.factorization-ladder-divisor,
+.factorization-ladder-dividend,
+.factorization-ladder-quotient,
+.factorization-ladder-final-right {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.factorization-ladder-divisor {
+  justify-content: flex-end;
+  font-weight: 600;
+}
+
+.factorization-ladder-bracket {
+  min-height: 74px;
+  border-left: 2px solid #4b5a75;
+  border-top: 2px solid #4b5a75;
+  border-radius: 6px 0 0 0;
+}
+
+.factorization-ladder-right {
+  display: grid;
+  gap: 8px;
+}
+
+.factorization-ladder-dividend {
+  padding-left: 4px;
+  border-bottom: 2px solid #4b5a75;
+  font-weight: 600;
+}
+
+.factorization-ladder-quotient {
+  padding-left: 16px;
+}
+
+.factorization-ladder-note {
+  margin: 0;
+  color: #55627a;
+  font-size: 0.86rem;
+}
+
+.factorization-ladder-final {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.ladder-blank-placeholder {
+  display: inline-block;
+  min-width: 96px;
+  min-height: 32px;
+  border-bottom: 2px solid #4b5a75;
+}
