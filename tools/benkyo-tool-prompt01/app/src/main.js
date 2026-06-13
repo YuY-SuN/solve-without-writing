@@ -4,11 +4,15 @@ const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
 const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
 const COMPLETION_STORAGE_KEY = "benkyo-tool-prompt01:completed-problems:v1";
 const VIEW_SELECTION_STORAGE_KEY = "benkyo-tool-prompt01:view-selection:v1";
+const STORAGE_EXPORT_SCHEMA = "benkyo-tool-prompt01-storage-export";
+const STORAGE_EXPORT_VERSION = 1;
 const MAX_HISTORY_ENTRIES = 10;
 
 const state = {
   showAnswers: false,
   showExplanations: false,
+  answerVisibilityOverrides: {},
+  explanationVisibilityOverrides: {},
   selectedPageKey: "all",
   selectedDatasetId: null,
   datasetCatalog: [],
@@ -31,6 +35,10 @@ const elements = {
   redoClear: document.querySelector("#redo-clear"),
   toggleAnswers: document.querySelector("#toggle-answers"),
   toggleExplanations: document.querySelector("#toggle-explanations"),
+  exportStorage: document.querySelector("#export-storage"),
+  importStorage: document.querySelector("#import-storage"),
+  importStorageFile: document.querySelector("#import-storage-file"),
+  storageTransferStatus: document.querySelector("#storage-transfer-status"),
   pageProgress: document.querySelector("#page-progress"),
   problemList: document.querySelector("#problem-list"),
 };
@@ -70,6 +78,10 @@ function makePageKey(datasetId, page) {
 }
 
 function makeProblemCompletionKey(datasetId, page, problemId) {
+  return `${datasetId}::${page}::${problemId}`;
+}
+
+function makeProblemViewKey(datasetId, page, problemId) {
   return `${datasetId}::${page}::${problemId}`;
 }
 
@@ -130,6 +142,199 @@ function getVisibleProblems() {
 
 function getVisibleResponseKeys() {
   return getVisibleProblems().flatMap((problem) => getProblemResponseKeys(problem));
+}
+
+function getProblemViewKey(problem, datasetId = state.selectedDatasetId) {
+  return makeProblemViewKey(datasetId, problem.page, problem.id);
+}
+
+function getProblemAnswerVisibility(problem) {
+  const problemKey = getProblemViewKey(problem);
+  return state.answerVisibilityOverrides[problemKey] ?? state.showAnswers;
+}
+
+function getProblemExplanationVisibility(problem) {
+  const problemKey = getProblemViewKey(problem);
+  return state.explanationVisibilityOverrides[problemKey] ?? state.showExplanations;
+}
+
+function setProblemVisibilityOverride(kind, problem, isVisible) {
+  const overridesKey = kind === "answer"
+    ? "answerVisibilityOverrides"
+    : "explanationVisibilityOverrides";
+  const baseVisible = kind === "answer" ? state.showAnswers : state.showExplanations;
+  const problemKey = getProblemViewKey(problem);
+  const nextOverrides = { ...state[overridesKey] };
+
+  if (isVisible === baseVisible) {
+    delete nextOverrides[problemKey];
+  } else {
+    nextOverrides[problemKey] = isVisible;
+  }
+
+  state[overridesKey] = nextOverrides;
+}
+
+function toggleProblemAnswerVisibility(problem) {
+  setProblemVisibilityOverride("answer", problem, !getProblemAnswerVisibility(problem));
+  render();
+}
+
+function toggleProblemExplanationVisibility(problem) {
+  setProblemVisibilityOverride("explanation", problem, !getProblemExplanationVisibility(problem));
+  render();
+}
+
+function syncAnswerVisibility(isVisible) {
+  state.showAnswers = isVisible;
+  state.answerVisibilityOverrides = {};
+  render();
+}
+
+function syncExplanationVisibility(isVisible) {
+  state.showExplanations = isVisible;
+  state.explanationVisibilityOverrides = {};
+  render();
+}
+
+
+function setStorageTransferStatus(message, kind = "info") {
+  if (!elements.storageTransferStatus) {
+    return;
+  }
+
+  elements.storageTransferStatus.textContent = message;
+  elements.storageTransferStatus.dataset.kind = kind;
+}
+
+function buildStorageExportPayload() {
+  return {
+    schema: STORAGE_EXPORT_SCHEMA,
+    version: STORAGE_EXPORT_VERSION,
+    exportedAt: new Date().toISOString(),
+    data: {
+      responseValues: state.responseValues,
+      completedProblems: state.completedProblems,
+      history: {
+        undoStack: state.undoStack,
+        redoStack: state.redoStack,
+      },
+      viewSelection: {
+        datasetId: state.selectedDatasetId,
+        pageKey: state.selectedPageKey,
+      },
+    },
+  };
+}
+
+function downloadTextFile(filename, text, mimeType) {
+  const blob = new Blob([text], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportPersistedState() {
+  const payload = buildStorageExportPayload();
+  const stamp = payload.exportedAt.slice(0, 19).replace(/[:T]/g, "-");
+  downloadTextFile(
+    `benkyo-tool-prompt01-storage-${stamp}.json`,
+    JSON.stringify(payload, null, 2),
+    "application/json",
+  );
+  setStorageTransferStatus("記憶データを書き出しました。", "success");
+}
+
+function parseImportedObject(rawText) {
+  let parsed;
+  try {
+    parsed = JSON.parse(rawText);
+  } catch {
+    throw new Error("JSON として読めませんでした");
+  }
+
+  if (!parsed || typeof parsed !== "object") {
+    throw new Error("ファイル形式が不正です");
+  }
+  if (parsed.schema !== STORAGE_EXPORT_SCHEMA) {
+    throw new Error("このツール用のエクスポートファイルではありません");
+  }
+  if (parsed.version !== STORAGE_EXPORT_VERSION) {
+    throw new Error(`未対応のバージョンです: ${parsed.version}`);
+  }
+  if (!parsed.data || typeof parsed.data !== "object") {
+    throw new Error("data セクションが不正です");
+  }
+
+  return parsed.data;
+}
+
+function sanitizeImportedState(data) {
+  const responseValues = data.responseValues && typeof data.responseValues === "object"
+    ? data.responseValues
+    : {};
+  const completedProblems = data.completedProblems && typeof data.completedProblems === "object"
+    ? data.completedProblems
+    : {};
+  const history = data.history && typeof data.history === "object" ? data.history : {};
+  const viewSelection = data.viewSelection && typeof data.viewSelection === "object"
+    ? data.viewSelection
+    : {};
+
+  return {
+    responseValues,
+    completedProblems,
+    undoStack: Array.isArray(history.undoStack) ? history.undoStack : [],
+    redoStack: Array.isArray(history.redoStack) ? history.redoStack : [],
+    viewSelection: {
+      datasetId: typeof viewSelection.datasetId === "string" ? viewSelection.datasetId : null,
+      pageKey: typeof viewSelection.pageKey === "string" ? viewSelection.pageKey : "all",
+    },
+  };
+}
+
+async function applyImportedState(importedState) {
+  state.responseValues = cloneSerializable(importedState.responseValues) ?? {};
+  state.completedProblems = cloneSerializable(importedState.completedProblems) ?? {};
+  state.undoStack = cloneSerializable(importedState.undoStack) ?? [];
+  state.redoStack = cloneSerializable(importedState.redoStack) ?? [];
+  trimHistory(state.undoStack);
+  trimHistory(state.redoStack);
+
+  persistResponseValues();
+  persistCompletedProblems();
+  persistHistoryState();
+  sanitizeCompletedProblems();
+
+  const viewSelection = importedState.viewSelection ?? { datasetId: null, pageKey: "all" };
+  const fallbackDatasetId = state.datasetCatalog[0]?.id ?? null;
+
+  if (viewSelection.pageKey !== "all" && findPageEntry(viewSelection.pageKey)) {
+    await applyPageSelection(viewSelection.pageKey);
+    return;
+  }
+
+  if (viewSelection.datasetId && findDatasetEntry(viewSelection.datasetId)) {
+    await applyDataset(viewSelection.datasetId, "all");
+    return;
+  }
+
+  if (fallbackDatasetId) {
+    await applyDataset(fallbackDatasetId, "all");
+  } else {
+    render();
+  }
+}
+
+async function importPersistedState(file) {
+  const rawText = await file.text();
+  const parsed = parseImportedObject(rawText);
+  const importedState = sanitizeImportedState(parsed);
+  await applyImportedState(importedState);
+  setStorageTransferStatus("記憶データを読み込みました。", "success");
 }
 
 function buildPageCatalog(catalog, datasetsById) {
@@ -612,8 +817,10 @@ function render() {
   const visibleProblems = getVisibleProblems();
 
   renderProblems(elements.problemList, visibleProblems, {
-    showAnswers: state.showAnswers,
-    showExplanations: state.showExplanations,
+    getProblemAnswerVisibility,
+    getProblemExplanationVisibility,
+    onToggleProblemAnswerVisibility: toggleProblemAnswerVisibility,
+    onToggleProblemExplanationVisibility: toggleProblemExplanationVisibility,
     responseValues: state.responseValues,
     onResponseChange: handleResponseChange,
     onClearProblem: clearProblemResponses,
@@ -705,13 +912,33 @@ async function bootstrap() {
   });
 
   elements.toggleAnswers.addEventListener("click", () => {
-    state.showAnswers = !state.showAnswers;
-    render();
+    syncAnswerVisibility(!state.showAnswers);
   });
 
   elements.toggleExplanations.addEventListener("click", () => {
-    state.showExplanations = !state.showExplanations;
-    render();
+    syncExplanationVisibility(!state.showExplanations);
+  });
+
+  elements.exportStorage.addEventListener("click", () => {
+    exportPersistedState();
+  });
+
+  elements.importStorage.addEventListener("click", () => {
+    elements.importStorageFile.click();
+  });
+
+  elements.importStorageFile.addEventListener("change", async (event) => {
+    const [file] = event.target.files ?? [];
+    event.target.value = "";
+    if (!file) {
+      return;
+    }
+
+    try {
+      await importPersistedState(file);
+    } catch (error) {
+      setStorageTransferStatus(`読み込みに失敗しました: ${error.message}`, "error");
+    }
   });
 
   const fallbackDatasetId = catalog.defaultDatasetId ?? state.datasetCatalog[0].id;

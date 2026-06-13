@@ -30,6 +30,7 @@
 - 上部ツールバーの「問題セット」コンボボックスから dataset 全体を切り替える
 - 上部ツールバーの「ページ」コンボボックスから全 dataset を横断して特定ページへ直接切り替える
 - 最後に開いていた dataset / page 選択は `localStorage` に保存し、次回起動時に復元する
+- `localStorage` の回答・完了・履歴・閲覧位置は JSON ファイルへ export / import できる
 - 保存済みページが消えていた場合は dataset 全体表示、dataset も無効なら `defaultDatasetId` にフォールバックする
 - `index.json` の各要素は少なくとも `id` `label` `path` を持つ
 - `defaultDatasetId` が初期表示セットになる
@@ -112,6 +113,7 @@
 - 回答クリアは問題単位または表示中単位で行えると使いやすい
 - Undo/Redo は回答状態全体のスナップショットを最大10件持つ形にすると実装が安定する
 - 閲覧位置も跨ぎたい場合は `selectedDatasetId` と `selectedPageKey` を `localStorage` に保存し、起動時に有効性を検証してから復元する
+- バックアップや端末移行が必要な場合は、`localStorage` スナップショットを JSON で export / import する。TOML ではなく JSON を選ぶのは、静的ブラウザ環境で追加パーサなしに扱え、既存の状態構造をそのまま version 付きで持ち出せるため
 - `response.type: "choice"` は選択肢の表示と選択操作が必要
 - `response.type: "draw_graph"` は数直線やグラフ上で直接入力でき、完了判定では answer の件数と入力件数をそろえる
 - `response.type: "draw_point"` は点ラベルごとの配置入力ができ、完了判定では answer 側キーがすべて入力されている必要がある

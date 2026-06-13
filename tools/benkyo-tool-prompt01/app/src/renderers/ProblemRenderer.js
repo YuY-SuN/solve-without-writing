@@ -26,6 +26,21 @@ function appendAnswerVisuals(node, answerVisuals) {
   node.appendChild(wrapper);
 }
 
+
+function hasAnswerContent(problem) {
+  if (problem.answer || (problem.answerVisuals?.length ?? 0) > 0) {
+    return true;
+  }
+
+  return (problem.items ?? []).some(
+    (item) => item.answer || (item.answerVisuals?.length ?? 0) > 0,
+  );
+}
+
+function hasExplanationContent(problem) {
+  return Boolean(problem.explanation);
+}
+
 export function renderProblems(container, problems, options) {
   container.innerHTML = "";
 
@@ -59,6 +74,40 @@ function renderProblem(problem, options) {
   headerSide.className = "problem-header-side";
   headerSide.appendChild(meta);
 
+  const detailActions = document.createElement("div");
+  detailActions.className = "problem-detail-actions";
+  const canShowAnswer = hasAnswerContent(problem);
+  const canShowExplanation = hasExplanationContent(problem);
+
+  const answerToggle = document.createElement("button");
+  answerToggle.type = "button";
+  answerToggle.className = "secondary-button";
+
+  const explanationToggle = document.createElement("button");
+  explanationToggle.type = "button";
+  explanationToggle.className = "secondary-button";
+
+  detailActions.append(answerToggle, explanationToggle);
+  headerSide.appendChild(detailActions);
+
+  const completionBlock = document.createElement("div");
+  completionBlock.className = "problem-completion-block";
+
+  const completionLabel = document.createElement("label");
+  completionLabel.className = "problem-completion-toggle";
+
+  const completionCheckbox = document.createElement("input");
+  completionCheckbox.type = "checkbox";
+  completionCheckbox.className = "problem-completion-input";
+
+  const completionText = document.createElement("span");
+  completionText.textContent = "完了";
+  completionLabel.append(completionCheckbox, completionText);
+
+  const completionHint = document.createElement("p");
+  completionHint.className = "problem-completion-hint";
+
+  completionBlock.append(completionLabel, completionHint);
 
   function updateCompletionUi() {
     const status = options.getProblemCompletionStatus?.(problem) ?? {
@@ -76,6 +125,30 @@ function renderProblem(problem, options) {
         ? "ready"
         : "locked";
   }
+
+  function updateDetailToggleUi() {
+    const showAnswers = options.getProblemAnswerVisibility?.(problem) ?? false;
+    const showExplanations = options.getProblemExplanationVisibility?.(problem) ?? false;
+    answerToggle.disabled = !canShowAnswer;
+    explanationToggle.disabled = !canShowExplanation;
+    answerToggle.textContent = showAnswers ? "この問題の答えを隠す" : "この問題の答えを表示";
+    explanationToggle.textContent = showExplanations
+      ? "この問題の解説を隠す"
+      : "この問題の解説を表示";
+  }
+
+  answerToggle.addEventListener("click", () => {
+    options.onToggleProblemAnswerVisibility?.(problem);
+  });
+
+  explanationToggle.addEventListener("click", () => {
+    options.onToggleProblemExplanationVisibility?.(problem);
+  });
+
+  completionCheckbox.addEventListener("change", (event) => {
+    options.onToggleProblemComplete?.(problem, event.target.checked);
+    updateCompletionUi();
+  });
 
   if (options.onClearProblem) {
     const clearButton = document.createElement("button");
@@ -114,6 +187,9 @@ function renderProblem(problem, options) {
 
   const items = document.createElement("div");
   items.className = "problem-items";
+  const showAnswers = options.getProblemAnswerVisibility?.(problem) ?? false;
+  const showExplanations = options.getProblemExplanationVisibility?.(problem) ?? false;
+
   for (const item of problem.items ?? []) {
     const itemNode = document.createElement("section");
     itemNode.className = "problem-item";
@@ -162,10 +238,10 @@ function renderProblem(problem, options) {
         itemNode.appendChild(responseNode);
       }
     }
-    if (options.showAnswers && item.answer) {
+    if (showAnswers && item.answer) {
       itemNode.appendChild(renderAnswer(item.answer));
     }
-    if (options.showAnswers) {
+    if (showAnswers) {
       appendAnswerVisuals(itemNode, item.answerVisuals ?? []);
     }
     items.appendChild(itemNode);
@@ -186,42 +262,18 @@ function renderProblem(problem, options) {
       footer.appendChild(responseNode);
     }
   }
-  if (options.showAnswers && problem.answer) {
+  if (showAnswers && problem.answer) {
     footer.appendChild(renderAnswer(problem.answer));
   }
-  if (options.showExplanations && problem.explanation) {
+  if (showExplanations && problem.explanation) {
     footer.appendChild(renderExplanation(problem.explanation));
   }
-
-  const completionBlock = document.createElement("div");
-  completionBlock.className = "problem-completion-block";
-
-  const completionLabel = document.createElement("label");
-  completionLabel.className = "problem-completion-toggle";
-
-  const completionCheckbox = document.createElement("input");
-  completionCheckbox.type = "checkbox";
-  completionCheckbox.className = "problem-completion-input";
-
-  const completionText = document.createElement("span");
-  completionText.textContent = "完了";
-  completionLabel.append(completionCheckbox, completionText);
-
-  const completionHint = document.createElement("p");
-  completionHint.className = "problem-completion-hint";
-
-  completionBlock.append(completionLabel, completionHint);
-
-  completionCheckbox.addEventListener("change", (event) => {
-    options.onToggleProblemComplete?.(problem, event.target.checked);
-    updateCompletionUi();
-  });
 
   article.append(header, prompt, visuals);
   if (items.childElementCount > 0) {
     article.appendChild(items);
   }
-  if (options.showAnswers) {
+  if (showAnswers) {
     appendAnswerVisuals(article, problem.answerVisuals ?? []);
   }
   if (footer.childElementCount > 0) {
@@ -229,6 +281,7 @@ function renderProblem(problem, options) {
   }
   article.appendChild(completionBlock);
 
+  updateDetailToggleUi();
   updateCompletionUi();
 
   return article;

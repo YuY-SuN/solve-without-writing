@@ -91,6 +91,8 @@
 - ページ選択時の dataset 自動切り替え
 - 最後に開いていた dataset / page 選択の永続化と復元
 - 解答欄の入力UIと選択肢の操作UI
+- 問題単位の答え・解説トグルと、全体トグルとの同期
+- `localStorage` 記憶データの JSON export / import
 - 問題単位・表示中単位の回答クリアと10件のUndo/Redo履歴
 - 既存の答え表示・解説表示・問題描画の再利用
 
@@ -221,6 +223,7 @@ python3 sync_index.py
 - `完了` チェックは各問題カードの下端に配置し、問題を見終えた流れで操作できるようにする
 - ただし、必要な `response` がすべて入力済みのときだけ完了を付けられる
 - `response` が 0 件の問題は最初から完了可能とみなす
+- 答えと解説は問題ごとに表示でき、ページ上部の全体トグルを押したときは問題ごとの表示状態も同じ値にそろえる
 - 完了状態は `benkyo-tool-prompt01:completed-problems:v1` に保存する
 - ページごとに `完了 x/y` と `残り z問` を表示する
 
@@ -232,3 +235,26 @@ python3 sync_index.py
 - `tools/benkyo-tool-prompt01/app/src/main.js`
 - `tools/benkyo-tool-prompt01/app/src/renderers/ProblemRenderer.js`
 - `tools/benkyo-tool-prompt01/app/src/styles/page.css`
+
+
+## Storage export and import
+
+`localStorage` に溜まる学習状態を、ファイル経由で持ち出し・復元できるようにした。
+
+対象:
+- `responseValues`
+- `completedProblems`
+- `history.undoStack` / `history.redoStack`
+- `viewSelection`
+
+設計方針:
+- 形式は JSON とする
+- ルートに `schema` `version` `exportedAt` を持たせ、将来の拡張や互換判定をしやすくする
+- import 時は型をざっくり検証し、壊れた値は空データへフォールバックする
+- 保存済みページが現行 dataset に存在しなければ、既存のフォールバック規則に従って dataset 全体表示へ戻す
+
+運用:
+1. 画面上部の `記憶を書き出す` で JSON ファイルを保存する
+2. 別ブラウザや別端末では `記憶を読み込む` からその JSON を選ぶ
+3. 読み込み後は、回答・完了・履歴・最後に見ていたページが復元される
+4. 読み込み対象はこのツールが出力した JSON だけを想定する

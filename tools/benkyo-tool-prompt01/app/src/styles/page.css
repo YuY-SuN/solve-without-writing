@@ -89,6 +89,21 @@ button:disabled {
   opacity: 0.55;
 }
 
+.toolbar-status {
+  margin: -8px 0 20px;
+  min-height: 1.5em;
+  color: #55627a;
+  font-size: 0.92rem;
+}
+
+.toolbar-status[data-kind="success"] {
+  color: #166534;
+}
+
+.toolbar-status[data-kind="error"] {
+  color: #b42318;
+}
+
 .problem-list {
   display: grid;
   gap: 20px;
@@ -167,6 +182,13 @@ button:disabled {
   display: grid;
   gap: 10px;
   justify-items: end;
+}
+
+.problem-detail-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .problem-completion-block {
