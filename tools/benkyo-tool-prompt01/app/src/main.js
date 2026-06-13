@@ -2,6 +2,7 @@ import { renderProblems } from "./renderers/ProblemRenderer.js";
 
 const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
 const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
+const COMPLETION_STORAGE_KEY = "benkyo-tool-prompt01:completed-problems:v1";
 const MAX_HISTORY_ENTRIES = 10;
 
 const state = {
@@ -13,6 +14,7 @@ const state = {
   datasetsById: {},
   pageCatalog: [],
   responseValues: {},
+  completedProblems: {},
   undoStack: [],
   redoStack: [],
   dataset: null,
@@ -28,6 +30,7 @@ const elements = {
   redoClear: document.querySelector("#redo-clear"),
   toggleAnswers: document.querySelector("#toggle-answers"),
   toggleExplanations: document.querySelector("#toggle-explanations"),
+  pageProgress: document.querySelector("#page-progress"),
   problemList: document.querySelector("#problem-list"),
 };
 
@@ -65,24 +68,40 @@ function makePageKey(datasetId, page) {
   return `${datasetId}::${page}`;
 }
 
+function makeProblemCompletionKey(datasetId, page, problemId) {
+  return `${datasetId}::${page}::${problemId}`;
+}
+
 function getItemResponseKey(problem, item) {
   return item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
 }
 
-function getProblemResponseKeys(problem) {
-  const keys = [];
+function getProblemResponseDescriptors(problem) {
+  const descriptors = [];
 
   if (problem.response) {
-    keys.push(problem.id);
+    descriptors.push({
+      key: problem.id,
+      response: problem.response,
+      answer: problem.answer,
+    });
   }
 
   for (const item of problem.items ?? []) {
     if (item.response) {
-      keys.push(getItemResponseKey(problem, item));
+      descriptors.push({
+        key: getItemResponseKey(problem, item),
+        response: item.response,
+        answer: item.answer,
+      });
     }
   }
 
-  return keys;
+  return descriptors;
+}
+
+function getProblemResponseKeys(problem) {
+  return getProblemResponseDescriptors(problem).map((entry) => entry.key);
 }
 
 function findDatasetEntry(datasetId) {
@@ -145,7 +164,7 @@ function populateDatasetSelect(catalog) {
   }
 }
 
-function populatePageFilter(pageCatalog) {
+function populatePageFilter(pageCatalog, progressMap) {
   elements.pageFilter.innerHTML = "";
 
   const allOption = document.createElement("option");
@@ -156,8 +175,26 @@ function populatePageFilter(pageCatalog) {
   for (const entry of pageCatalog) {
     const option = document.createElement("option");
     option.value = entry.key;
-    option.textContent = `${entry.page}ページ / ${entry.datasetLabel}`;
+    option.textContent = formatPageOptionLabel(entry, progressMap);
     elements.pageFilter.appendChild(option);
+  }
+}
+
+function refreshPageFilterLabels(progressMap) {
+  const options = [...elements.pageFilter.querySelectorAll("option")];
+
+  for (const option of options) {
+    if (option.value === "all") {
+      option.textContent = "すべて（現在の問題セット）";
+      continue;
+    }
+
+    const entry = findPageEntry(option.value);
+    if (!entry) {
+      continue;
+    }
+
+    option.textContent = formatPageOptionLabel(entry, progressMap);
   }
 }
 
@@ -225,8 +262,17 @@ function loadPersistedResponseValues() {
   return parsed && typeof parsed === "object" ? parsed : {};
 }
 
+function loadPersistedCompletedProblems() {
+  const parsed = loadPersistedJson(COMPLETION_STORAGE_KEY);
+  return parsed && typeof parsed === "object" ? parsed : {};
+}
+
 function persistResponseValues() {
   persistJson(RESPONSE_STORAGE_KEY, state.responseValues);
+}
+
+function persistCompletedProblems() {
+  persistJson(COMPLETION_STORAGE_KEY, state.completedProblems);
 }
 
 function loadPersistedHistoryState() {
@@ -265,6 +311,210 @@ function commitResponseValues(nextResponseValues) {
   return true;
 }
 
+function isNonEmptyValue(value) {
+  if (typeof value === "string") {
+    return value.trim() !== "";
+  }
+  return value !== null && value !== undefined;
+}
+
+function isResponseComplete(response, value, answer) {
+  if (!response || response.type === "none") {
+    return true;
+  }
+
+  if (response.type === "blank" || response.type === "free_text") {
+    return isNonEmptyValue(value);
+  }
+
+  if (response.type === "multi_blank") {
+    return (response.fields ?? []).every((field) => isNonEmptyValue(value?.[field.key]));
+  }
+
+  if (response.type === "choice") {
+    if (response.multiple) {
+      return Array.isArray(value) && value.length > 0;
+    }
+    return isNonEmptyValue(value);
+  }
+
+  if (response.type === "table_fill") {
+    return (response.targets ?? []).every((target) => isNonEmptyValue(value?.[target.key]));
+  }
+
+  if (response.type === "draw_graph") {
+    if (Array.isArray(answer?.value)) {
+      return Array.isArray(value) && value.length === answer.value.length;
+    }
+
+    if (Array.isArray(answer?.value?.bins)) {
+      return Array.isArray(value?.bins) && value.bins.length === answer.value.bins.length;
+    }
+
+    return false;
+  }
+
+  if (response.type === "draw_point") {
+    const expectedKeys = Object.keys(answer?.value ?? {});
+    if (expectedKeys.length === 0) {
+      return false;
+    }
+    return expectedKeys.every((key) => isNonEmptyValue(value?.[key]));
+  }
+
+  return false;
+}
+
+function getProblemCompletionStatus(problem, datasetId = state.selectedDatasetId) {
+  const descriptors = getProblemResponseDescriptors(problem);
+  const incompleteCount = descriptors.filter(
+    (entry) => !isResponseComplete(entry.response, state.responseValues[entry.key], entry.answer),
+  ).length;
+  const isCompletable = incompleteCount === 0;
+  const completionKey = makeProblemCompletionKey(datasetId, problem.page, problem.id);
+  const isComplete = isCompletable && Boolean(state.completedProblems[completionKey]);
+
+  let message = "";
+  if (!isCompletable) {
+    message = incompleteCount === 1
+      ? "入力が1か所そろうと完了にできます"
+      : `入力が${incompleteCount}か所そろうと完了にできます`;
+  } else if (isComplete) {
+    message = "この問題は完了です";
+  } else if (descriptors.length === 0) {
+    message = "入力欄はありません。完了を付けられます";
+  } else {
+    message = "入力済みです。完了を付けられます";
+  }
+
+  return {
+    isCompletable,
+    isComplete,
+    message,
+    completionKey,
+  };
+}
+
+function sanitizeCompletedProblems() {
+  const nextCompletedProblems = {};
+
+  for (const entry of state.datasetCatalog) {
+    const dataset = state.datasetsById[entry.id];
+    for (const page of dataset?.pages ?? []) {
+      for (const problem of page.problems ?? []) {
+        const problemWithPage = { ...problem, page: page.page };
+        const status = getProblemCompletionStatus(problemWithPage, entry.id);
+        if (status.isComplete) {
+          nextCompletedProblems[status.completionKey] = true;
+        }
+      }
+    }
+  }
+
+  if (!areEqual(state.completedProblems, nextCompletedProblems)) {
+    state.completedProblems = nextCompletedProblems;
+    persistCompletedProblems();
+  }
+}
+
+function toggleProblemComplete(problem, shouldComplete) {
+  const status = getProblemCompletionStatus(problem);
+  const nextCompletedProblems = { ...state.completedProblems };
+
+  if (shouldComplete && status.isCompletable) {
+    nextCompletedProblems[status.completionKey] = true;
+  } else {
+    delete nextCompletedProblems[status.completionKey];
+  }
+
+  if (!areEqual(state.completedProblems, nextCompletedProblems)) {
+    state.completedProblems = nextCompletedProblems;
+    persistCompletedProblems();
+  }
+
+  renderProgressViews();
+}
+
+function buildPageProgressMap() {
+  const summaries = {};
+
+  for (const entry of state.datasetCatalog) {
+    const dataset = state.datasetsById[entry.id];
+    for (const page of dataset?.pages ?? []) {
+      const problems = page.problems.map((problem) => ({ ...problem, page: page.page }));
+      const completeCount = problems.filter(
+        (problem) => getProblemCompletionStatus(problem, entry.id).isComplete,
+      ).length;
+
+      summaries[makePageKey(entry.id, page.page)] = {
+        totalCount: problems.length,
+        completeCount,
+        remainingCount: problems.length - completeCount,
+      };
+    }
+  }
+
+  return summaries;
+}
+
+function formatPageOptionLabel(entry, progressMap) {
+  const progress = progressMap?.[entry.key];
+  if (!progress) {
+    return `${entry.page}ページ / ${entry.datasetLabel}`;
+  }
+  return `${entry.page}ページ / ${entry.datasetLabel} / ${progress.completeCount}/${progress.totalCount} 完了`;
+}
+
+function renderPageProgress(progressMap) {
+  const dataset = state.datasetsById[state.selectedDatasetId];
+  elements.pageProgress.innerHTML = "";
+
+  if (!dataset) {
+    return;
+  }
+
+  const list = document.createElement("div");
+  list.className = "page-progress-grid";
+
+  for (const page of dataset.pages ?? []) {
+    const pageKey = makePageKey(state.selectedDatasetId, page.page);
+    const summary = progressMap[pageKey] ?? {
+      totalCount: page.problems.length,
+      completeCount: 0,
+      remainingCount: page.problems.length,
+    };
+
+    const card = document.createElement("article");
+    card.className = "page-progress-card";
+    if (state.selectedPageKey === pageKey) {
+      card.dataset.active = "true";
+    }
+
+    const title = document.createElement("p");
+    title.className = "page-progress-title";
+    title.textContent = `${page.page}ページ`;
+
+    const counts = document.createElement("p");
+    counts.className = "page-progress-counts";
+    counts.textContent = `${summary.completeCount}/${summary.totalCount} 完了`;
+
+    const remaining = document.createElement("p");
+    remaining.className = "page-progress-remaining";
+    remaining.textContent = `残り ${summary.remainingCount}問`;
+
+    card.append(title, counts, remaining);
+    list.appendChild(card);
+  }
+
+  elements.pageProgress.appendChild(list);
+}
+
+function renderProgressViews() {
+  const progressMap = buildPageProgressMap();
+  refreshPageFilterLabels(progressMap);
+  renderPageProgress(progressMap);
+}
+
 function handleResponseChange(responseKey, valueOrUpdater) {
   const currentValue = state.responseValues[responseKey];
   const nextValue =
@@ -278,7 +528,11 @@ function handleResponseChange(responseKey, valueOrUpdater) {
 
   const nextResponseValues = { ...state.responseValues };
   nextResponseValues[responseKey] = cloneSerializable(nextValue);
-  commitResponseValues(nextResponseValues);
+
+  if (commitResponseValues(nextResponseValues)) {
+    sanitizeCompletedProblems();
+    renderProgressViews();
+  }
 }
 
 function clearResponseKeys(responseKeys) {
@@ -289,6 +543,7 @@ function clearResponseKeys(responseKeys) {
   }
 
   if (commitResponseValues(nextResponseValues)) {
+    sanitizeCompletedProblems();
     render();
   }
 }
@@ -313,6 +568,7 @@ function undoHistory() {
   state.responseValues = cloneSerializable(previous) ?? {};
   persistResponseValues();
   persistHistoryState();
+  sanitizeCompletedProblems();
   render();
 }
 
@@ -328,6 +584,7 @@ function redoHistory() {
   state.responseValues = cloneSerializable(next) ?? {};
   persistResponseValues();
   persistHistoryState();
+  sanitizeCompletedProblems();
   render();
 }
 
@@ -340,7 +597,11 @@ function render() {
     responseValues: state.responseValues,
     onResponseChange: handleResponseChange,
     onClearProblem: clearProblemResponses,
+    getProblemCompletionStatus,
+    onToggleProblemComplete: toggleProblemComplete,
+    onProblemStatusChange: renderProgressViews,
   });
+  renderProgressViews();
   updateToolbar();
 }
 
@@ -376,6 +637,7 @@ async function applyPageSelection(pageKey) {
 
 async function bootstrap() {
   state.responseValues = loadPersistedResponseValues();
+  state.completedProblems = loadPersistedCompletedProblems();
   const historyState = loadPersistedHistoryState();
   state.undoStack = historyState.undoStack;
   state.redoStack = historyState.redoStack;
@@ -394,9 +656,11 @@ async function bootstrap() {
   );
   state.datasetsById = Object.fromEntries(datasets);
   state.pageCatalog = buildPageCatalog(catalog, state.datasetsById);
+  sanitizeCompletedProblems();
 
+  const progressMap = buildPageProgressMap();
   populateDatasetSelect(catalog);
-  populatePageFilter(state.pageCatalog);
+  populatePageFilter(state.pageCatalog, progressMap);
 
   elements.datasetSelect.addEventListener("change", async (event) => {
     await applyDataset(event.target.value, "all");

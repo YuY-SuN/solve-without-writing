@@ -59,6 +59,48 @@ function renderProblem(problem, options) {
   headerSide.className = "problem-header-side";
   headerSide.appendChild(meta);
 
+  const completionBlock = document.createElement("div");
+  completionBlock.className = "problem-completion-block";
+
+  const completionLabel = document.createElement("label");
+  completionLabel.className = "problem-completion-toggle";
+
+  const completionCheckbox = document.createElement("input");
+  completionCheckbox.type = "checkbox";
+  completionCheckbox.className = "problem-completion-input";
+
+  const completionText = document.createElement("span");
+  completionText.textContent = "完了";
+  completionLabel.append(completionCheckbox, completionText);
+
+  const completionHint = document.createElement("p");
+  completionHint.className = "problem-completion-hint";
+
+  completionBlock.append(completionLabel, completionHint);
+  headerSide.appendChild(completionBlock);
+
+  function updateCompletionUi() {
+    const status = options.getProblemCompletionStatus?.(problem) ?? {
+      isCompletable: true,
+      isComplete: false,
+      message: "",
+    };
+
+    completionCheckbox.checked = status.isComplete;
+    completionCheckbox.disabled = !status.isCompletable;
+    completionHint.textContent = status.message ?? "";
+    article.dataset.completionState = status.isComplete
+      ? "complete"
+      : status.isCompletable
+        ? "ready"
+        : "locked";
+  }
+
+  completionCheckbox.addEventListener("change", (event) => {
+    options.onToggleProblemComplete?.(problem, event.target.checked);
+    updateCompletionUi();
+  });
+
   if (options.onClearProblem) {
     const clearButton = document.createElement("button");
     clearButton.type = "button";
@@ -66,6 +108,7 @@ function renderProblem(problem, options) {
     clearButton.textContent = "この問題をクリア";
     clearButton.addEventListener("click", () => {
       options.onClearProblem(problem);
+      updateCompletionUi();
     });
     headerSide.appendChild(clearButton);
   }
@@ -75,11 +118,20 @@ function renderProblem(problem, options) {
   const prompt = renderPrompt(problem);
   const visuals = document.createElement("div");
   visuals.className = "problem-visuals";
+
+  const updateCompletionAfterResponse = () => {
+    updateCompletionUi();
+    options.onProblemStatusChange?.();
+  };
+
   renderVisualList(problem.visuals ?? [], visuals, {
     response: problem.response,
     responseKey: problem.id,
     value: options.responseValues?.[problem.id] ?? null,
-    onChange: (nextValue) => options.onResponseChange?.(problem.id, nextValue),
+    onChange: (nextValue) => {
+      options.onResponseChange?.(problem.id, nextValue);
+      updateCompletionAfterResponse();
+    },
     answer: problem.answer,
     answerVisuals: problem.answerVisuals ?? [],
   });
@@ -110,7 +162,12 @@ function renderProblem(problem, options) {
         response: item.response,
         responseKey,
         value: responseKey ? options.responseValues?.[responseKey] ?? null : null,
-        onChange: responseKey ? (nextValue) => options.onResponseChange?.(responseKey, nextValue) : null,
+        onChange: responseKey
+          ? (nextValue) => {
+              options.onResponseChange?.(responseKey, nextValue);
+              updateCompletionAfterResponse();
+            }
+          : null,
         answer: item.answer,
         answerVisuals: item.answerVisuals ?? [],
       });
@@ -120,7 +177,10 @@ function renderProblem(problem, options) {
       const responseNode = renderResponse(item.response, {
         responseKey,
         value: options.responseValues?.[responseKey] ?? null,
-        onChange: (nextValue) => options.onResponseChange?.(responseKey, nextValue),
+        onChange: (nextValue) => {
+          options.onResponseChange?.(responseKey, nextValue);
+          updateCompletionAfterResponse();
+        },
       });
       if (responseNode) {
         itemNode.appendChild(responseNode);
@@ -141,7 +201,10 @@ function renderProblem(problem, options) {
     const responseNode = renderResponse(problem.response, {
       responseKey: problem.id,
       value: options.responseValues?.[problem.id] ?? null,
-      onChange: (nextValue) => options.onResponseChange?.(problem.id, nextValue),
+      onChange: (nextValue) => {
+        options.onResponseChange?.(problem.id, nextValue);
+        updateCompletionAfterResponse();
+      },
     });
     if (responseNode) {
       footer.appendChild(responseNode);
@@ -164,6 +227,8 @@ function renderProblem(problem, options) {
   if (footer.childElementCount > 0) {
     article.appendChild(footer);
   }
+
+  updateCompletionUi();
 
   return article;
 }

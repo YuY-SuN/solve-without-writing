@@ -94,6 +94,52 @@ button:disabled {
   gap: 20px;
 }
 
+.page-progress-panel {
+  margin-bottom: 20px;
+}
+
+.page-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.page-progress-card {
+  padding: 14px 16px;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(23, 32, 51, 0.04);
+}
+
+.page-progress-card[data-active="true"] {
+  border-color: #8ab4ff;
+  background: #eef5ff;
+}
+
+.page-progress-title,
+.page-progress-counts,
+.page-progress-remaining,
+.problem-completion-hint {
+  margin: 0;
+}
+
+.page-progress-title {
+  font-size: 0.92rem;
+  color: #55627a;
+}
+
+.page-progress-counts {
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.page-progress-remaining {
+  margin-top: 2px;
+  color: #23406f;
+  font-size: 0.92rem;
+}
+
 .problem-card {
   background: #fff;
   border: 1px solid #dbe4f0;
@@ -121,6 +167,32 @@ button:disabled {
   display: grid;
   gap: 10px;
   justify-items: end;
+}
+
+.problem-completion-block {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+}
+
+.problem-completion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.problem-completion-input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #2f6fed;
+}
+
+.problem-completion-hint {
+  color: #55627a;
+  font-size: 0.86rem;
+  text-align: right;
 }
 
 .problem-heading h2 {
