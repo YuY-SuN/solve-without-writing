@@ -672,3 +672,13 @@ pre {
     border-color: #cbd5e1;
   }
 }
+
+.transfer-visuals-block {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.transfer-visuals-block .visual-panel {
+  background: #fbfdff;
+}

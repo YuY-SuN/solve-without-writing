@@ -1,5 +1,5 @@
 import { renderProblems } from "./renderers/ProblemRenderer.js";
-import { renderPrompt } from "./renderers/TextRenderer.js";
+import { renderVisualList } from "./renderers/VisualRenderer.js";
 
 const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
 const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
@@ -165,6 +165,120 @@ function getVisibleCompletedProblems() {
 
 function getTransferProblems() {
   return getAllProblems(state.dataset).filter((problem) => getProblemCompletionStatus(problem).isComplete);
+}
+
+function cloneDeep(value) {
+  return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
+}
+
+function applyNamedValuesToVisual(value, mapping = {}) {
+  if (Array.isArray(value)) {
+    return value.map((entry) => applyNamedValuesToVisual(entry, mapping));
+  }
+
+  if (value && typeof value === "object") {
+    if (value.blank === true && value.key && Object.prototype.hasOwnProperty.call(mapping, value.key)) {
+      return mapping[value.key];
+    }
+
+    const next = {};
+    for (const [key, entry] of Object.entries(value)) {
+      next[key] = applyNamedValuesToVisual(entry, mapping);
+    }
+    return next;
+  }
+
+  return value;
+}
+
+function normalizePointListFromValue(rawValue) {
+  if (Array.isArray(rawValue)) {
+    return rawValue.map((entry) => ({ label: "", value: typeof entry === "object" && entry?.type === "fraction" ? entry.numerator / entry.denominator : entry }))
+      .filter((entry) => typeof entry.value === "number");
+  }
+
+  if (rawValue && typeof rawValue === "object") {
+    if (Array.isArray(rawValue.points)) {
+      return rawValue.points.map((entry) => ({ label: "", value: entry })).filter((entry) => typeof entry.value === "number");
+    }
+
+    return Object.entries(rawValue).map(([label, value]) => ({ label, value })).filter((entry) => typeof entry.value === "number");
+  }
+
+  return [];
+}
+
+function buildHistogramVisual(template, rawValue) {
+  if (!template || !rawValue || !Array.isArray(rawValue.bins)) {
+    return null;
+  }
+  const next = cloneDeep(template);
+  next.values = rawValue.bins.map((entry) => Number(entry) || 0);
+  return next;
+}
+
+function buildNumberLineVisual(template, rawValue) {
+  if (!template) {
+    return null;
+  }
+  const points = normalizePointListFromValue(rawValue);
+  const next = cloneDeep(template);
+  next.points = [
+    ...(Array.isArray(template.points) ? template.points : []),
+    ...points,
+  ];
+  return next;
+}
+
+function buildTransferVisualsForNode(node, responseValue) {
+  const mode = state.transferContentMode;
+  const visuals = [];
+  const problemResponse = node.response?.type && node.response.type !== "none" ? node.response : null;
+
+  for (const visual of node.visuals ?? []) {
+    if (visual.type === "table" || visual.type === "factorization_ladder") {
+      if (mode === "response" && problemResponse && responseValue && typeof responseValue === "object") {
+        visuals.push(applyNamedValuesToVisual(cloneDeep(visual), responseValue));
+        continue;
+      }
+      if (mode === "answer" && node.answer?.value && typeof node.answer.value === "object") {
+        visuals.push(applyNamedValuesToVisual(cloneDeep(visual), node.answer.value));
+        continue;
+      }
+      visuals.push(cloneDeep(visual));
+      continue;
+    }
+
+    if (visual.type === "number_line" && problemResponse?.type === "draw_graph") {
+      const source = mode === "answer" ? (node.answer?.value?.points ?? node.answer?.value) : responseValue;
+      const nextVisual = buildNumberLineVisual(visual, source);
+      visuals.push(nextVisual ?? cloneDeep(visual));
+      continue;
+    }
+
+    if (visual.type === "number_line" && problemResponse?.type === "draw_point") {
+      const source = mode === "answer" ? node.answer?.value : responseValue;
+      const nextVisual = buildNumberLineVisual(visual, source);
+      visuals.push(nextVisual ?? cloneDeep(visual));
+      continue;
+    }
+
+    if (visual.type === "graph_grid" && problemResponse?.type === "draw_graph") {
+      const histogramTemplate = (node.answerVisuals ?? []).find((entry) => entry.type === "histogram") ?? null;
+      const source = mode === "answer" ? node.answer?.value : responseValue;
+      const histogram = buildHistogramVisual(histogramTemplate, source);
+      visuals.push(histogram ?? cloneDeep(visual));
+      continue;
+    }
+
+    visuals.push(cloneDeep(visual));
+  }
+
+  if (mode === "answer" && visuals.length === 0 && (node.answerVisuals?.length ?? 0) > 0) {
+    return cloneDeep(node.answerVisuals);
+  }
+
+  return visuals;
 }
 
 function getProblemViewKey(problem, datasetId = state.selectedDatasetId) {
@@ -989,12 +1103,15 @@ function collectTransferRows(problem, items, rows, mode) {
   for (const item of items ?? []) {
     const hasResponse = Boolean(item.response && item.response.type !== "none");
     const hasAnswer = hasTransferAnswerContent(item.answer);
+    const responseValue = state.responseValues[getItemResponseKey(problem, item)];
+    const visuals = buildTransferVisualsForNode(item, responseValue);
 
     if (mode === "response" && hasResponse) {
       rows.push({
         label: item.no ? `小問${item.no}` : (item.label ?? "小問"),
         prompt: item.text ?? "",
-        value: formatTransferResponseValue(item.response, state.responseValues[getItemResponseKey(problem, item)], item.answer, item.answerVisuals ?? []),
+        visuals,
+        value: formatTransferResponseValue(item.response, responseValue, item.answer, item.answerVisuals ?? []),
       });
     }
 
@@ -1002,6 +1119,7 @@ function collectTransferRows(problem, items, rows, mode) {
       rows.push({
         label: item.no ? `小問${item.no}` : (item.label ?? "小問"),
         prompt: item.text ?? "",
+        visuals,
         value: formatTransferAnswerValue(item.answer, item.response, item.answerVisuals ?? []),
       });
     }
@@ -1015,12 +1133,15 @@ function collectTransferRows(problem, items, rows, mode) {
 function buildTransferRows(problem) {
   const rows = [];
   const mode = state.transferContentMode;
+  const responseValue = state.responseValues[problem.id];
+  const visuals = buildTransferVisualsForNode(problem, responseValue);
 
   if (mode === "response" && problem.response && problem.response.type !== "none") {
     rows.push({
       label: "問題本体",
       prompt: problem.prompt?.text ?? "",
-      value: formatTransferResponseValue(problem.response, state.responseValues[problem.id], problem.answer, problem.answerVisuals ?? []),
+      visuals,
+      value: formatTransferResponseValue(problem.response, responseValue, problem.answer, problem.answerVisuals ?? []),
     });
   }
 
@@ -1028,6 +1149,7 @@ function buildTransferRows(problem) {
     rows.push({
       label: "問題本体",
       prompt: problem.prompt?.text ?? "",
+      visuals,
       value: formatTransferAnswerValue(problem.answer, problem.response, problem.answerVisuals ?? []),
     });
   }
@@ -1038,6 +1160,7 @@ function buildTransferRows(problem) {
     rows.push({
       label: mode === "answer" ? "解答" : "答え",
       prompt: mode === "answer" ? "入力欄がない問題" : "入力欄がない問題",
+      visuals,
       value: formatTransferAnswerValue(problem.answer, problem.response, problem.answerVisuals ?? []),
     });
   }
@@ -1079,7 +1202,6 @@ function renderTransferMode() {
 
     header.append(title, meta);
     card.appendChild(header);
-    card.appendChild(renderPrompt(problem));
 
     const rows = buildTransferRows(problem);
     const answerBlock = document.createElement("div");
@@ -1105,11 +1227,20 @@ function renderTransferMode() {
       rowPrompt.className = "transfer-answer-item-prompt";
       rowPrompt.textContent = row.prompt || "";
 
+      item.append(rowLabel, rowPrompt);
+
+      if (row.visuals?.length) {
+        const visualBlock = document.createElement("div");
+        visualBlock.className = "transfer-visuals-block";
+        renderVisualList(row.visuals, visualBlock, {});
+        item.appendChild(visualBlock);
+      }
+
       const rowValue = document.createElement("pre");
       rowValue.className = "transfer-answer-item-value";
       rowValue.textContent = row.value;
 
-      item.append(rowLabel, rowPrompt, rowValue);
+      item.appendChild(rowValue);
       answerList.appendChild(item);
     }
 
