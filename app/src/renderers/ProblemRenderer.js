@@ -169,6 +169,9 @@ function renderProblem(problem, options) {
   headerSide.className = "problem-header-side";
   headerSide.appendChild(meta);
 
+  const problemControls = document.createElement("div");
+  problemControls.className = "problem-controls";
+
   const detailActions = document.createElement("div");
   detailActions.className = "problem-detail-actions";
   const canShowAnswer = hasAnswerContent(problem);
@@ -183,7 +186,7 @@ function renderProblem(problem, options) {
   explanationToggle.className = "secondary-button";
 
   detailActions.append(answerToggle, explanationToggle);
-  headerSide.appendChild(detailActions);
+  problemControls.appendChild(detailActions);
 
   const completionBlock = document.createElement("div");
   completionBlock.className = "problem-completion-block";
@@ -203,6 +206,7 @@ function renderProblem(problem, options) {
   completionHint.className = "problem-completion-hint";
 
   completionBlock.append(completionLabel, completionHint);
+  problemControls.appendChild(completionBlock);
 
   function updateCompletionUi() {
     const status = options.getProblemCompletionStatus?.(problem) ?? {
@@ -327,7 +331,7 @@ function renderProblem(problem, options) {
   if (footer.childElementCount > 0) {
     article.appendChild(footer);
   }
-  article.appendChild(completionBlock);
+  article.appendChild(problemControls);
 
   updateDetailToggleUi();
   updateCompletionUi();
