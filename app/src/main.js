@@ -1,4 +1,5 @@
 import { renderProblems } from "./renderers/ProblemRenderer.js";
+import { renderPrompt } from "./renderers/TextRenderer.js";
 
 const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
 const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
@@ -23,9 +24,12 @@ const state = {
   undoStack: [],
   redoStack: [],
   dataset: null,
+  transferMode: false,
+  transferContentMode: "response",
 };
 
 const elements = {
+  appShell: document.querySelector(".app-shell"),
   title: document.querySelector("#app-title"),
   source: document.querySelector("#app-source"),
   datasetSelect: document.querySelector("#dataset-select"),
@@ -35,10 +39,14 @@ const elements = {
   redoClear: document.querySelector("#redo-clear"),
   toggleAnswers: document.querySelector("#toggle-answers"),
   toggleExplanations: document.querySelector("#toggle-explanations"),
+  toggleTransferMode: document.querySelector("#toggle-transfer-mode"),
+  toggleTransferContent: document.querySelector("#toggle-transfer-content"),
+  printTransfer: document.querySelector("#print-transfer"),
   exportStorage: document.querySelector("#export-storage"),
   importStorage: document.querySelector("#import-storage"),
   importStorageFile: document.querySelector("#import-storage-file"),
   storageTransferStatus: document.querySelector("#storage-transfer-status"),
+  pageProgressPanel: document.querySelector(".page-progress-panel"),
   pageProgress: document.querySelector("#page-progress"),
   problemList: document.querySelector("#problem-list"),
 };
@@ -149,6 +157,14 @@ function getVisibleProblems() {
 
 function getVisibleResponseKeys() {
   return getVisibleProblems().flatMap((problem) => getProblemResponseKeys(problem));
+}
+
+function getVisibleCompletedProblems() {
+  return getVisibleProblems().filter((problem) => getProblemCompletionStatus(problem).isComplete);
+}
+
+function getTransferProblems() {
+  return getAllProblems(state.dataset).filter((problem) => getProblemCompletionStatus(problem).isComplete);
 }
 
 function getProblemViewKey(problem, datasetId = state.selectedDatasetId) {
@@ -412,14 +428,33 @@ function refreshPageFilterLabels(progressMap) {
 }
 
 function updateToolbar() {
+  const transferProblems = state.dataset ? getTransferProblems() : [];
   elements.clearVisible.textContent = state.selectedPageKey === "all" ? "表示中をクリア" : "このページをクリア";
-  elements.clearVisible.disabled = getVisibleResponseKeys().length === 0;
-  elements.undoClear.disabled = state.undoStack.length === 0;
-  elements.redoClear.disabled = state.redoStack.length === 0;
+  elements.clearVisible.disabled = state.transferMode || getVisibleResponseKeys().length === 0;
+  elements.undoClear.disabled = state.transferMode || state.undoStack.length === 0;
+  elements.redoClear.disabled = state.transferMode || state.redoStack.length === 0;
   elements.toggleAnswers.textContent = state.showAnswers ? "答えを隠す" : "答えを表示";
   elements.toggleExplanations.textContent = state.showExplanations
     ? "解説を隠す"
     : "解説を表示";
+  elements.toggleAnswers.disabled = state.transferMode;
+  elements.toggleExplanations.disabled = state.transferMode;
+  elements.toggleTransferMode.textContent = state.transferMode ? "通常表示に戻る" : "転記モード";
+  elements.toggleTransferContent.disabled = !state.transferMode;
+  elements.toggleTransferContent.textContent = state.transferContentMode === "answer"
+    ? "転記内容: 解答"
+    : "転記内容: 入力内容";
+  elements.pageFilter.disabled = state.transferMode;
+  elements.printTransfer.disabled = !state.transferMode || transferProblems.length === 0;
+  elements.printTransfer.textContent = transferProblems.length > 0
+    ? `転記を印刷 (${transferProblems.length}問)`
+    : "転記を印刷";
+  if (elements.appShell) {
+    elements.appShell.dataset.viewMode = state.transferMode ? "transfer" : "normal";
+  }
+  if (elements.pageProgressPanel) {
+    elements.pageProgressPanel.dataset.mode = state.transferMode ? "transfer" : "normal";
+  }
 }
 
 function updateHeader() {
@@ -741,9 +776,358 @@ function renderPageProgress(progressMap) {
   elements.pageProgress.appendChild(list);
 }
 
+function renderTransferSummary(datasetProblems, completedProblems) {
+  elements.pageProgress.innerHTML = "";
+  const card = document.createElement("article");
+  card.className = "transfer-summary-card";
+
+  const title = document.createElement("p");
+  title.className = "page-progress-title";
+  title.textContent = state.transferContentMode === "answer" ? "転記モード: 解答" : "転記モード: 入力内容";
+
+  const counts = document.createElement("p");
+  counts.className = "page-progress-counts";
+  counts.textContent = `${completedProblems.length}/${datasetProblems.length} 問を転記対象として表示`;
+
+  const note = document.createElement("p");
+  note.className = "page-progress-remaining";
+  note.textContent = "現在の問題セットの全ページから完了済み問題だけを抽出しています。ページ絞り込みは転記モード中は無効です。";
+
+  card.append(title, counts, note);
+  elements.pageProgress.appendChild(card);
+}
+
+function formatTransferPrimitive(value) {
+  if (value === null || value === undefined) {
+    return "未入力";
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed === "" ? "未入力" : trimmed;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  if (Array.isArray(value)) {
+    const parts = value.map((entry) => formatTransferPrimitive(entry)).filter((entry) => entry !== "未入力");
+    return parts.length > 0 ? parts.join("、") : "未入力";
+  }
+
+  if (typeof value === "object") {
+    if (typeof value.formula === "string") {
+      return value.formula;
+    }
+    if (value.type === "fraction" && Number.isFinite(value.numerator) && Number.isFinite(value.denominator)) {
+      return `${value.numerator}/${value.denominator}`;
+    }
+    return JSON.stringify(value, null, 2);
+  }
+
+  return String(value);
+}
+
+function formatTransferNamedObject(value, labels = null) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return formatTransferPrimitive(value);
+  }
+
+  const entries = labels
+    ? labels.map((entry) => [entry.key, entry.label ?? entry.key])
+    : Object.keys(value).map((key) => [key, key]);
+
+  const parts = [];
+  for (const [key, label] of entries) {
+    if (!(key in value)) {
+      continue;
+    }
+    parts.push(`${label}: ${formatTransferPrimitive(value[key])}`);
+  }
+
+  for (const [key, entryValue] of Object.entries(value)) {
+    if (entries.some(([entryKey]) => entryKey === key)) {
+      continue;
+    }
+    parts.push(`${key}: ${formatTransferPrimitive(entryValue)}`);
+  }
+
+  return parts.length > 0 ? parts.join(" / ") : "未入力";
+}
+
+function formatTransferDrawGraphValue(rawValue, answerVisuals = []) {
+  if (Array.isArray(rawValue)) {
+    return rawValue.map((entry) => formatTransferPrimitive(entry)).join("、");
+  }
+
+  if (rawValue && typeof rawValue === "object") {
+    if (Array.isArray(rawValue.points)) {
+      return rawValue.points.map((entry) => formatTransferPrimitive(entry)).join("、");
+    }
+
+    if (Array.isArray(rawValue.bins)) {
+      const histogram = (answerVisuals ?? []).find((visual) => visual.type === "histogram");
+      if (histogram?.xAxis?.bins) {
+        return rawValue.bins.map((entry, index) => {
+          const bin = histogram.xAxis.bins[index];
+          const label = bin ? `${bin.from}-${bin.to}` : `bin${index + 1}`;
+          return `${label}: ${formatTransferPrimitive(entry)}`;
+        }).join(" / ");
+      }
+      return rawValue.bins.map((entry, index) => `bin${index + 1}: ${formatTransferPrimitive(entry)}`).join(" / ");
+    }
+  }
+
+  return formatTransferPrimitive(rawValue);
+}
+
+function formatTransferResponseValue(response, rawValue, answer = null, answerVisuals = []) {
+  if (!response) {
+    return formatTransferPrimitive(rawValue);
+  }
+
+  if (response.type === "blank") {
+    const base = formatTransferPrimitive(rawValue);
+    return response.unit && base !== "未入力" ? `${base}${response.unit}` : base;
+  }
+
+  if (response.type === "free_text") {
+    return formatTransferPrimitive(rawValue);
+  }
+
+  if (response.type === "multi_blank") {
+    return formatTransferNamedObject(rawValue, response.fields ?? []);
+  }
+
+  if (response.type === "choice") {
+    const selectedValues = response.multiple
+      ? (Array.isArray(rawValue) ? rawValue : [])
+      : [rawValue].filter((value) => value !== null && value !== undefined && value !== "");
+    const labels = selectedValues.map((value) => {
+      const choice = (response.choices ?? []).find((entry) => (entry.key ?? entry.text ?? "") === value);
+      return choice?.text ?? String(value);
+    });
+    return labels.length > 0 ? labels.join("、") : "未入力";
+  }
+
+  if (response.type === "table_fill" || response.type === "ladder_fill") {
+    return formatTransferNamedObject(rawValue, response.targets ?? []);
+  }
+
+  if (response.type === "draw_point") {
+    const labels = Object.keys(answer?.value ?? {}).map((key) => ({ key, label: key }));
+    return formatTransferNamedObject(rawValue, labels);
+  }
+
+  if (response.type === "draw_graph") {
+    return formatTransferDrawGraphValue(rawValue, answerVisuals);
+  }
+
+  return formatTransferPrimitive(rawValue);
+}
+
+function formatTransferAnswerValue(answer, response = null, answerVisuals = []) {
+  if (!answer) {
+    return "答えデータなし";
+  }
+
+  if (typeof answer.display === "string") {
+    return answer.display;
+  }
+
+  if (Array.isArray(answer.display)) {
+    return answer.display.join("、");
+  }
+
+  if (response?.type === "multi_blank") {
+    return formatTransferNamedObject(answer.value, response.fields ?? []);
+  }
+
+  if (response?.type === "table_fill" || response?.type === "ladder_fill") {
+    return formatTransferNamedObject(answer.value, response.targets ?? []);
+  }
+
+  if (response?.type === "draw_point") {
+    const labels = Object.keys(answer.value ?? {}).map((key) => ({ key, label: key }));
+    const relation = answer.relation ? ` (${answer.relation})` : "";
+    return `${formatTransferNamedObject(answer.value, labels)}${relation}`;
+  }
+
+  if (response?.type === "draw_graph") {
+    if (answer?.value?.points) {
+      return answer.value.points.map((entry) => formatTransferPrimitive(entry)).join("、");
+    }
+    if (answer?.value?.bins) {
+      return formatTransferDrawGraphValue(answer.value, answerVisuals);
+    }
+  }
+
+  if (typeof answer.value === "string" || typeof answer.value === "number") {
+    return String(answer.value);
+  }
+
+  if (Array.isArray(answer.value)) {
+    return answer.value.map((entry) => formatTransferPrimitive(entry)).join("、");
+  }
+
+  if (answer.display && typeof answer.display === "object") {
+    return JSON.stringify(answer.display, null, 2);
+  }
+
+  return JSON.stringify(answer.value ?? answer, null, 2);
+}
+
+function hasTransferAnswerContent(answer) {
+  if (!answer || typeof answer !== "object") {
+    return false;
+  }
+  return answer.value !== undefined || answer.display !== undefined;
+}
+
+function collectTransferRows(problem, items, rows, mode) {
+  for (const item of items ?? []) {
+    const hasResponse = Boolean(item.response && item.response.type !== "none");
+    const hasAnswer = hasTransferAnswerContent(item.answer);
+
+    if (mode === "response" && hasResponse) {
+      rows.push({
+        label: item.no ? `小問${item.no}` : (item.label ?? "小問"),
+        prompt: item.text ?? "",
+        value: formatTransferResponseValue(item.response, state.responseValues[getItemResponseKey(problem, item)], item.answer, item.answerVisuals ?? []),
+      });
+    }
+
+    if (mode === "answer" && hasAnswer) {
+      rows.push({
+        label: item.no ? `小問${item.no}` : (item.label ?? "小問"),
+        prompt: item.text ?? "",
+        value: formatTransferAnswerValue(item.answer, item.response, item.answerVisuals ?? []),
+      });
+    }
+
+    if (item.items?.length) {
+      collectTransferRows(problem, item.items, rows, mode);
+    }
+  }
+}
+
+function buildTransferRows(problem) {
+  const rows = [];
+  const mode = state.transferContentMode;
+
+  if (mode === "response" && problem.response && problem.response.type !== "none") {
+    rows.push({
+      label: "問題本体",
+      prompt: problem.prompt?.text ?? "",
+      value: formatTransferResponseValue(problem.response, state.responseValues[problem.id], problem.answer, problem.answerVisuals ?? []),
+    });
+  }
+
+  if (mode === "answer" && hasTransferAnswerContent(problem.answer)) {
+    rows.push({
+      label: "問題本体",
+      prompt: problem.prompt?.text ?? "",
+      value: formatTransferAnswerValue(problem.answer, problem.response, problem.answerVisuals ?? []),
+    });
+  }
+
+  collectTransferRows(problem, problem.items, rows, mode);
+
+  if (rows.length === 0 && hasTransferAnswerContent(problem.answer)) {
+    rows.push({
+      label: mode === "answer" ? "解答" : "答え",
+      prompt: mode === "answer" ? "入力欄がない問題" : "入力欄がない問題",
+      value: formatTransferAnswerValue(problem.answer, problem.response, problem.answerVisuals ?? []),
+    });
+  }
+
+  return rows;
+}
+
+function renderTransferMode() {
+  const datasetProblems = getAllProblems(state.dataset);
+  const completedProblems = getTransferProblems();
+  elements.problemList.innerHTML = "";
+  renderTransferSummary(datasetProblems, completedProblems);
+
+  if (completedProblems.length === 0) {
+    const message = document.createElement("p");
+    message.className = "error-message";
+    message.textContent = "この問題セットには、転記モードで表示できる完了済み問題がありません。";
+    elements.problemList.appendChild(message);
+    return;
+  }
+
+  const list = document.createElement("div");
+  list.className = "transfer-list";
+
+  for (const problem of completedProblems) {
+    const card = document.createElement("article");
+    card.className = "transfer-card";
+
+    const header = document.createElement("div");
+    header.className = "transfer-card-header";
+
+    const title = document.createElement("h2");
+    title.className = "transfer-card-title";
+    title.textContent = problem.section.title;
+
+    const meta = document.createElement("p");
+    meta.className = "transfer-meta";
+    meta.textContent = `${problem.page}ページ / ${problem.id}`;
+
+    header.append(title, meta);
+    card.appendChild(header);
+    card.appendChild(renderPrompt(problem));
+
+    const rows = buildTransferRows(problem);
+    const answerBlock = document.createElement("div");
+    answerBlock.className = "transfer-answer-block";
+
+    const answerLabel = document.createElement("p");
+    answerLabel.className = "answer-label";
+    answerLabel.textContent = "転記用回答";
+    answerBlock.appendChild(answerLabel);
+
+    const answerList = document.createElement("div");
+    answerList.className = "transfer-answer-list";
+
+    for (const row of rows) {
+      const item = document.createElement("section");
+      item.className = "transfer-answer-item";
+
+      const rowLabel = document.createElement("p");
+      rowLabel.className = "transfer-answer-item-label";
+      rowLabel.textContent = row.label;
+
+      const rowPrompt = document.createElement("p");
+      rowPrompt.className = "transfer-answer-item-prompt";
+      rowPrompt.textContent = row.prompt || "";
+
+      const rowValue = document.createElement("pre");
+      rowValue.className = "transfer-answer-item-value";
+      rowValue.textContent = row.value;
+
+      item.append(rowLabel, rowPrompt, rowValue);
+      answerList.appendChild(item);
+    }
+
+    answerBlock.appendChild(answerList);
+    card.appendChild(answerBlock);
+    list.appendChild(card);
+  }
+
+  elements.problemList.appendChild(list);
+}
+
 function renderProgressViews() {
   const progressMap = buildPageProgressMap();
   refreshPageFilterLabels(progressMap);
+  if (state.transferMode) {
+    renderTransferSummary(getAllProblems(state.dataset), getTransferProblems());
+    return;
+  }
   renderPageProgress(progressMap);
 }
 
@@ -822,6 +1206,12 @@ function redoHistory() {
 
 function render() {
   const visibleProblems = getVisibleProblems();
+
+  if (state.transferMode) {
+    renderTransferMode();
+    updateToolbar();
+    return;
+  }
 
   renderProblems(elements.problemList, visibleProblems, {
     getProblemAnswerVisibility,
@@ -924,6 +1314,27 @@ async function bootstrap() {
 
   elements.toggleExplanations.addEventListener("click", () => {
     syncExplanationVisibility(!state.showExplanations);
+  });
+
+  elements.toggleTransferMode.addEventListener("click", () => {
+    state.transferMode = !state.transferMode;
+    render();
+  });
+
+  elements.toggleTransferContent.addEventListener("click", () => {
+    state.transferContentMode = state.transferContentMode === "answer" ? "response" : "answer";
+    if (state.transferMode) {
+      render();
+    } else {
+      updateToolbar();
+    }
+  });
+
+  elements.printTransfer.addEventListener("click", () => {
+    if (!state.transferMode || getTransferProblems().length === 0) {
+      return;
+    }
+    window.print();
   });
 
   elements.exportStorage.addEventListener("click", () => {

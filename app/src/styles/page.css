@@ -553,3 +553,122 @@ pre {
   min-height: 32px;
   border-bottom: 2px solid #4b5a75;
 }
+
+.transfer-summary-card {
+  padding: 14px 16px;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  background: #eef5ff;
+  box-shadow: 0 8px 24px rgba(23, 32, 51, 0.04);
+}
+
+.transfer-list {
+  display: grid;
+  gap: 16px;
+}
+
+.transfer-card {
+  padding: 18px 20px;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(23, 32, 51, 0.05);
+}
+
+.transfer-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.transfer-card-title,
+.transfer-meta,
+.transfer-answer-item-label,
+.transfer-answer-item-prompt,
+.transfer-answer-item-value {
+  margin: 0;
+}
+
+.transfer-card-title {
+  font-size: 1.2rem;
+}
+
+.transfer-meta,
+.transfer-answer-item-label {
+  color: #55627a;
+  font-size: 0.92rem;
+}
+
+.transfer-answer-block {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #f8fbff;
+  border: 1px solid #dbe4f0;
+}
+
+.transfer-answer-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.transfer-answer-item {
+  display: grid;
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #dbe4f0;
+}
+
+.transfer-answer-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.transfer-answer-item-prompt {
+  white-space: pre-wrap;
+}
+
+.transfer-answer-item-value {
+  margin-top: 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #dbe4f0;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .app-shell {
+    max-width: none;
+    padding: 0;
+  }
+
+  .toolbar,
+  .toolbar-status,
+  .page-progress-panel[data-mode="normal"] {
+    display: none;
+  }
+
+  .page-progress-panel {
+    margin-bottom: 12px;
+  }
+
+  .problem-list,
+  .transfer-list {
+    gap: 12px;
+  }
+
+  .transfer-card,
+  .problem-card {
+    box-shadow: none;
+    break-inside: avoid;
+    border-color: #cbd5e1;
+  }
+}
