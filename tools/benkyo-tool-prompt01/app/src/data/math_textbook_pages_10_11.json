@@ -404,7 +404,7 @@
                 "type": "blank"
               },
               "answer": {
-                "value": -5
+                "value": 3
               },
               "uncertain": false
             }
@@ -439,7 +439,7 @@
             "type": "none"
           },
           "answer": {},
-          "explanation": "『aよりb大きい数』は a+b，『aよりb小さい数』は a-b と考えられる。",
+          "explanation": "『aよりb大きい数』は a+b，『aよりb小さい数』は a-b と考えられる。したがって『-1より-4小さい数』は -1-(-4)=3。",
           "notes": "例の数直線もあわせて構造化した。",
           "uncertain": false
         }
@@ -720,7 +720,7 @@
                 "type": "blank"
               },
               "answer": {
-                "value": -6
+                "value": 4
               },
               "uncertain": false
             },
@@ -775,7 +775,7 @@
             "type": "none"
           },
           "answer": {},
-          "explanation": "(1) は x+4=2，(2) は -1+(-5)，(3) は 3+x=-5 と考える。",
+          "explanation": "(1) は x+4=2，(2) は -1-(-5)，(3) は 3+x=-5 と考える。",
           "notes": "",
           "uncertain": false
         },
