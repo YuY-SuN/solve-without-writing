@@ -13,4 +13,4 @@
 - 継続的に参照する前提知識、技術的制約、作業ルール、Git運用上の注意は `docs/engineering-notes.md` に集約し、変更が出たら更新すること。
 - ブランチ運用ルールを変えたときは、`docs/engineering-notes.md` にローカルブランチ作成、remote branch push、merge 手順の前提を追記すること。
 - 過去の feature ブランチや先行実装を取り込んで docs が追いついていない場合は、その差分を同じブランチ上で補填してから push すること。
-- `tools/benkyo-tool-prompt01/` の変更では、少なくとも `README.md` と、個別機能docまたは `docs/engineering-notes.md` のどちらを更新したかを明示できる状態にすること。
+- `app/` の変更では、少なくとも `README.md` と、個別機能docまたは `docs/engineering-notes.md` のどちらを更新したかを明示できる状態にすること。

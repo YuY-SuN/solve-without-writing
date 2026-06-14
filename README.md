@@ -1,12 +1,11 @@
 # mintao-benkyo-tool-memo.d
 
-中学生向けの算数・数学教材を、静的Webツールとして再現していくための作業リポジトリです。現在の主対象は `tools/benkyo-tool-prompt01/` で、問題JSONを読み込んで、回答入力、答え・解説表示、進捗管理、記憶データの入出力を行う教材ビューアを育てています。
+中学生向けの算数・数学教材を、単一の静的Webアプリとして再現・拡張していくリポジトリです。問題JSONを読み込んで、回答入力、答え・解説表示、進捗管理、記憶データの入出力を行う教材ビューアを `app/` 配下で育てています。
 
 ## 主な場所
 
-- `tools/benkyo-tool-prompt01/`: 実際のWebツール本体
-- `tools/benkyo-tool-prompt01/app/`: ブラウザで配信する静的アプリ
-- `tools/benkyo-tool-prompt01/app/src/data/`: 問題データと `index.json`
+- `app/`: ブラウザで配信する静的アプリ本体
+- `app/src/data/`: 問題データと `index.json`
 - `docs/`: 機能追加ごとの設計・運用メモ
 - `misc/GPTs-prompts/`: データ生成や変換に使うプロンプト置き場
 
@@ -14,19 +13,39 @@
 
 - `AGENTS.md`: このリポジトリでのドキュメント運用ルール
 - `docs/engineering-notes.md`: 横断的な設計方針、運用ルール、検証上の注意
-- `tools/benkyo-tool-prompt01/README.md`: ツールの起動方法、操作概要、データ運用
+- `docs/app-root-layout.md`: 単一アプリ前提のディレクトリ構成と更新手順
+- `docs/benkyo-tool-prompt01-dataset-selector.md`: dataset 切り替え、入力UI、データ更新の補足
 
 ## 起動
 
 ```bash
-cd tools/benkyo-tool-prompt01/app
+cd app
 python3 -m http.server 4173
 ```
 
 ブラウザで `http://127.0.0.1:4173` を開きます。Windows では `python3` の代わりに `py` や `python` を使って構いません。
 
+## データ追加と更新
+
+上部の「問題セット」コンボボックスと「ページ」コンボボックスは `app/src/data/index.json` を起点に全 dataset を読み、ページを横断して選べるようにしています。最後に開いていた問題セットとページ選択は `localStorage` に保存されるため、再読み込みや次回起動後も同じページを開き直せます。保存済みのページが `index.json` や dataset 更新で消えていた場合は、その dataset 全体表示、さらに dataset 自体も無効なら `defaultDatasetId` へ自動で戻します。
+
+新しい問題JSONを追加したら、`app/src/data/` で次を実行してください。
+
+```bash
+cd app/src/data
+python3 sync_index.py
+```
+
+このツールは `data/` 配下の `index.json` 以外の `.json` を走査し、`index.json` を再生成します。既存の `label` と `defaultDatasetId` は、対応するファイルが残っている限り保持します。
+
+問題データを修正するときは、問題文と `answer` だけでなく `explanation` も同じ規則で見直してください。特に `「aよりb大きい数」= a+b` と `「aよりb小さい数」= a-b` のように符号付きの量を文で扱う設問では、`b` が負数でも記号を読み飛ばさずに整合確認する運用にしています。
+
+## 記憶データの入出力
+
+`記憶を書き出す` は `localStorage` に保持している回答入力、完了フラグ、Undo / Redo 履歴、最後に開いていた問題セットとページを 1 つの JSON ファイルへ保存します。`記憶を読み込む` では、その JSON を選ぶと現在の記憶を置き換えて復元します。
+
 ## 補足
 
 - `file://` 直開きでは `fetch()` が使えないため、静的サーバー経由で開く前提です。
 - 仕様変更や機能追加をしたら、同じ変更セットで `docs/` と関連 `README.md` を更新する運用です。
-- ルート以外の詳しい説明は、各ツール配下の `README.md` に寄せています。
+- このリポジトリは単一アプリを継続拡張する方針なので、実行物は root 直下の `app/` に集約しています。

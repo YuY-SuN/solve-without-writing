@@ -9,7 +9,7 @@
 ## Repository overview
 
 - リポジトリ全体の入口説明はルート `README.md` に置く
-- 主な対象は `tools/benkyo-tool-prompt01/`
+- 主な対象は `app/` を中心とした単一の静的Webアプリ
 - 静的Webツールとして実装しており、サーバーサイドアプリは持たない
 - 画面本体は `app/index.html`
 - 読み込み制御は `app/src/main.js`
@@ -156,7 +156,7 @@
 
 ### 4. Compare時は未コミット変更の扱いを明示する
 
-`master` と比較する際に、未コミット変更を抱えたままブランチ切り替えすると、見た目上は `master` にいても素の `master` ではなくなる。
+`main` と比較する際に、未コミット変更を抱えたままブランチ切り替えすると、見た目上は `main` にいても素の `main` ではなくなる。
 
 教訓:
 - 比較前に、変更を commit するか stash するかを決める
@@ -179,7 +179,7 @@
 - ローカルブランチで内容確認が取れ、ユーザーから問題ない判断が出たら、対応する remote branch も push する
 - remote branch 名は、原則としてローカルブランチ名とそろえる
 - merge はローカルで行う前提を維持し、基底ブランチへ反映する前に不要な未追跡ファイルを混ぜない
-- このリポジトリでは基底ブランチが `main` ではなく `master` だった
+- このリポジトリでは基底ブランチを `main` として扱う
 - タグ付けもローカルで行い、push は別指示まで行わない
 - 無関係な未追跡ファイルはコミットに含めない
 - ただし、機能に必要な新規 data file は `index.json` との整合のため一緒に含める
@@ -230,9 +230,10 @@
 
 - `AGENTS.md`
 - `docs/engineering-notes.md`
+- `docs/app-root-layout.md`
 - `docs/benkyo-tool-prompt01-dataset-selector.md`
 - `docs/benkyo-tool-prompt01-completion-progress-plan.md`
-- `tools/benkyo-tool-prompt01/app/src/main.js`
-- `tools/benkyo-tool-prompt01/app/src/renderers/ProblemRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/renderers/TextRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/data/index.json`
+- `app/src/main.js`
+- `app/src/renderers/ProblemRenderer.js`
+- `app/src/renderers/TextRenderer.js`
+- `app/src/data/index.json`

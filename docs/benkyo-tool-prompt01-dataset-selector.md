@@ -2,7 +2,7 @@
 
 ## Summary
 
-`tools/benkyo-tool-prompt01` に、`data/` 配下の複数問題セットを切り替えて表示する機能を追加した。
+単一アプリ構成の `app/` に、`data/` 配下の複数問題セットを切り替えて表示する機能を追加した。
 
 あわせて、`src/data/index.json` を手作業で保守しなくてよいように、`data/` 配下のJSONを走査して `index.json` を再生成する独立ツール `sync_index.py` を追加した。
 
@@ -72,13 +72,13 @@
 
 - `AGENTS.md`
 - `docs/benkyo-tool-prompt01-dataset-selector.md`
-- `tools/benkyo-tool-prompt01/app/index.html`
-- `tools/benkyo-tool-prompt01/app/src/main.js`
-- `tools/benkyo-tool-prompt01/app/src/styles/page.css`
-- `tools/benkyo-tool-prompt01/app/src/data/index.json`
-- `tools/benkyo-tool-prompt01/app/src/data/geometry-focus.json`
-- `tools/benkyo-tool-prompt01/app/src/data/sync_index.py`
-- `tools/benkyo-tool-prompt01/README.md`
+- `app/index.html`
+- `app/src/main.js`
+- `app/src/styles/page.css`
+- `app/src/data/index.json`
+- `app/src/data/geometry-focus.json`
+- `app/src/data/sync_index.py`
+- `README.md`
 
 ### Main.js responsibilities
 
@@ -109,11 +109,11 @@
 
 ### Add a new dataset
 
-1. `tools/benkyo-tool-prompt01/app/src/data/` に新しい問題JSONを置く
+1. `app/src/data/` に新しい問題JSONを置く
 2. 次を実行する
 
 ```bash
-cd tools/benkyo-tool-prompt01/app/src/data
+cd app/src/data
 python3 sync_index.py
 ```
 
@@ -148,8 +148,8 @@ python3 sync_index.py
 - `context` 未設定の既存問題は従来どおり `prompt` のみを表示
 
 更新ファイル:
-- `tools/benkyo-tool-prompt01/app/src/renderers/TextRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/styles/page.css`
+- `app/src/renderers/TextRenderer.js`
+- `app/src/styles/page.css`
 
 
 ## Interactive response inputs
@@ -209,10 +209,10 @@ python3 sync_index.py
 - 完了判定では `response.targets` に列挙された全 key が埋まっている必要がある
 
 更新ファイル:
-- `tools/benkyo-tool-prompt01/app/src/renderers/TableRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/renderers/VisualRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/renderers/ProblemRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/renderers/TextRenderer.js`
+- `app/src/renderers/TableRenderer.js`
+- `app/src/renderers/VisualRenderer.js`
+- `app/src/renderers/ProblemRenderer.js`
+- `app/src/renderers/TextRenderer.js`
 
 ## Completion progress
 
@@ -231,10 +231,10 @@ python3 sync_index.py
 - `docs/benkyo-tool-prompt01-completion-progress-plan.md`
 
 更新ファイル:
-- `tools/benkyo-tool-prompt01/app/index.html`
-- `tools/benkyo-tool-prompt01/app/src/main.js`
-- `tools/benkyo-tool-prompt01/app/src/renderers/ProblemRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/styles/page.css`
+- `app/index.html`
+- `app/src/main.js`
+- `app/src/renderers/ProblemRenderer.js`
+- `app/src/styles/page.css`
 
 
 ## Storage export and import
@@ -271,9 +271,9 @@ python3 sync_index.py
 - 再帰 `items` に対して、答え表示、解説表示、完了判定、回答クリアも同じ規則で動くようにする
 
 更新ファイル:
-- `tools/benkyo-tool-prompt01/app/src/renderers/FactorizationLadderRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/renderers/VisualRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/renderers/TextRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/renderers/ProblemRenderer.js`
-- `tools/benkyo-tool-prompt01/app/src/main.js`
-- `tools/benkyo-tool-prompt01/app/src/styles/page.css`
+- `app/src/renderers/FactorizationLadderRenderer.js`
+- `app/src/renderers/VisualRenderer.js`
+- `app/src/renderers/TextRenderer.js`
+- `app/src/renderers/ProblemRenderer.js`
+- `app/src/main.js`
+- `app/src/styles/page.css`
