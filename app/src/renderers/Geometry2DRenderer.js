@@ -1,4 +1,4 @@
-import { createCanvas, drawingTheme, line } from "./canvas.js";
+import { createCanvas, drawingTheme, line } from "./canvas.js?v20260617-1";
 
 export function renderGeometry2D(visual, container) {
   const width = visual.width ?? 240;
@@ -20,6 +20,9 @@ export function renderGeometry2D(visual, container) {
       break;
     case "trapezoid":
       drawTrapezoid(ctx, width, height, visual);
+      break;
+    case "set_inclusion":
+      drawSetInclusion(ctx, width, height, visual);
       break;
     default:
       ctx.fillText(`Unsupported shape: ${visual.shape}`, 12, 24);
@@ -85,6 +88,33 @@ function drawTrapezoid(ctx, width, height, visual) {
     bottom: [width * 0.5, height * 0.95],
     height: [width * 0.22, height * 0.56],
   });
+}
+
+function drawSetInclusion(ctx, width, height, visual) {
+  const labels = visual.labels ?? {};
+  const outer = { x: width * 0.08, y: height * 0.12, w: width * 0.84, h: height * 0.72 };
+  const middle = { x: width * 0.18, y: height * 0.24, w: width * 0.56, h: height * 0.44 };
+  const inner = { x: width * 0.28, y: height * 0.36, w: width * 0.24, h: height * 0.2 };
+
+  ctx.strokeRect(outer.x, outer.y, outer.w, outer.h);
+  ctx.strokeRect(middle.x, middle.y, middle.w, middle.h);
+  ctx.strokeRect(inner.x, inner.y, inner.w, inner.h);
+
+  ctx.textAlign = "left";
+  if (labels.all) {
+    ctx.fillText(labels.all, outer.x + 8, outer.y - 8);
+  }
+  if (labels.integer) {
+    ctx.fillText(labels.integer, middle.x + 8, middle.y - 8);
+  }
+  if (labels.natural) {
+    ctx.fillText(labels.natural, inner.x + 8, inner.y - 8);
+  }
+
+  ctx.textAlign = "center";
+  ctx.fillText("A", inner.x + inner.w / 2, inner.y + inner.h / 2 + 5);
+  ctx.fillText("B", middle.x + middle.w - 28, middle.y + middle.h / 2 + 5);
+  ctx.fillText("C", outer.x + outer.w - 28, outer.y + outer.h / 2 + 5);
 }
 
 function drawPolygon(ctx, points) {

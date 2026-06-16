@@ -390,82 +390,6 @@
                 "value": -0.05
               },
               "uncertain": false
-            },
-            {
-              "id": "p021_q01_05",
-              "no": 5,
-              "text": "(-15/8)×(-2/9)",
-              "visuals": [],
-              "response": {
-                "type": "blank"
-              },
-              "answer": {
-                "value": {
-                  "type": "fraction",
-                  "numerator": 5,
-                  "denominator": 12
-                },
-                "display": "5/12",
-                "accepted": [
-                  "5/12"
-                ]
-              },
-              "uncertain": false
-            },
-            {
-              "id": "p021_q01_06",
-              "no": 6,
-              "text": "7/3÷(-21)",
-              "visuals": [],
-              "response": {
-                "type": "blank"
-              },
-              "answer": {
-                "value": {
-                  "type": "fraction",
-                  "numerator": -1,
-                  "denominator": 9
-                },
-                "display": "-1/9",
-                "accepted": [
-                  "-1/9"
-                ]
-              },
-              "uncertain": false
-            },
-            {
-              "id": "p021_q01_07",
-              "no": 7,
-              "text": "(-6/5)÷(-8/5)",
-              "visuals": [],
-              "response": {
-                "type": "blank"
-              },
-              "answer": {
-                "value": {
-                  "type": "fraction",
-                  "numerator": 3,
-                  "denominator": 4
-                },
-                "display": "3/4",
-                "accepted": [
-                  "3/4"
-                ]
-              },
-              "uncertain": false
-            },
-            {
-              "id": "p021_q01_08",
-              "no": 8,
-              "text": "(-9)÷(-3/4)",
-              "visuals": [],
-              "response": {
-                "type": "blank"
-              },
-              "answer": {
-                "value": 12
-              },
-              "uncertain": false
             }
           ],
           "visuals": [],
@@ -473,7 +397,7 @@
             "type": "none"
           },
           "answer": {},
-          "explanation": "",
+          "explanation": "小数をふくむ乗法・除法では、符号を決めてから小数点の位置を整えて計算する。",
           "notes": "右ページの1番は画像のレイアウト上2段組だが，問題データでは連番の小問として統合した。",
           "uncertain": false
         },
@@ -530,6 +454,82 @@
                 ]
               },
               "uncertain": false
+            },
+            {
+              "id": "p021_q02_03",
+              "no": 3,
+              "text": "(-15/8)×(-2/9)",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": {
+                  "type": "fraction",
+                  "numerator": 5,
+                  "denominator": 12
+                },
+                "display": "5/12",
+                "accepted": [
+                  "5/12"
+                ]
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p021_q02_04",
+              "no": 4,
+              "text": "7/3÷(-21)",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": {
+                  "type": "fraction",
+                  "numerator": -1,
+                  "denominator": 9
+                },
+                "display": "-1/9",
+                "accepted": [
+                  "-1/9"
+                ]
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p021_q02_05",
+              "no": 5,
+              "text": "(-6/5)÷(-8/5)",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": {
+                  "type": "fraction",
+                  "numerator": 3,
+                  "denominator": 4
+                },
+                "display": "3/4",
+                "accepted": [
+                  "3/4"
+                ]
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p021_q02_06",
+              "no": 6,
+              "text": "(-9)÷(-3/4)",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 12
+              },
+              "uncertain": false
             }
           ],
           "visuals": [],
@@ -537,7 +537,7 @@
             "type": "none"
           },
           "answer": {},
-          "explanation": "",
+          "explanation": "分数をふくむ乗法・除法では、符号を決めてから約分し、わり算は逆数をかけて計算する。",
           "notes": "",
           "uncertain": false
         },

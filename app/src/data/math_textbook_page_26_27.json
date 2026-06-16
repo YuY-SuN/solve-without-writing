@@ -237,7 +237,7 @@
             "category": "正の数・負の数"
           },
           "prompt": {
-            "text": "次の数の中から，自然数をすべて選びなさい。また，整数をすべて選んで，○でかこみなさい。"
+            "text": "次の数の中から，自然数をすべて選びなさい。また，整数をすべて選びなさい。"
           },
           "context": {
             "text": "-30，-2，-1.5，0，1/2，1，100"
@@ -245,25 +245,25 @@
           "items": [],
           "visuals": [],
           "response": {
-            "type": "free_text",
-            "lines": 2
+            "type": "multi_blank",
+            "fields": [
+              {
+                "key": "natural_numbers",
+                "label": "自然数"
+              },
+              {
+                "key": "integers",
+                "label": "整数"
+              }
+            ]
           },
           "answer": {
             "value": {
-              "natural_numbers": [
-                1,
-                100
-              ],
-              "integers": [
-                -30,
-                -2,
-                0,
-                1,
-                100
-              ]
+              "natural_numbers": "1, 100",
+              "integers": "-30, -2, 0, 1, 100"
             }
           },
-          "explanation": "自然数は 1, 2, 3, …。整数は負の整数，0，正の整数を合わせたもの。",
+          "explanation": "自然数は 1, 2, 3, … なので 1 と 100。整数は負の整数、0、正の整数なので -30, -2, 0, 1, 100。",
           "uncertain": false
         },
         {
@@ -356,6 +356,17 @@
           "items": [],
           "visuals": [
             {
+              "type": "geometry_2d",
+              "shape": "set_inclusion",
+              "width": 320,
+              "height": 220,
+              "labels": {
+                "natural": "自然数",
+                "integer": "整数",
+                "all": "数全体"
+              }
+            },
+            {
               "type": "table",
               "columns": [
                 "記号",
@@ -426,7 +437,7 @@
               ]
             }
           },
-          "explanation": "A は自然数，B は整数だが自然数ではない数，C は整数ではない数に対応する。",
+          "explanation": "A は自然数、B は整数だが自然数ではない数、C は整数ではない数を表す。イ=8 は自然数、ア=-2・ウ=-15・オ=0・カ=0 は整数、エ=-3/5 は整数ではない。",
           "uncertain": false
         },
         {

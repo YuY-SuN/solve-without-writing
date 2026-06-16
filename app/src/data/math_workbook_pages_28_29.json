@@ -1,0 +1,442 @@
+{
+"meta": {
+"title": "ドリル 正の数・負の数の計算",
+"source": "uploaded_image",
+"version": "0.1.0",
+"language": "ja"
+},
+"pages": [
+{
+"page": 28,
+"problems": [
+{
+"id": "p028_q01",
+"page": 28,
+"section": {
+"no": 1,
+"title": "ステップA",
+"category": "正の数・負の数の計算"
+},
+"prompt": {
+"text": "次の計算をしなさい。"
+},
+"items": [
+{
+"id": "p028_q01_01",
+"no": 1,
+"text": "13+(-16)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -3
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_02",
+"no": 2,
+"text": "1.8-(-3.2)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 5
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_03",
+"no": 3,
+"text": "(-3/4)+(-1/3)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": {
+"type": "fraction",
+"numerator": -13,
+"denominator": 12
+},
+"display": "-13/12",
+"accepted": [
+"-13/12",
+"-1と1/12",
+"-1 1/12"
+]
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_04",
+"no": 4,
+"text": "4-5-14+7",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -8
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_05",
+"no": 5,
+"text": "13+(-8)-26-(-8)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -13
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_06",
+"no": 6,
+"text": "(-8)×(-9)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 72
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_07",
+"no": 7,
+"text": "40÷(-5)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -8
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_08",
+"no": 8,
+"text": "(-3/2)÷(5/6)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": {
+"type": "fraction",
+"numerator": -9,
+"denominator": 5
+},
+"display": "-9/5",
+"accepted": [
+"-9/5",
+"-1と4/5",
+"-1 4/5"
+]
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_09",
+"no": 9,
+"text": "7÷4×(-8)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -14
+},
+"notes": "演算記号がやや不鮮明だが、\"7÷4×(-8)\" と読める。",
+"uncertain": true
+},
+{
+"id": "p028_q01_10",
+"no": 10,
+"text": "(-5)×(-4)^2",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -80
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_11",
+"no": 11,
+"text": "(-15)÷3-4×(-2)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 3
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_12",
+"no": 12,
+"text": "2×(-3)^3-3^2",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -63
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_13",
+"no": 13,
+"text": "-5×{3-(8-4)}",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 5
+},
+"uncertain": false
+},
+{
+"id": "p028_q01_14",
+"no": 14,
+"text": "(1/9-7/4)×(-36)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 59
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+}
+]
+},
+{
+"page": 29,
+"problems": [
+{
+"id": "p029_q01",
+"page": 29,
+"section": {
+"no": 1,
+"title": "ステップB",
+"category": "正の数・負の数の計算"
+},
+"prompt": {
+"text": "次の計算をしなさい。"
+},
+"items": [
+{
+"id": "p029_q01_01",
+"no": 1,
+"text": "-9+4",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -5
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_02",
+"no": 2,
+"text": "-4-7",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -11
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_03",
+"no": 3,
+"text": "5/2+(-7/3)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": {
+"type": "fraction",
+"numerator": 1,
+"denominator": 6
+},
+"display": "1/6",
+"accepted": [
+"1/6"
+]
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_04",
+"no": 4,
+"text": "3-7-(-8)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 4
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_05",
+"no": 5,
+"text": "(-2/3)×(-9/4)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": {
+"type": "fraction",
+"numerator": 3,
+"denominator": 2
+},
+"display": "3/2",
+"accepted": [
+"3/2",
+"1と1/2",
+"1 1/2"
+]
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_06",
+"no": 6,
+"text": "9÷(-3/4)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -12
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_07",
+"no": 7,
+"text": "9÷(-6)×(-2)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 3
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_08",
+"no": 8,
+"text": "9+3×(-6)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -9
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_09",
+"no": 9,
+"text": "14÷(-7)-(-3)^2",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -11
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_10",
+"no": 10,
+"text": "3-7×(5-8)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 24
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_11",
+"no": 11,
+"text": "-3^2×{7-(-4)^2}",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": 81
+},
+"uncertain": false
+},
+{
+"id": "p029_q01_12",
+"no": 12,
+"text": "(-12)×(-1/3+3/2)",
+"visuals": [],
+"response": {
+"type": "blank"
+},
+"answer": {
+"value": -14
+},
+"uncertain": false
+}
+],
+"visuals": [],
+"response": {
+"type": "none"
+},
+"answer": {},
+"explanation": "",
+"notes": "",
+"uncertain": false
+}
+]
+}
+]
+}
+

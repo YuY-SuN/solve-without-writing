@@ -97,6 +97,42 @@
                   5
                 ]
               },
+              "points": []
+            }
+          ],
+          "response": {
+            "type": "draw_graph"
+          },
+          "answer": {
+            "value": {
+              "points": [
+                6,
+                -2,
+                -5.5,
+                0.5
+              ]
+            }
+          },
+          "answerVisuals": [
+            {
+              "type": "number_line",
+              "width": 520,
+              "height": 120,
+              "range": {
+                "min": -7,
+                "max": 7
+              },
+              "ticks": {
+                "minor": 0.5,
+                "major": 1,
+                "labels": [
+                  -5,
+                  -1,
+                  0,
+                  1,
+                  5
+                ]
+              },
               "points": [
                 {
                   "value": 6
@@ -114,20 +150,7 @@
               ]
             }
           ],
-          "response": {
-            "type": "draw_graph"
-          },
-          "answer": {
-            "value": {
-              "points": [
-                6,
-                -2,
-                -5.5,
-                0.5
-              ]
-            }
-          },
-          "explanation": "",
+          "explanation": "6、-2、-5.5、1/2 の位置を、0 からのへだたりと符号で確かめて数直線上に表す。",
           "notes": "数直線の左右端は写真ではやや不鮮明なため、-5.5 と 1/2 を表せる目盛りとして range と tick を補完した。",
           "uncertain": true
         },
@@ -502,13 +525,13 @@
             {
               "id": "p033_q07_01",
               "no": 1,
-              "text": "(-4)^2÷(-1)^2",
+              "text": "(-4^2)÷(-1)^2",
               "visuals": [],
               "response": {
                 "type": "blank"
               },
               "answer": {
-                "value": 16
+                "value": -16
               },
               "uncertain": false
             },
@@ -557,7 +580,7 @@
             "type": "none"
           },
           "answer": {},
-          "explanation": "",
+          "explanation": "(1) は -4^2=-(4^2)=-16、(-1)^2=1 なので -16÷1=-16。累乗を先に計算し、その後で乗除・加減を行う。",
           "notes": "",
           "uncertain": false
         },
@@ -603,7 +626,7 @@
               "ウ"
             ]
           },
-          "explanation": "",
+          "explanation": "整数は、たす・ひく・かけるではいつも整数になるが、わるでは整数にならない場合がある。",
           "notes": "",
           "uncertain": false
         },
@@ -648,7 +671,7 @@
               "ウ"
             ]
           },
-          "explanation": "",
+          "explanation": "17 と 37 は 1 とその数自身のほかでは割り切れないので素数。27 と 77 はそれぞれ 3、7 で割り切れる。",
           "notes": "",
           "uncertain": false
         }

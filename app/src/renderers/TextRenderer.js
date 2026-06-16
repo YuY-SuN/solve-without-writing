@@ -71,7 +71,9 @@ function createChoiceControl(choice, response, responseKey, selectedValue, onCha
   }
 
   const text = document.createElement("span");
-  text.textContent = choice.text;
+  text.textContent = choice.key && choice.key !== choice.text
+    ? `${choice.key} ${choice.text}`
+    : choice.text;
 
   row.append(input, text);
   return row;

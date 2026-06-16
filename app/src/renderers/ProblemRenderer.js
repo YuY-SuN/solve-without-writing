@@ -1,5 +1,5 @@
-import { renderPrompt, renderResponse, renderAnswer, renderExplanation } from "./TextRenderer.js";
-import { renderVisualList } from "./VisualRenderer.js";
+import { renderPrompt, renderResponse, renderAnswer, renderExplanation } from "./TextRenderer.js?v20260617-1";
+import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
 
 function getItemResponseKey(problem, item) {
   return item.id ?? `${problem.id}-item-${item.no ?? "response"}`;

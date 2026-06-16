@@ -1,11 +1,11 @@
-import { renderTable } from "./TableRenderer.js";
-import { renderNumberLine } from "./NumberLineRenderer.js";
-import { renderGeometry2D } from "./Geometry2DRenderer.js";
-import { renderGeometry3D } from "./Geometry3DRenderer.js";
-import { renderGraphGrid } from "./GraphRenderer.js";
-import { renderHistogram } from "./HistogramRenderer.js";
-import { renderNet } from "./NetRenderer.js";
-import { renderFactorizationLadder } from "./FactorizationLadderRenderer.js";
+import { renderTable } from "./TableRenderer.js?v20260617-1";
+import { renderNumberLine } from "./NumberLineRenderer.js?v20260617-1";
+import { renderGeometry2D } from "./Geometry2DRenderer.js?v20260617-1";
+import { renderGeometry3D } from "./Geometry3DRenderer.js?v20260617-1";
+import { renderGraphGrid } from "./GraphRenderer.js?v20260617-1";
+import { renderHistogram } from "./HistogramRenderer.js?v20260617-1";
+import { renderNet } from "./NetRenderer.js?v20260617-1";
+import { renderFactorizationLadder } from "./FactorizationLadderRenderer.js?v20260617-1";
 
 export function renderVisualList(visuals, container, options = {}) {
   for (const visual of visuals) {

@@ -146,13 +146,13 @@
 {
 "id": "p024_q03_01",
 "no": 1,
-"text": "5×(-2)",
+"text": "5×(-2^2)",
 "visuals": [],
 "response": {
 "type": "blank"
 },
 "answer": {
-"value": -10
+"value": -20
 },
 "uncertain": false
 },
@@ -175,7 +175,7 @@
 "type": "none"
 },
 "answer": {},
-"explanation": "",
+"explanation": "(1) は -2^2=-(2^2)=-4 なので 5×(-4)=-20。(2) は累乗を先に計算してから割る。",
 "notes": "",
 "uncertain": false
 },

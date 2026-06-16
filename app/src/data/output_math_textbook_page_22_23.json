@@ -1,0 +1,463 @@
+{
+  "meta": {
+    "title": "8 3数以上の乗法、除法",
+    "source": "uploaded_image",
+    "version": "0.1.0",
+    "language": "ja"
+  },
+  "pages": [
+    {
+      "page": 22,
+      "problems": [
+        {
+          "id": "p022_q01",
+          "page": 22,
+          "section": {
+            "no": 1,
+            "title": "乗法の計算法則",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算のア、イでは、乗法の何という法則が使われていますか。"
+          },
+          "context": {
+            "text": "（-25）×7×（-4）=7×（-25）×（-4）=7×100=700"
+          },
+          "items": [],
+          "visuals": [
+            {
+              "type": "table",
+              "columns": ["step", "expression", "annotationKey"],
+              "rows": [
+                [1, "（-25）×7×（-4）", "original"],
+                [2, "7×（-25）×（-4）", "ア"],
+                [3, "7×100", "イ"],
+                [4, "700", "result"]
+              ],
+              "style": {
+                "header": true,
+                "compact": true
+              }
+            }
+          ],
+          "response": {
+            "type": "multi_blank",
+            "fields": [
+              {
+                "key": "ア",
+                "label": "ア"
+              },
+              {
+                "key": "イ",
+                "label": "イ"
+              }
+            ]
+          },
+          "answer": {
+            "value": {
+              "ア": "交換法則",
+              "イ": "結合法則"
+            }
+          },
+          "explanation": "7と-25の順序を入れ替えるのは交換法則、-25と-4を先に計算して100とみるのは結合法則。",
+          "notes": "図中の対応関係を保持するため、アは1行目から2行目への並べ替え、イは2行目から3行目へのまとめ計算を表す。吹き出し文は『かける順序を変えると計算が簡単になる。』『負の符号は何個あるかな。』。",
+          "uncertain": false
+        },
+        {
+          "id": "p022_q02",
+          "page": 22,
+          "section": {
+            "no": 2,
+            "title": "乗法の計算法則の利用",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "乗法の計算法則を利用して、次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p022_q02_01",
+              "no": 1,
+              "text": "2×（-13）×5",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -130
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p022_q02_02",
+              "no": 2,
+              "text": "（-25）×13×4",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -1300
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p022_q02_03",
+              "no": 3,
+              "text": "（-2）×11×15",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -330
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p022_q03",
+          "page": 22,
+          "section": {
+            "no": 3,
+            "title": "3数以上の乗法",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p022_q03_01",
+              "no": 1,
+              "text": "（-3）×（-6）×（-2）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -36
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p022_q03_02",
+              "no": 2,
+              "text": "（-5/4）×4/3×（-6/5）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 2
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "",
+          "notes": "分数は紙面では縦書き分数。初期実装として text に式をそのまま保持。",
+          "uncertain": false
+        },
+        {
+          "id": "p022_q04",
+          "page": 22,
+          "section": {
+            "no": 4,
+            "title": "3数以上の除法",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の式を、乗法だけの式になおして計算しなさい。"
+          },
+          "items": [
+            {
+              "id": "p022_q04_01",
+              "no": 1,
+              "text": "（-3）×（-4）÷2",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "formula": "（-3）×（-4）×1/2",
+                "value": 6
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p022_q04_02",
+              "no": 2,
+              "text": "27÷（-6）×4",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "formula": "27×（-1/6）×4",
+                "value": -18
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p022_q04_03",
+              "no": 3,
+              "text": "（-8）÷2÷（-2/3）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "formula": "（-8）×1/2×（-3/2）",
+                "value": 6
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "",
+          "notes": "",
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "page": 23,
+      "problems": [
+        {
+          "id": "p023_q01",
+          "page": 23,
+          "section": {
+            "no": 1,
+            "title": "乗法の計算法則の利用",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p023_q01_01",
+              "no": 1,
+              "text": "12×（-4）×15",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -720
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p023_q01_02",
+              "no": 2,
+              "text": "（-7）×（-8）×125",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 7000
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p023_q01_03",
+              "no": 3,
+              "text": "（-8）×35×（-1/4）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 70
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p023_q02",
+          "page": 23,
+          "section": {
+            "no": 2,
+            "title": "3数以上の除法",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p023_q02_01",
+              "no": 1,
+              "text": "7÷21×（-18）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -6
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p023_q02_02",
+              "no": 2,
+              "text": "（-30）÷5÷（-3）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": 2
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p023_q02_03",
+              "no": 3,
+              "text": "（-27）×（-4/3）÷（-3）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": -12
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "",
+          "notes": "",
+          "uncertain": false
+        },
+        {
+          "id": "p023_q03",
+          "page": 23,
+          "section": {
+            "no": 3,
+            "title": "3数以上の乗除",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算をしなさい。"
+          },
+          "items": [
+            {
+              "id": "p023_q03_01",
+              "no": 1,
+              "text": "（-5/9）÷（-4/15）×8/25",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": {
+                  "type": "fraction",
+                  "numerator": 2,
+                  "denominator": 3
+                },
+                "display": "2/3",
+                "accepted": [
+                  "2/3"
+                ]
+              },
+              "uncertain": false
+            },
+            {
+              "id": "p023_q03_02",
+              "no": 2,
+              "text": "1/3÷（-5/4）÷（-0.7）",
+              "visuals": [],
+              "response": {
+                "type": "blank"
+              },
+              "answer": {
+                "value": {
+                  "type": "fraction",
+                  "numerator": 8,
+                  "denominator": 21
+                },
+                "display": "8/21",
+                "accepted": [
+                  "8/21"
+                ]
+              },
+              "uncertain": false
+            }
+          ],
+          "visuals": [],
+          "response": {
+            "type": "none"
+          },
+          "answer": {},
+          "explanation": "",
+          "notes": "分数や小数を含む式は text に保持。",
+          "uncertain": false
+        },
+        {
+          "id": "p023_q04",
+          "page": 23,
+          "section": {
+            "no": 4,
+            "title": "学びを深めよう",
+            "category": "正の数・負の数"
+          },
+          "prompt": {
+            "text": "次の計算はまちがっています。どこがまちがっているか説明し、正しい計算を書きなさい。"
+          },
+          "context": {
+            "text": "まちがい例： （-18）÷3×（-2）=（-18）÷（-6）=3"
+          },
+          "items": [],
+          "visuals": [],
+          "response": {
+            "type": "free_text",
+            "lines": 4
+          },
+          "answer": {
+            "value": {
+              "error": "除法と乗法は同じ優先順位なので左から順に計算するべきなのに、3×（-2）を先に計算している。",
+              "correctCalculation": "（-18）÷3×（-2）=（-6）×（-2）=12"
+            }
+          },
+          "explanation": "除法と乗法が続く式は左から順に計算する。",
+          "notes": "解答欄は説明欄と正しい計算欄に分かれているが、再現用には free_text でまとめた。",
+          "uncertain": false
+        }
+      ]
+    }
+  ]
+}

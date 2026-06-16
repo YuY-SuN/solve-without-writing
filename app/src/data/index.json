@@ -47,6 +47,11 @@
       "path": "math_workbook_pages_24_25.json"
     },
     {
+      "id": "math-workbook-pages-28-29",
+      "label": "ドリル 正の数・負の数の計算",
+      "path": "math_workbook_pages_28_29.json"
+    },
+    {
       "id": "math-workbook-pages-30-31",
       "label": "11 自然数を素数の積で表す / 12 正の数・負の数の利用",
       "path": "math_workbook_pages_30_31.json"
@@ -55,6 +60,11 @@
       "id": "math-workbook-pages-34-35",
       "label": "章末総合テスト",
       "path": "math_workbook_pages_34_35.json"
+    },
+    {
+      "id": "output-math-textbook-page-22-23",
+      "label": "8 3数以上の乗法、除法",
+      "path": "output_math_textbook_page_22_23.json"
     },
     {
       "id": "core-math",
