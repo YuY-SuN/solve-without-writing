@@ -434,10 +434,14 @@ function sanitizeImportedState(data) {
 }
 
 async function applyImportedState(importedState) {
-  state.responseValues = cloneSerializable(importedState.responseValues) ?? {};
+  const migratedResponseState = migrateResponseValuesWithDataset(importedState.responseValues, state.datasetsById);
+  const migratedUndoStack = migrateHistoryStackWithDataset(importedState.undoStack, state.datasetsById);
+  const migratedRedoStack = migrateHistoryStackWithDataset(importedState.redoStack, state.datasetsById);
+
+  state.responseValues = migratedResponseState.responseValues;
   state.completedProblems = cloneSerializable(importedState.completedProblems) ?? {};
-  state.undoStack = cloneSerializable(importedState.undoStack) ?? [];
-  state.redoStack = cloneSerializable(importedState.redoStack) ?? [];
+  state.undoStack = migratedUndoStack.historyStack;
+  state.redoStack = migratedRedoStack.historyStack;
   trimHistory(state.undoStack);
   trimHistory(state.redoStack);
 
@@ -622,6 +626,79 @@ function persistJson(storageKey, value) {
 function loadPersistedResponseValues() {
   const parsed = loadPersistedJson(RESPONSE_STORAGE_KEY);
   return parsed && typeof parsed === "object" ? parsed : {};
+}
+
+function fillMissingResponseFields(rawValue, response, answer) {
+  if (response?.type !== "multi_blank") {
+    return { value: rawValue, changed: false };
+  }
+
+  if (!rawValue || typeof rawValue !== "object" || Array.isArray(rawValue)) {
+    return { value: rawValue, changed: false };
+  }
+
+  if (!answer?.value || typeof answer.value !== "object" || Array.isArray(answer.value)) {
+    return { value: rawValue, changed: false };
+  }
+
+  let changed = false;
+  const nextValue = { ...rawValue };
+
+  for (const field of response.fields ?? []) {
+    const fieldKey = field.key;
+    const hasStoredValue = isNonEmptyValue(nextValue[fieldKey]);
+    const hasAnswerValue = isNonEmptyValue(answer.value[fieldKey]);
+    if (!hasStoredValue && hasAnswerValue) {
+      nextValue[fieldKey] = cloneSerializable(answer.value[fieldKey]);
+      changed = true;
+    }
+  }
+
+  return { value: changed ? nextValue : rawValue, changed };
+}
+
+function migrateResponseValuesWithDataset(responseValues, datasetsById = {}) {
+  const nextResponseValues = cloneSerializable(responseValues) ?? {};
+  let changed = false;
+
+  for (const dataset of Object.values(datasetsById)) {
+    for (const page of dataset?.pages ?? []) {
+      for (const problem of page.problems ?? []) {
+        const descriptors = getProblemResponseDescriptors(problem);
+        for (const descriptor of descriptors) {
+          if (!Object.prototype.hasOwnProperty.call(nextResponseValues, descriptor.key)) {
+            continue;
+          }
+          const migrated = fillMissingResponseFields(
+            nextResponseValues[descriptor.key],
+            descriptor.response,
+            descriptor.answer,
+          );
+          if (migrated.changed) {
+            nextResponseValues[descriptor.key] = migrated.value;
+            changed = true;
+          }
+        }
+      }
+    }
+  }
+
+  return { responseValues: nextResponseValues, changed };
+}
+
+function migrateHistoryStackWithDataset(historyStack, datasetsById = {}) {
+  if (!Array.isArray(historyStack)) {
+    return { historyStack: [], changed: false };
+  }
+
+  let changed = false;
+  const nextHistoryStack = historyStack.map((entry) => {
+    const migrated = migrateResponseValuesWithDataset(entry, datasetsById);
+    changed = changed || migrated.changed;
+    return migrated.responseValues;
+  });
+
+  return { historyStack: nextHistoryStack, changed };
 }
 
 function loadPersistedCompletedProblems() {
@@ -1412,6 +1489,16 @@ async function bootstrap() {
     state.datasetCatalog.map(async (entry) => [entry.id, await loadDataset(entry.path)]),
   );
   state.datasetsById = Object.fromEntries(datasets);
+  const migratedResponseState = migrateResponseValuesWithDataset(state.responseValues, state.datasetsById);
+  const migratedUndoStack = migrateHistoryStackWithDataset(state.undoStack, state.datasetsById);
+  const migratedRedoStack = migrateHistoryStackWithDataset(state.redoStack, state.datasetsById);
+  state.responseValues = migratedResponseState.responseValues;
+  state.undoStack = migratedUndoStack.historyStack;
+  state.redoStack = migratedRedoStack.historyStack;
+  if (migratedResponseState.changed || migratedUndoStack.changed || migratedRedoStack.changed) {
+    persistResponseValues();
+    persistHistoryState();
+  }
   state.pageCatalog = buildPageCatalog(catalog, state.datasetsById);
   sanitizeCompletedProblems();
 
