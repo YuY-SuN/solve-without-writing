@@ -122,6 +122,7 @@
 - `response.type: "draw_point"` は点ラベルごとの配置入力ができ、完了判定では answer 側キーがすべて入力されている必要がある
 - `response.type: "table_fill"` は `response.targets` と表セルの `blank.key` を結び付けてセルへ直接入力する
 - `response.type: "ladder_fill"` は `factorization_ladder` 内の空欄 key を `response.targets` で列挙し、階段図の入力欄へ直接結び付ける
+- `response.type: "multi_blank"` に後から field を足す場合は、既存 `localStorage` の回答オブジェクトを削除せず、不足 field だけ `answer.value` で補完する。既存キーの上書きや field 順ずれは起こさない
 - `items` は1段とは限らず、教材によっては小問の中にさらに `items` が入るので、描画・完了判定・回答クリアは再帰構造を前提にする
 
 ## Lessons learned from recent work
@@ -172,6 +173,7 @@
 - ページ進捗は dataset ごとに `完了数 / 総問題数 / 残り` を集計して表示する
 - 転記モード POC は、現在の問題セットの全ページから `完了` 済みの問題だけを抽出し、`入力内容` または `解答` を印刷向け一覧として表示する
 - 転記モードでは入れ子の小問を個別行として扱い、表・数直線・ヒストグラムなどの図表も該当する行ごとに再描画する
+- `p014_q01` のように既存設問へ計算結果欄を追加する更新では、保存済み `sign` / `value` を維持したまま、新設 `result` だけ答えデータから補完して回収する
 
 ## Git workflow rules
 
