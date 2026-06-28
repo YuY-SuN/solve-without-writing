@@ -411,7 +411,12 @@
               },
               "answer": {
                 "value": 1,
-                "accepted": [1, 1.0, "1", "1.0"]
+                "accepted": [
+                  1,
+                  1.0,
+                  "1",
+                  "1.0"
+                ]
               },
               "uncertain": false
             }
@@ -452,7 +457,10 @@
                   "denominator": 5
                 },
                 "display": "-3/5",
-                "accepted": ["-3/5", "−3/5"]
+                "accepted": [
+                  "-3/5",
+                  "−3/5"
+                ]
               },
               "uncertain": false
             },
@@ -471,7 +479,10 @@
                   "denominator": 2
                 },
                 "display": "-1/2",
-                "accepted": ["-1/2", "−1/2"]
+                "accepted": [
+                  "-1/2",
+                  "−1/2"
+                ]
               },
               "uncertain": false
             },
@@ -490,9 +501,32 @@
                   "denominator": 18
                 },
                 "display": "-19/18",
-                "accepted": ["-19/18", "−19/18", "-1 1/18", "−1 1/18", "-1と1/18", "−1と1/18"]
+                "accepted": [
+                  "-19/18",
+                  "−19/18",
+                  "-1 1/18",
+                  "−1 1/18",
+                  "-1と1/18",
+                  "−1と1/18"
+                ]
               },
-              "uncertain": false
+              "uncertain": false,
+              "work": {
+                "type": "expression_steps",
+                "optional": true,
+                "label": "通分・計算の過程",
+                "defaultOpen": true,
+                "mode": "fraction",
+                "starter": {
+                  "expression": "（−2/9）＋（−5/6）"
+                },
+                "suggestedNotes": [
+                  "通分",
+                  "分子を計算",
+                  "約分",
+                  "符号に注意"
+                ]
+              }
             }
           ],
           "visuals": [],

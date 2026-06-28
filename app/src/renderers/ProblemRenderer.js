@@ -1,8 +1,13 @@
 import { renderPrompt, renderResponse, renderAnswer, renderExplanation } from "./TextRenderer.js?v20260617-1";
 import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
+import { renderWork } from "./WorkRenderer.js?v20260628-1";
 
 function getItemResponseKey(problem, item) {
   return item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
+}
+
+function getItemWorkKey(problem, item) {
+  return item.id ?? `${problem.id}-item-${item.no ?? "work"}`;
 }
 
 function appendAnswerVisuals(node, answerVisuals) {
@@ -98,6 +103,19 @@ function renderItemNode(problem, item, options, depth = 0) {
       answerVisuals: item.answerVisuals ?? [],
     });
     itemNode.appendChild(itemVisuals);
+  }
+
+  if (item.work) {
+    const workKey = getItemWorkKey(problem, item);
+    const workNode = renderWork(item.work, {
+      value: options.workValues?.[workKey] ?? null,
+      onChange: (nextValue) => {
+        options.onWorkChange?.(workKey, nextValue);
+      },
+    });
+    if (workNode) {
+      itemNode.appendChild(workNode);
+    }
   }
 
   if (item.response) {
@@ -292,11 +310,27 @@ function renderProblem(problem, options) {
   for (const item of problem.items ?? []) {
     items.appendChild(renderItemNode(problem, item, {
       responseValues: options.responseValues,
+      workValues: options.workValues,
       onResponseChange: options.onResponseChange,
+      onWorkChange: options.onWorkChange,
       onStatusChange: updateCompletionAfterResponse,
       showAnswers,
       showExplanations,
     }));
+  }
+
+  const problemWork = document.createElement("div");
+  problemWork.className = "problem-work";
+  if (problem.work) {
+    const workNode = renderWork(problem.work, {
+      value: options.workValues?.[problem.id] ?? null,
+      onChange: (nextValue) => {
+        options.onWorkChange?.(problem.id, nextValue);
+      },
+    });
+    if (workNode) {
+      problemWork.appendChild(workNode);
+    }
   }
 
   const footer = document.createElement("footer");
@@ -324,6 +358,9 @@ function renderProblem(problem, options) {
   article.append(header, prompt, visuals);
   if (items.childElementCount > 0) {
     article.appendChild(items);
+  }
+  if (problemWork.childElementCount > 0) {
+    article.appendChild(problemWork);
   }
   if (showAnswers) {
     appendAnswerVisuals(article, problem.answerVisuals ?? []);

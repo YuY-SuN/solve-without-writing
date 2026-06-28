@@ -31,7 +31,7 @@
 - 上部ツールバーの「問題セット」コンボボックスから dataset 全体を切り替える
 - 上部ツールバーの「ページ」コンボボックスから全 dataset を横断して特定ページへ直接切り替える
 - 最後に開いていた dataset / page 選択は `localStorage` に保存し、次回起動時に復元する
-- `localStorage` の回答・完了・履歴・閲覧位置は JSON ファイルへ export / import できる
+- `localStorage` の回答・途中式・完了・履歴・閲覧位置は JSON ファイルへ export / import できる
 - 保存済みページが消えていた場合は dataset 全体表示、dataset も無効なら `defaultDatasetId` にフォールバックする
 - `index.json` の各要素は少なくとも `id` `label` `path` を持つ
 - `defaultDatasetId` が初期表示セットになる
@@ -125,6 +125,19 @@
 - `response.type: "multi_blank"` に後から field を足す場合は、既存 `localStorage` の回答オブジェクトを削除せず、不足 field だけ `answer.value` で補完する。既存キーの上書きや field 順ずれは起こさない
 - `items` は1段とは限らず、教材によっては小問の中にさらに `items` が入るので、描画・完了判定・回答クリアは再帰構造を前提にする
 
+### Work input types
+
+問題または小問に `work.type: "expression_steps"` を追加すると、最終解答とは別に「考え方・途中式」欄を表示できる。
+
+重要:
+- `work` は `response` と分けて扱い、完了判定には含めない
+- 保存値は `responseValues` ではなく `workValues` に保持する
+- localStorage key は `benkyo-tool-prompt01:work-values:v1`
+- 記憶データ export / import では `data.workValues` として持ち出す
+- 問題クリア、表示中クリアでは、解答欄と同じ対象範囲の途中式も削除する
+- `starter.expression` は最初の式、`suggestedNotes` は「通分」「約分」「分配法則」などのメモ候補に使う
+- 詳細なデータ仕様と運用は `docs/expression-work-input-plan.md` を参照する
+
 ## Lessons learned from recent work
 
 ### 1. Data issue and renderer issue must be separated
@@ -179,6 +192,7 @@
 
 - GitHub 接続や push は明示的な指示があるまで行わない
 - 機能作業は原則としてローカルブランチで始める
+- ユーザーが「branchを切って、mainにマージしない」と指定した作業は、ローカル feature branch にコミットするだけに留め、main への checkout / merge は行わない
 - 不具合修正は `fix/...` ブランチ名を優先し、commit 確認後に同名の remote branch へ push する
 - ローカルブランチで内容確認が取れ、ユーザーから問題ない判断が出たら、対応する remote branch も push する
 - remote branch 名は、原則としてローカルブランチ名とそろえる

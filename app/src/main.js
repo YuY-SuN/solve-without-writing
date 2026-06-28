@@ -1,7 +1,8 @@
-import { renderProblems } from "./renderers/ProblemRenderer.js?v20260617-1";
+import { renderProblems } from "./renderers/ProblemRenderer.js?v20260628-1";
 import { renderVisualList } from "./renderers/VisualRenderer.js?v20260617-1";
 
 const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
+const WORK_STORAGE_KEY = "benkyo-tool-prompt01:work-values:v1";
 const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
 const COMPLETION_STORAGE_KEY = "benkyo-tool-prompt01:completed-problems:v1";
 const VIEW_SELECTION_STORAGE_KEY = "benkyo-tool-prompt01:view-selection:v1";
@@ -20,6 +21,7 @@ const state = {
   datasetsById: {},
   pageCatalog: [],
   responseValues: {},
+  workValues: {},
   completedProblems: {},
   undoStack: [],
   redoStack: [],
@@ -97,6 +99,10 @@ function getItemResponseKey(problem, item) {
   return item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
 }
 
+function getItemWorkKey(problem, item) {
+  return item.id ?? `${problem.id}-item-${item.no ?? "work"}`;
+}
+
 function collectResponseDescriptors(owner, items, descriptors) {
   for (const item of items ?? []) {
     if (item.response) {
@@ -131,6 +137,26 @@ function getProblemResponseDescriptors(problem) {
 function getProblemResponseKeys(problem) {
   return getProblemResponseDescriptors(problem).map((entry) => entry.key);
 }
+function collectWorkKeys(owner, items, keys) {
+  for (const item of items ?? []) {
+    if (item.work) {
+      keys.push(getItemWorkKey(owner, item));
+    }
+    if (item.items?.length) {
+      collectWorkKeys(owner, item.items, keys);
+    }
+  }
+}
+
+function getProblemWorkKeys(problem) {
+  const keys = [];
+  if (problem.work) {
+    keys.push(problem.id);
+  }
+  collectWorkKeys(problem, problem.items, keys);
+  return keys;
+}
+
 
 function findDatasetEntry(datasetId) {
   return state.datasetCatalog.find((entry) => entry.id === datasetId) ?? null;
@@ -157,6 +183,10 @@ function getVisibleProblems() {
 
 function getVisibleResponseKeys() {
   return getVisibleProblems().flatMap((problem) => getProblemResponseKeys(problem));
+}
+
+function getVisibleWorkKeys() {
+  return getVisibleProblems().flatMap((problem) => getProblemWorkKeys(problem));
 }
 
 function getVisibleCompletedProblems() {
@@ -351,6 +381,7 @@ function buildStorageExportPayload() {
     exportedAt: new Date().toISOString(),
     data: {
       responseValues: state.responseValues,
+      workValues: state.workValues,
       completedProblems: state.completedProblems,
       history: {
         undoStack: state.undoStack,
@@ -413,6 +444,9 @@ function sanitizeImportedState(data) {
   const responseValues = data.responseValues && typeof data.responseValues === "object"
     ? data.responseValues
     : {};
+  const workValues = data.workValues && typeof data.workValues === "object"
+    ? data.workValues
+    : {};
   const completedProblems = data.completedProblems && typeof data.completedProblems === "object"
     ? data.completedProblems
     : {};
@@ -423,6 +457,7 @@ function sanitizeImportedState(data) {
 
   return {
     responseValues,
+    workValues,
     completedProblems,
     undoStack: Array.isArray(history.undoStack) ? history.undoStack : [],
     redoStack: Array.isArray(history.redoStack) ? history.redoStack : [],
@@ -439,6 +474,7 @@ async function applyImportedState(importedState) {
   const migratedRedoStack = migrateHistoryStackWithDataset(importedState.redoStack, state.datasetsById);
 
   state.responseValues = migratedResponseState.responseValues;
+  state.workValues = cloneSerializable(importedState.workValues) ?? {};
   state.completedProblems = cloneSerializable(importedState.completedProblems) ?? {};
   state.undoStack = migratedUndoStack.historyStack;
   state.redoStack = migratedRedoStack.historyStack;
@@ -446,6 +482,7 @@ async function applyImportedState(importedState) {
   trimHistory(state.redoStack);
 
   persistResponseValues();
+  persistWorkValues();
   persistCompletedProblems();
   persistHistoryState();
   sanitizeCompletedProblems();
@@ -548,7 +585,7 @@ function refreshPageFilterLabels(progressMap) {
 function updateToolbar() {
   const transferProblems = state.dataset ? getTransferProblems() : [];
   elements.clearVisible.textContent = state.selectedPageKey === "all" ? "表示中をクリア" : "このページをクリア";
-  elements.clearVisible.disabled = state.transferMode || getVisibleResponseKeys().length === 0;
+  elements.clearVisible.disabled = state.transferMode || (getVisibleResponseKeys().length === 0 && getVisibleWorkKeys().length === 0);
   elements.undoClear.disabled = state.transferMode || state.undoStack.length === 0;
   elements.redoClear.disabled = state.transferMode || state.redoStack.length === 0;
   elements.toggleAnswers.textContent = state.showAnswers ? "答えを隠す" : "答えを表示";
@@ -625,6 +662,11 @@ function persistJson(storageKey, value) {
 
 function loadPersistedResponseValues() {
   const parsed = loadPersistedJson(RESPONSE_STORAGE_KEY);
+  return parsed && typeof parsed === "object" ? parsed : {};
+}
+
+function loadPersistedWorkValues() {
+  const parsed = loadPersistedJson(WORK_STORAGE_KEY);
   return parsed && typeof parsed === "object" ? parsed : {};
 }
 
@@ -708,6 +750,10 @@ function loadPersistedCompletedProblems() {
 
 function persistResponseValues() {
   persistJson(RESPONSE_STORAGE_KEY, state.responseValues);
+}
+
+function persistWorkValues() {
+  persistJson(WORK_STORAGE_KEY, state.workValues);
 }
 
 function persistCompletedProblems() {
@@ -1359,25 +1405,54 @@ function handleResponseChange(responseKey, valueOrUpdater) {
   }
 }
 
-function clearResponseKeys(responseKeys) {
+function handleWorkChange(workKey, valueOrUpdater) {
+  const currentValue = state.workValues[workKey];
+  const nextValue =
+    typeof valueOrUpdater === "function"
+      ? valueOrUpdater(currentValue)
+      : valueOrUpdater;
+
+  if (areEqual(currentValue, nextValue)) {
+    return;
+  }
+
+  state.workValues = {
+    ...state.workValues,
+    [workKey]: cloneSerializable(nextValue),
+  };
+  persistWorkValues();
+}
+
+function clearStoredKeys(responseKeys, workKeys) {
   const nextResponseValues = { ...state.responseValues };
+  const nextWorkValues = { ...state.workValues };
 
   for (const responseKey of new Set(responseKeys)) {
     delete nextResponseValues[responseKey];
   }
+  for (const workKey of new Set(workKeys)) {
+    delete nextWorkValues[workKey];
+  }
 
-  if (commitResponseValues(nextResponseValues)) {
+  const responseChanged = commitResponseValues(nextResponseValues);
+  const workChanged = !areEqual(state.workValues, nextWorkValues);
+  if (workChanged) {
+    state.workValues = nextWorkValues;
+    persistWorkValues();
+  }
+
+  if (responseChanged || workChanged) {
     sanitizeCompletedProblems();
     render();
   }
 }
 
 function clearProblemResponses(problem) {
-  clearResponseKeys(getProblemResponseKeys(problem));
+  clearStoredKeys(getProblemResponseKeys(problem), getProblemWorkKeys(problem));
 }
 
 function clearVisibleResponses() {
-  clearResponseKeys(getVisibleResponseKeys());
+  clearStoredKeys(getVisibleResponseKeys(), getVisibleWorkKeys());
 }
 
 function undoHistory() {
@@ -1427,7 +1502,9 @@ function render() {
     onToggleProblemAnswerVisibility: toggleProblemAnswerVisibility,
     onToggleProblemExplanationVisibility: toggleProblemExplanationVisibility,
     responseValues: state.responseValues,
+    workValues: state.workValues,
     onResponseChange: handleResponseChange,
+    onWorkChange: handleWorkChange,
     onClearProblem: clearProblemResponses,
     getProblemCompletionStatus,
     onToggleProblemComplete: toggleProblemComplete,
@@ -1470,6 +1547,7 @@ async function applyPageSelection(pageKey) {
 
 async function bootstrap() {
   state.responseValues = loadPersistedResponseValues();
+  state.workValues = loadPersistedWorkValues();
   state.completedProblems = loadPersistedCompletedProblems();
   const persistedViewSelection = loadPersistedViewSelection();
   const historyState = loadPersistedHistoryState();
