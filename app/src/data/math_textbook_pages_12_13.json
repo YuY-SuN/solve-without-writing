@@ -512,20 +512,41 @@
               },
               "uncertain": false,
               "work": {
-                "type": "expression_steps",
+                "type": "fraction_common_denominator_guide",
                 "optional": true,
-                "label": "通分・計算の過程",
+                "label": "通分の見方ガイド",
                 "defaultOpen": true,
-                "mode": "fraction",
+                "description": "先に分母をそろえる先を決めてから、それぞれ何倍するかを考えます。",
                 "starter": {
                   "expression": "（−2/9）＋（−5/6）"
                 },
-                "suggestedNotes": [
-                  "通分",
-                  "分子を計算",
-                  "約分",
-                  "符号に注意"
-                ]
+                "leftLabel": "−2/9",
+                "rightLabel": "−5/6",
+                "prompts": {
+                  "commonDenominator": "分母をいくつにそろえる？",
+                  "leftMultiplier": "−2/9 は何倍する？",
+                  "rightMultiplier": "−5/6 は何倍する？",
+                  "leftConverted": "−2/9 を通分した形",
+                  "rightConverted": "−5/6 を通分した形",
+                  "sumExpression": "通分後のたし算",
+                  "result": "計算結果",
+                  "note": "気づいたことメモ"
+                },
+                "hints": {
+                  "commonDenominator": "9 と 6 の両方で割り切れる数を考えます。",
+                  "leftMultiplier": "分母 9 を共通分母に合わせる倍率です。",
+                  "rightMultiplier": "分母 6 を共通分母に合わせる倍率です。",
+                  "sumExpression": "分母がそろったら分子どうしを見ます。"
+                },
+                "placeholders": {
+                  "commonDenominator": "例: 18",
+                  "leftMultiplier": "例: 2",
+                  "rightMultiplier": "例: 3",
+                  "leftConverted": "例: -4/18",
+                  "rightConverted": "例: -15/18",
+                  "sumExpression": "例: -4/18 + -15/18",
+                  "result": "例: -19/18"
+                }
               }
             }
           ],

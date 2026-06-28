@@ -24,6 +24,8 @@
 - ブラウザが `fetch()` で `src/data/*.json` を読む構成
 - `file://` 直開きではなく、ローカル静的サーバー経由で開く必要がある
 - 動作確認は通常 `python3 -m http.server 4173` を使う
+- `app/index.html` から読む `main.js` / `page.css` は query version 付きで参照しているので、表示ロジックやスタイルの変更時はこの version も同じ変更セットで更新する
+- `main.js` の import 先だけ更新して `index.html` の version を据え置くと、ブラウザキャッシュで古い entry module が使われ、新しいUIが一切出ないことがある
 
 ### Dataset loading
 
@@ -127,7 +129,12 @@
 
 ### Work input types
 
-問題または小問に `work.type: "expression_steps"` を追加すると、最終解答とは別に「考え方・途中式」欄を表示できる。
+問題または小問に `work` を追加すると、最終解答とは別に「考え方・途中式」欄を表示できる。
+
+現在の work type:
+- `expression_steps`: 汎用の自由記録型。式を1行ずつ書く
+- `distribution_guide`: 分配法則向けの導き型。どの数が両方にかかるかを先に考える
+- `fraction_common_denominator_guide`: 通分向けの導き型。どの分母にそろえるか、何倍するかを先に考える
 
 重要:
 - `work` は `response` と分けて扱い、完了判定には含めない
@@ -135,7 +142,8 @@
 - localStorage key は `benkyo-tool-prompt01:work-values:v1`
 - 記憶データ export / import では `data.workValues` として持ち出す
 - 問題クリア、表示中クリアでは、解答欄と同じ対象範囲の途中式も削除する
-- `starter.expression` は最初の式、`suggestedNotes` は「通分」「約分」「分配法則」などのメモ候補に使う
+- `expression_steps` の `starter.expression` と `suggestedNotes` は自由記録の初期式とメモ候補に使う
+- 導き型の `distribution_guide` と `fraction_common_denominator_guide` では、prompt / hint / placeholder を使って、先に観察や操作選択をさせる
 - 詳細なデータ仕様と運用は `docs/expression-work-input-plan.md` を参照する
 
 ## Lessons learned from recent work

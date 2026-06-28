@@ -179,18 +179,45 @@
               },
               "uncertain": false,
               "work": {
-                "type": "expression_steps",
+                "type": "distribution_guide",
                 "optional": true,
-                "label": "分配法則の過程",
+                "label": "分配の見方ガイド",
                 "defaultOpen": true,
-                "mode": "distribution",
+                "description": "先に『どの数が両方にかかるか』を見つけてから、ばらした式を書きます。",
                 "starter": {
                   "expression": "(100-1)×(-12)"
                 },
-                "suggestedNotes": [
-                  "分配法則",
-                  "符号に注意",
-                  "計算"
+                "prompts": {
+                  "operation": "この式は、1つの数を2つの項へ配る見方ができそうですか。まずは見方を選びます。",
+                  "sharedFactor": "両方に同じようにかかる数",
+                  "firstTerm": "まとまりの1つ目",
+                  "secondTerm": "まとまりの2つ目",
+                  "rewrittenExpression": "ばらしたあとの式",
+                  "result": "計算結果",
+                  "note": "気づいたことメモ"
+                },
+                "hints": {
+                  "operation": "『同じ数が2つの項にかかる』と見えたら、ばらす見方が使えます。",
+                  "sharedFactor": "この問題では外側にある数に注目します。",
+                  "secondTerm": "符号も込みで考えると、言いかえた後に迷いにくくなります。",
+                  "rewrittenExpression": "まずは計算せず、分配した形だけを書きます。"
+                },
+                "placeholders": {
+                  "sharedFactor": "例: (-12)",
+                  "firstTerm": "例: 100",
+                  "secondTerm": "例: -1",
+                  "rewrittenExpression": "例: 100×(-12)-1×(-12)",
+                  "result": "例: -1188"
+                },
+                "operationOptions": [
+                  {
+                    "value": "expand",
+                    "label": "ばらして見る"
+                  },
+                  {
+                    "value": "keep",
+                    "label": "まだまとめたまま見る"
+                  }
                 ]
               }
             },

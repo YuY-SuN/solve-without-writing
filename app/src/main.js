@@ -1,4 +1,4 @@
-import { renderProblems } from "./renderers/ProblemRenderer.js?v20260628-1";
+import { renderProblems } from "./renderers/ProblemRenderer.js?v20260628-2";
 import { renderVisualList } from "./renderers/VisualRenderer.js?v20260617-1";
 
 const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
