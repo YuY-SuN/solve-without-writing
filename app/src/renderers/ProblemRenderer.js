@@ -1,4 +1,4 @@
-import { renderPrompt, renderResponse, renderAnswer, renderExplanation } from "./TextRenderer.js?v20260617-1";
+import { renderPrompt, renderResponse, renderAnswer, renderExplanation } from "./TextRenderer.js?v20261003-1";
 import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
 
 function getItemResponseKey(problem, item) {

@@ -85,6 +85,12 @@
       "id": "workbook-p-16-p-17",
       "label": "正の数・負の数 3数以上の加法、減法",
       "path": "workbook_p_16_p_17.json"
+    },
+    {
+      "id": "english-lesson3-3-chatgpt",
+      "label": "Lesson 3-3 人についてたずねたり、答えたりできる。",
+      "subject": "english",
+      "path": "english_lesson3_3_chatgpt.json"
     }
   ]
 }

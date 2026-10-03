@@ -34,6 +34,7 @@
 - `localStorage` の回答・完了・履歴・閲覧位置は JSON ファイルへ export / import できる
 - 保存済みページが消えていた場合は dataset 全体表示、dataset も無効なら `defaultDatasetId` にフォールバックする
 - `index.json` の各要素は少なくとも `id` `label` `path` を持つ
+- `index.json` の `subject` は任意。問題JSONの `meta.subject` が優先され、どちらにもない既存datasetは `math` として扱う
 - `defaultDatasetId` が初期表示セットになる
 - ページ選択肢は dataset ごとの再構築ではなく、起動時に全 dataset を読んで横断生成する
 
@@ -45,6 +46,7 @@
 - 既存 `defaultDatasetId` は有効なら保持し、無効なら先頭 dataset に補正する
 - 新規 dataset の `id` はファイル名ベースで生成する
 - `meta.title` があれば新規 `label` 候補に使う
+- `meta.subject` があればindexに出力し、省略時は `math` とする
 
 ## Data model knowledge
 
@@ -108,6 +110,8 @@
 - `table_fill`
 - `ladder_fill`
 - `none`
+- `word_order`
+- `mode_switch`
 
 重要:
 - `response.type: "none"` は「解答欄を出さない」が正しい
@@ -124,6 +128,14 @@
 - `response.type: "ladder_fill"` は `factorization_ladder` 内の空欄 key を `response.targets` で列挙し、階段図の入力欄へ直接結び付ける
 - `response.type: "multi_blank"` に後から field を足す場合は、既存 `localStorage` の回答オブジェクトを削除せず、不足 field だけ `answer.value` で補完する。既存キーの上書きや field 順ずれは起こさない
 - `items` は1段とは限らず、教材によっては小問の中にさらに `items` が入るので、描画・完了判定・回答クリアは再帰構造を前提にする
+- 教科固有の分岐を問題全体のrendererへ広げず、回答操作は `response.type` ごとの共通rendererとして追加する
+- `choice.shuffle` の順序はrendererのdataset内responseオブジェクト単位でキャッシュし、DOM再描画中に変わらないようにする。再読み込み後は新しい順序になりうる
+- `choice.showKeys: false` は選択肢keyの表示だけを抑制する。省略時は既存どおりkeyを表示する
+- `mode_switch` の保存値は `{ mode, values: { [mode]: answerValue } }`。完了判定は選択中modeのresponseへ委譲する
+- `mode_switch` のmode内にある `multi_blank` の欄追加では、既存のmode別回答を保持し、不足キーだけ `answer.modes[mode].value` で補完する
+- `word_order` の回答値はtoken keyの配列。すべてのtokenを選ぶと入力済みとなる。順序の正誤判定は行わない
+- 起動時にresponse形式を検証し、読み込みに失敗したdatasetは一覧から除外して他datasetの利用を継続する
+- 英語教材の詳細仕様とサンプルは `docs/english-learning-support.md` を参照する
 
 ## Lessons learned from recent work
 

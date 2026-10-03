@@ -44,9 +44,11 @@ def make_entry(path: Path, existing_by_path: dict[str, dict], used_ids: set[str]
     used_ids.add(dataset_id)
 
     label = existing.get("label") or data.get("meta", {}).get("title") or path.stem
+    subject = data.get("meta", {}).get("subject") or "math"
     return {
         "id": dataset_id,
         "label": label,
+        "subject": subject,
         "path": path.name,
     }
 

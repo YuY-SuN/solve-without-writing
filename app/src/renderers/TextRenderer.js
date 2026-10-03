@@ -1,3 +1,6 @@
+const choiceOrderCache = new WeakMap();
+const tokenOrderCache = new WeakMap();
+
 export function renderPrompt(problem) {
   const wrapper = document.createElement("div");
   wrapper.className = "problem-prompt-block";
@@ -71,12 +74,208 @@ function createChoiceControl(choice, response, responseKey, selectedValue, onCha
   }
 
   const text = document.createElement("span");
-  text.textContent = choice.key && choice.key !== choice.text
+  const showKey = response.showKeys !== false;
+  text.textContent = showKey && choice.key && choice.key !== choice.text
     ? `${choice.key} ${choice.text}`
     : choice.text;
 
   row.append(input, text);
   return row;
+}
+
+function getStableChoiceOrder(response) {
+  const choices = response.choices ?? [];
+  if (response.shuffle !== true) {
+    return choices;
+  }
+
+  if (!choiceOrderCache.has(response)) {
+    const shuffled = [...choices];
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    }
+    choiceOrderCache.set(response, shuffled);
+  }
+
+  return choiceOrderCache.get(response);
+}
+
+function getStableTokenOrder(response) {
+  const tokens = response.tokens ?? [];
+  if (response.shuffle !== true) {
+    return tokens;
+  }
+
+  if (!tokenOrderCache.has(response)) {
+    const shuffled = [...tokens];
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    }
+    tokenOrderCache.set(response, shuffled);
+  }
+
+  return tokenOrderCache.get(response);
+}
+
+function createModeSwitch(response, options) {
+  const modes = response.modes ?? {};
+  const defaultMode = response.defaultMode;
+  const storedValue = options.value && typeof options.value === "object" ? options.value : {};
+  let activeMode = Object.hasOwn(modes, storedValue.mode) ? storedValue.mode : defaultMode;
+  let modeValue = storedValue.values && typeof storedValue.values === "object" ? { ...storedValue.values } : {};
+  const wrapper = document.createElement("div");
+  wrapper.className = "mode-switch-response";
+
+  const controls = document.createElement("div");
+  controls.className = "mode-switch-controls";
+  const buttons = new Map();
+  const activeContainer = document.createElement("div");
+  activeContainer.className = "mode-switch-active";
+
+  function renderActiveMode() {
+    activeContainer.innerHTML = "";
+    for (const [modeName, button] of buttons) {
+      button.setAttribute("aria-pressed", String(modeName === activeMode));
+    }
+
+    const activeResponse = modes[activeMode];
+    if (!activeResponse) {
+      return;
+    }
+    const activeControl = renderResponse(activeResponse, {
+      responseKey: `${options.responseKey ?? "response"}-${activeMode}`,
+      value: modeValue[activeMode] ?? null,
+      onChange: (nextValue) => {
+        options.onChange?.((currentValue) => {
+          const current = currentValue && typeof currentValue === "object" ? currentValue : {};
+          const currentValues = current.values && typeof current.values === "object" ? current.values : {};
+          const previousModeValue = currentValues[activeMode];
+          const nextModeValue = typeof nextValue === "function" ? nextValue(previousModeValue) : nextValue;
+          modeValue = { ...modeValue, [activeMode]: nextModeValue };
+          return {
+            mode: activeMode,
+            values: { ...currentValues, [activeMode]: nextModeValue },
+          };
+        });
+      },
+    });
+    if (activeControl) {
+      activeContainer.appendChild(activeControl);
+    }
+  }
+
+  for (const modeName of Object.keys(modes)) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "mode-switch-button";
+    button.textContent = modeName === "choice"
+      ? "選択式"
+      : modeName === "input"
+        ? "記入式"
+        : modeName;
+    button.addEventListener("click", () => {
+      activeMode = modeName;
+      options.onChange?.({
+        mode: modeName,
+        values: modeValue,
+      });
+      renderActiveMode();
+    });
+    buttons.set(modeName, button);
+    controls.appendChild(button);
+  }
+  wrapper.appendChild(controls);
+  wrapper.appendChild(activeContainer);
+  renderActiveMode();
+
+  return wrapper;
+}
+
+function createWordOrder(response, options) {
+  const orderedTokens = getStableTokenOrder(response);
+  let selectedKeys = Array.isArray(options.value) ? [...options.value] : [];
+  const tokenByKey = new Map(orderedTokens.map((token) => [token.key, token]));
+  const wrapper = document.createElement("div");
+  wrapper.className = "word-order-response";
+
+  function commit(nextKeys) {
+    selectedKeys = nextKeys;
+    options.onChange?.([...selectedKeys]);
+    renderWordOrder();
+  }
+
+  function renderWordOrder() {
+    wrapper.innerHTML = "";
+    const answerLabel = document.createElement("p");
+    answerLabel.className = "word-order-label";
+    answerLabel.textContent = "回答";
+    wrapper.appendChild(answerLabel);
+
+    const answerRow = document.createElement("div");
+    answerRow.className = "word-order-answer";
+    answerRow.setAttribute("aria-label", "選んだ語句");
+    for (const [index, key] of selectedKeys.entries()) {
+      const token = tokenByKey.get(key);
+      if (!token) {
+        continue;
+      }
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "word-order-token word-order-token-selected";
+      button.textContent = token.text;
+      button.title = "クリックして候補へ戻す";
+      button.setAttribute("aria-label", `${token.text} を候補へ戻す`);
+      button.addEventListener("click", () => {
+        commit(selectedKeys.filter((_, selectedIndex) => selectedIndex !== index));
+      });
+      answerRow.appendChild(button);
+    }
+    if (answerRow.childElementCount === 0) {
+      const placeholder = document.createElement("span");
+      placeholder.className = "word-order-placeholder";
+      placeholder.textContent = "語句を選んで英文を作ります。";
+      answerRow.appendChild(placeholder);
+    }
+    wrapper.appendChild(answerRow);
+
+    const actions = document.createElement("div");
+    actions.className = "word-order-actions";
+    const undoButton = document.createElement("button");
+    undoButton.type = "button";
+    undoButton.className = "secondary-button";
+    undoButton.textContent = "最後の1語を戻す";
+    undoButton.disabled = selectedKeys.length === 0;
+    undoButton.addEventListener("click", () => commit(selectedKeys.slice(0, -1)));
+    actions.appendChild(undoButton);
+    wrapper.appendChild(actions);
+
+    const choicesLabel = document.createElement("p");
+    choicesLabel.className = "word-order-label";
+    choicesLabel.textContent = "候補";
+    wrapper.appendChild(choicesLabel);
+
+    const selectedKeySet = new Set(selectedKeys);
+    const choices = document.createElement("div");
+    choices.className = "word-order-choices";
+    choices.setAttribute("aria-label", "選べる語句");
+    for (const token of orderedTokens) {
+      if (selectedKeySet.has(token.key)) {
+        continue;
+      }
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "word-order-token";
+      button.textContent = token.text;
+      button.addEventListener("click", () => commit([...selectedKeys, token.key]));
+      choices.appendChild(button);
+    }
+    wrapper.appendChild(choices);
+  }
+
+  renderWordOrder();
+  return wrapper;
 }
 
 export function renderResponse(response, options = {}) {
@@ -153,10 +352,20 @@ export function renderResponse(response, options = {}) {
   if (response.type === "choice") {
     const list = document.createElement("div");
     list.className = "choice-list";
-    for (const choice of response.choices ?? []) {
+    for (const choice of getStableChoiceOrder(response)) {
       list.appendChild(createChoiceControl(choice, response, responseKey, value, onChange));
     }
     wrapper.appendChild(list);
+    return wrapper;
+  }
+
+  if (response.type === "mode_switch") {
+    wrapper.appendChild(createModeSwitch(response, { ...options, responseKey, value, onChange }));
+    return wrapper;
+  }
+
+  if (response.type === "word_order") {
+    wrapper.appendChild(createWordOrder(response, { ...options, value, onChange }));
     return wrapper;
   }
 
@@ -208,9 +417,16 @@ export function renderAnswer(answer) {
   label.textContent = "答え";
   wrapper.appendChild(label);
 
-  const pre = document.createElement("pre");
-  pre.textContent = JSON.stringify(answer, null, 2);
-  wrapper.appendChild(pre);
+  if (typeof answer?.display === "string" || Array.isArray(answer?.display)) {
+    const display = document.createElement("p");
+    display.className = "answer-display";
+    display.textContent = Array.isArray(answer.display) ? answer.display.join("、") : answer.display;
+    wrapper.appendChild(display);
+  } else {
+    const pre = document.createElement("pre");
+    pre.textContent = JSON.stringify(answer, null, 2);
+    wrapper.appendChild(pre);
+  }
   return wrapper;
 }
 

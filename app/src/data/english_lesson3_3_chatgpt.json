@@ -1,0 +1,1024 @@
+{
+  "meta": {
+    "title": "Lesson 3-3 人についてたずねたり、答えたりできる。",
+    "source": "英語_20261003-1545_文字清書-1.pdf",
+    "version": "1",
+    "language": "ja",
+    "subject": "english"
+  },
+  "pages": [
+    {
+      "page": 32,
+      "problems": [
+        {
+          "id": "eng_lesson3_3_p32_a1",
+          "section": {
+            "no": 1,
+            "title": "A 基本を確認する！",
+            "category": "選択"
+          },
+          "prompt": {
+            "text": "絵の中の□に入るセリフとなるように、適する語を選ぼう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "eng_lesson3_3_p32_a1_01",
+              "no": 1,
+              "text": "( ___ / ___ ) is she?　彼女はだれですか。",
+              "response": {
+                "type": "choice",
+                "shuffle": true,
+                "showKeys": false,
+                "choices": [
+                  {
+                    "key": "a",
+                    "text": "Who"
+                  },
+                  {
+                    "key": "b",
+                    "text": "Who's",
+                    "errorType": "contraction",
+                    "explanation": "後ろに is she が続くため、Who's を置くと is が重複します。"
+                  }
+                ]
+              },
+              "answer": {
+                "value": "a",
+                "display": "Who is she?"
+              },
+              "explanation": "人について「だれ」とたずねるときは who を使います。"
+            },
+            {
+              "id": "eng_lesson3_3_p32_a1_02",
+              "no": 2,
+              "text": "That is Takeshi. He is my friend. I like ( her / him ).",
+              "context": {
+                "text": "あちらは武史です。彼は私の友達です。私は彼がとても好きです。"
+              },
+              "response": {
+                "type": "choice",
+                "shuffle": true,
+                "showKeys": false,
+                "choices": [
+                  {
+                    "key": "a",
+                    "text": "her",
+                    "errorType": "pronoun_gender",
+                    "explanation": "Takeshi は He で受けているので、目的格は him です。"
+                  },
+                  {
+                    "key": "b",
+                    "text": "him"
+                  }
+                ]
+              },
+              "answer": {
+                "value": "b",
+                "display": "him"
+              },
+              "explanation": "「彼を」は him で表します。"
+            },
+            {
+              "id": "eng_lesson3_3_p32_a1_03",
+              "no": 3,
+              "text": "She is Ms. White. Do you know ( her / him )?",
+              "context": {
+                "text": "彼女はホワイト先生です。あなたは彼女を知っていますか。"
+              },
+              "response": {
+                "type": "choice",
+                "shuffle": true,
+                "showKeys": false,
+                "choices": [
+                  {
+                    "key": "a",
+                    "text": "her"
+                  },
+                  {
+                    "key": "b",
+                    "text": "him",
+                    "errorType": "pronoun_gender",
+                    "explanation": "Ms. White は She で受けているので、目的格は her です。"
+                  }
+                ]
+              },
+              "answer": {
+                "value": "a",
+                "display": "her"
+              },
+              "explanation": "「彼女を」は her で表します。"
+            }
+          ],
+          "answer": {}
+        },
+        {
+          "id": "eng_lesson3_3_p32_a2",
+          "section": {
+            "no": 2,
+            "title": "A 基本を確認する！",
+            "category": "日本文にあう英文"
+          },
+          "prompt": {
+            "text": "日本文にあう英文になるように、適する語を書こう。選択式では正しい英文を選び、記入式では空欄を入力する。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "eng_lesson3_3_p32_a2_01",
+              "no": 1,
+              "text": "こちらはだれですか。　___ is ___ ?",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "Who is this?"
+                      },
+                      {
+                        "key": "b",
+                        "text": "Who this is?",
+                        "errorType": "word_order",
+                        "explanation": "疑問文では is を this の前に置きます。"
+                      },
+                      {
+                        "key": "c",
+                        "text": "Who is that?",
+                        "errorType": "demonstrative",
+                        "explanation": "「こちら」は this、「あちら」は that です。"
+                      },
+                      {
+                        "key": "d",
+                        "text": "Who are this?",
+                        "errorType": "be_verb",
+                        "explanation": "this は単数なので are ではなく is を使います。"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "multi_blank",
+                    "fields": [
+                      {
+                        "key": "first",
+                        "label": "1語目"
+                      },
+                      {
+                        "key": "second",
+                        "label": "2語目"
+                      }
+                    ]
+                  }
+                }
+              },
+              "answer": {
+                "display": "Who is this?",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": {
+                      "first": "Who",
+                      "second": "this"
+                    }
+                  }
+                }
+              },
+              "explanation": "「こちらはだれですか」は Who is this? と表します。"
+            },
+            {
+              "id": "eng_lesson3_3_p32_a2_02",
+              "no": 2,
+              "text": "彼は私の友達です。　___ is my ___ .",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "He is my friend."
+                      },
+                      {
+                        "key": "b",
+                        "text": "Him is my friend.",
+                        "errorType": "pronoun_case",
+                        "explanation": "主語には目的格 him ではなく主格 he を使います。"
+                      },
+                      {
+                        "key": "c",
+                        "text": "He are my friend.",
+                        "errorType": "be_verb",
+                        "explanation": "He には are ではなく is を使います。"
+                      },
+                      {
+                        "key": "d",
+                        "text": "He is me friend.",
+                        "errorType": "possessive",
+                        "explanation": "「私の」は me ではなく my です。"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "multi_blank",
+                    "fields": [
+                      {
+                        "key": "first",
+                        "label": "1語目"
+                      },
+                      {
+                        "key": "second",
+                        "label": "2語目"
+                      }
+                    ]
+                  }
+                }
+              },
+              "answer": {
+                "display": "He is my friend.",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": {
+                      "first": "He",
+                      "second": "friend"
+                    }
+                  }
+                }
+              },
+              "explanation": "「彼は」は He、「友達」は friend を使います。"
+            }
+          ],
+          "answer": {}
+        }
+      ]
+    },
+    {
+      "page": 33,
+      "problems": [
+        {
+          "id": "eng_lesson3_3_p33_a3",
+          "section": {
+            "no": 3,
+            "title": "A-3",
+            "category": "並べ替え"
+          },
+          "prompt": {
+            "text": "日本文にあう英文になるように、語や符号を並べかえよう。"
+          },
+          "items": [
+            {
+              "id": "eng_lesson3_3_p33_a3_01",
+              "no": 1,
+              "text": "あちらはだれですか。",
+              "response": {
+                "type": "word_order",
+                "shuffle": true,
+                "tokens": [
+                  {
+                    "key": "t1",
+                    "text": "that"
+                  },
+                  {
+                    "key": "t2",
+                    "text": "who"
+                  },
+                  {
+                    "key": "t3",
+                    "text": "is"
+                  },
+                  {
+                    "key": "t4",
+                    "text": "?"
+                  }
+                ]
+              },
+              "answer": {
+                "value": [
+                  "t2",
+                  "t3",
+                  "t1",
+                  "t4"
+                ],
+                "display": "Who is that?"
+              },
+              "explanation": "Who を文頭に置き、疑問文の語順で is that と続けます。"
+            }
+          ],
+          "response": {
+            "type": "none"
+          },
+          "answer": {}
+        },
+        {
+          "id": "eng_lesson3_3_p33_vocab",
+          "section": {
+            "no": 4,
+            "title": "必ず覚えたい語句",
+            "category": "語句"
+          },
+          "prompt": {
+            "text": "英語は日本語に、日本語は英語にかえて答えよう。選択式または記入式で解ける。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "eng_lesson3_3_p33_vocab_01",
+              "no": 1,
+              "text": "character",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "登場人物・キャラクター"
+                      },
+                      {
+                        "key": "b",
+                        "text": "考え・アイデア"
+                      },
+                      {
+                        "key": "c",
+                        "text": "歌手"
+                      },
+                      {
+                        "key": "d",
+                        "text": "友達"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "登場人物・キャラクター",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "キャラクター",
+                    "accepted": [
+                      "キャラクター",
+                      "登場人物",
+                      "登場人物・キャラクター"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "id": "eng_lesson3_3_p33_vocab_02",
+              "no": 2,
+              "text": "考え、アイデア",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "idea"
+                      },
+                      {
+                        "key": "b",
+                        "text": "character"
+                      },
+                      {
+                        "key": "c",
+                        "text": "singer"
+                      },
+                      {
+                        "key": "d",
+                        "text": "favorite"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "idea",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "idea",
+                    "accepted": [
+                      "idea"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "id": "eng_lesson3_3_p33_vocab_03",
+              "no": 3,
+              "text": "芸術について知っている　___ about art",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "know"
+                      },
+                      {
+                        "key": "b",
+                        "text": "like"
+                      },
+                      {
+                        "key": "c",
+                        "text": "is"
+                      },
+                      {
+                        "key": "d",
+                        "text": "who"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "know about art",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "know",
+                    "accepted": [
+                      "know"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "id": "eng_lesson3_3_p33_vocab_04",
+              "no": 4,
+              "text": "私は買い物が大好きだ。　I like shopping ___.",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "very much"
+                      },
+                      {
+                        "key": "b",
+                        "text": "about art"
+                      },
+                      {
+                        "key": "c",
+                        "text": "favorite"
+                      },
+                      {
+                        "key": "d",
+                        "text": "kind"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "I like shopping very much.",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "very much",
+                    "accepted": [
+                      "very much"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "answer": {}
+        },
+        {
+          "id": "eng_lesson3_3_p33_b1",
+          "section": {
+            "no": 1,
+            "title": "B 伝える練習をする！",
+            "category": "並べ替え"
+          },
+          "prompt": {
+            "text": "日本文にあう英文になるように、語や符号を並べかえて全文を作ろう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "eng_lesson3_3_p33_b1_01",
+              "no": 1,
+              "text": "私は彼女が大好きです。",
+              "response": {
+                "type": "word_order",
+                "shuffle": true,
+                "tokens": [
+                  {
+                    "key": "t1",
+                    "text": "very"
+                  },
+                  {
+                    "key": "t2",
+                    "text": "her"
+                  },
+                  {
+                    "key": "t3",
+                    "text": "like"
+                  },
+                  {
+                    "key": "t4",
+                    "text": "I"
+                  },
+                  {
+                    "key": "t5",
+                    "text": "much"
+                  },
+                  {
+                    "key": "t6",
+                    "text": "."
+                  }
+                ]
+              },
+              "answer": {
+                "value": [
+                  "t4",
+                  "t3",
+                  "t2",
+                  "t1",
+                  "t5",
+                  "t6"
+                ],
+                "display": "I like her very much."
+              },
+              "explanation": "I like her の後に very much を置きます。"
+            },
+            {
+              "id": "eng_lesson3_3_p33_b1_02",
+              "no": 2,
+              "text": "あなたのお気に入りの歌手はだれですか。",
+              "response": {
+                "type": "word_order",
+                "shuffle": true,
+                "tokens": [
+                  {
+                    "key": "t1",
+                    "text": "your"
+                  },
+                  {
+                    "key": "t2",
+                    "text": "singer"
+                  },
+                  {
+                    "key": "t3",
+                    "text": "who"
+                  },
+                  {
+                    "key": "t4",
+                    "text": "favorite"
+                  },
+                  {
+                    "key": "t5",
+                    "text": "is"
+                  },
+                  {
+                    "key": "t6",
+                    "text": "?"
+                  }
+                ]
+              },
+              "answer": {
+                "value": [
+                  "t3",
+                  "t5",
+                  "t1",
+                  "t4",
+                  "t2",
+                  "t6"
+                ],
+                "display": "Who is your favorite singer?"
+              },
+              "explanation": "Who is の後に your favorite singer を続けます。"
+            }
+          ],
+          "answer": {}
+        },
+        {
+          "id": "eng_lesson3_3_p33_b2",
+          "section": {
+            "no": 2,
+            "title": "B 自己表現",
+            "category": "英文完成"
+          },
+          "prompt": {
+            "text": "となりのクラスの Nick に友達の健を紹介する。①健を知っているか、②彼はとても親切、③彼のことが好き、の内容を英文で完成させよう。"
+          },
+          "context": {
+            "text": "ヒント：親切な = kind"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "eng_lesson3_3_p33_b2_01",
+              "no": 1,
+              "text": "This is Ken. Do you ___ ___ ?",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "know him"
+                      },
+                      {
+                        "key": "b",
+                        "text": "know he",
+                        "errorType": "pronoun_case",
+                        "explanation": "know の目的語には he ではなく him を使います。"
+                      },
+                      {
+                        "key": "c",
+                        "text": "knows him",
+                        "errorType": "verb_form",
+                        "explanation": "Do you の後は動詞の原形 know を使います。"
+                      },
+                      {
+                        "key": "d",
+                        "text": "know her",
+                        "errorType": "pronoun_gender",
+                        "explanation": "Ken は男性なので him を使います。"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "multi_blank",
+                    "fields": [
+                      {
+                        "key": "first",
+                        "label": "1語目"
+                      },
+                      {
+                        "key": "second",
+                        "label": "2語目"
+                      }
+                    ]
+                  }
+                }
+              },
+              "answer": {
+                "display": "This is Ken. Do you know him?",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": {
+                      "first": "know",
+                      "second": "him"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "eng_lesson3_3_p33_b2_02",
+              "no": 2,
+              "text": "___ ___ very ___ .",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "He is very kind."
+                      },
+                      {
+                        "key": "b",
+                        "text": "Him is very kind.",
+                        "errorType": "pronoun_case",
+                        "explanation": "主語には him ではなく he を使います。"
+                      },
+                      {
+                        "key": "c",
+                        "text": "He are very kind.",
+                        "errorType": "be_verb",
+                        "explanation": "He には are ではなく is を使います。"
+                      },
+                      {
+                        "key": "d",
+                        "text": "He is very kindness.",
+                        "errorType": "word_class",
+                        "explanation": "「親切な」は形容詞 kind を使います。"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "multi_blank",
+                    "fields": [
+                      {
+                        "key": "first",
+                        "label": "1語目"
+                      },
+                      {
+                        "key": "second",
+                        "label": "2語目"
+                      },
+                      {
+                        "key": "third",
+                        "label": "3語目"
+                      }
+                    ]
+                  }
+                }
+              },
+              "answer": {
+                "display": "He is very kind.",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": {
+                      "first": "He",
+                      "second": "is",
+                      "third": "kind"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "eng_lesson3_3_p33_b2_03",
+              "no": 3,
+              "text": "I ___ ___ .",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "like him"
+                      },
+                      {
+                        "key": "b",
+                        "text": "like he",
+                        "errorType": "pronoun_case",
+                        "explanation": "like の目的語には he ではなく him を使います。"
+                      },
+                      {
+                        "key": "c",
+                        "text": "likes him",
+                        "errorType": "verb_form",
+                        "explanation": "主語が I なので likes ではなく like を使います。"
+                      },
+                      {
+                        "key": "d",
+                        "text": "like her",
+                        "errorType": "pronoun_gender",
+                        "explanation": "Ken は男性なので him を使います。"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "multi_blank",
+                    "fields": [
+                      {
+                        "key": "first",
+                        "label": "1語目"
+                      },
+                      {
+                        "key": "second",
+                        "label": "2語目"
+                      }
+                    ]
+                  }
+                }
+              },
+              "answer": {
+                "display": "I like him.",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": {
+                      "first": "like",
+                      "second": "him"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "answer": {}
+        },
+        {
+          "id": "eng_lesson3_3_p33_b3",
+          "section": {
+            "no": 3,
+            "title": "B CAN-DO 自己表現",
+            "category": "自己表現"
+          },
+          "prompt": {
+            "text": "Ann に、好きなキャラクターについて英語で伝えよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "eng_lesson3_3_p33_b3_01",
+              "no": 1,
+              "text": "好きなキャラクターを1人選び、「こちらは…です。私は彼［彼女］が好きです」と紹介しよう。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "This is [character]. I like him/her."
+                      },
+                      {
+                        "key": "b",
+                        "text": "This [character]. I like him/her.",
+                        "errorType": "missing_be_verb",
+                        "explanation": "This is ... の is が必要です。"
+                      },
+                      {
+                        "key": "c",
+                        "text": "This is [character]. I like he/she.",
+                        "errorType": "pronoun_case",
+                        "explanation": "like の目的語には him/her を使います。"
+                      },
+                      {
+                        "key": "d",
+                        "text": "This is [character]. I am like him/her.",
+                        "errorType": "verb_usage",
+                        "explanation": "「好きです」は I like ... と表します。"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 2
+                  }
+                }
+              },
+              "answer": {
+                "display": "解答例：This is [character]. I like him/her.",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "This is [character]. I like him/her."
+                  }
+                }
+              },
+              "explanation": "実際の記入式では [character] を好きなキャラクター名にし、人物に合わせて him または her を使います。"
+            },
+            {
+              "id": "eng_lesson3_3_p33_b3_02",
+              "no": 2,
+              "text": "別のキャラクターをもう1人選び、「こちらは…です。あなたは彼［彼女］を知っていますか」と Ann にたずねよう。",
+              "context": {
+                "text": "ヒント：こちらは…です。= This is ... / 彼を = him / 彼女を = her / 知っている = know"
+              },
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "This is [character]. Do you know him/her?"
+                      },
+                      {
+                        "key": "b",
+                        "text": "This is [character]. Do you know he/she?",
+                        "errorType": "pronoun_case",
+                        "explanation": "know の目的語には him/her を使います。"
+                      },
+                      {
+                        "key": "c",
+                        "text": "This [character]. Do you know him/her?",
+                        "errorType": "missing_be_verb",
+                        "explanation": "This is ... の is が必要です。"
+                      },
+                      {
+                        "key": "d",
+                        "text": "This is [character]. Are you know him/her?",
+                        "errorType": "question_form",
+                        "explanation": "一般動詞 know の疑問文では Do you know ...? とします。"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 2
+                  }
+                }
+              },
+              "answer": {
+                "display": "解答例：This is [character]. Do you know him/her?",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "This is [character]. Do you know him/her?"
+                  }
+                }
+              },
+              "explanation": "実際の記入式では [character] をキャラクター名にし、人物に合わせて him または her を使います。"
+            }
+          ],
+          "answer": {}
+        }
+      ]
+    }
+  ]
+}

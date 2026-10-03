@@ -404,6 +404,71 @@ pre {
   accent-color: #2f6fed;
 }
 
+.mode-switch-controls,
+.word-order-choices,
+.word-order-answer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mode-switch-controls {
+  margin-bottom: 12px;
+}
+
+.mode-switch-button,
+.word-order-token {
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 1px solid #c7d2e3;
+  border-radius: 8px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+  cursor: pointer;
+}
+
+.mode-switch-button[aria-pressed="true"] {
+  border-color: #2f6fed;
+  background: #eaf1ff;
+  color: #23406f;
+  box-shadow: inset 0 0 0 1px #2f6fed;
+}
+
+.word-order-label {
+  margin: 12px 0 6px;
+  color: #55627a;
+  font-size: 0.92rem;
+}
+
+.word-order-answer {
+  min-height: 58px;
+  align-items: center;
+  padding: 10px;
+  border: 1px dashed #9aabc4;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.word-order-token-selected {
+  border-color: #8ab4ff;
+  background: #eaf1ff;
+}
+
+.word-order-placeholder {
+  color: #7b879b;
+}
+
+.word-order-actions {
+  margin-top: 8px;
+}
+
+.mode-switch-button:focus-visible,
+.word-order-token:focus-visible {
+  outline: 2px solid #8ab4ff;
+  outline-offset: 2px;
+}
+
 .draw-graph-hint,
 .response-unsupported {
   color: #55627a;
