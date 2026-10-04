@@ -14,6 +14,12 @@
       "path": "english/english_workbook_p32_p69.json"
     },
     {
+      "id": "japanese-jhs1-jun-nov-reading-kanji",
+      "label": "中学1年 国語 6〜11月想定 読解50問＋漢字",
+      "subject": "japanese",
+      "path": "japanese/japanese_jhs1_jun_nov_reading_kanji.json"
+    },
+    {
       "id": "geometry-focus",
       "label": "図形中心セット",
       "subject": "math",

@@ -65,7 +65,7 @@ JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/
 | `id` | **問題には実質必須**。回答保存キー、画面表示に使用 |
 | `section.no`, `.title`, `.category` | **問題には実質必須**。カード見出しで直接参照。`category` は空文字でも可 |
 | `prompt.text` | 任意。問題文として表示 |
-| `context.text` | 任意。補足文として問題文の下に表示 |
+| `context.text` | 任意。補足文・会話・本文・資料。長文は本文パネルで表示 |
 | `items` | 任意。小問の配列。小問の中にも `items` を置ける再帰構造 |
 | `visuals` | 任意。問題・小問に表示する図表の配列 |
 | `work` | 任意。最終回答と別の途中式欄 |
@@ -75,7 +75,7 @@ JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/
 | `explanation` | 任意。文字列の解説 |
 | `notes`, `uncertain` | 生成データにある補足メモ・不確実性フラグ。現在の問題UIや判定では参照しない |
 
-小問では `id`, `no`, `label`, `text`, `context`, `visuals`, `work`, `response`, `answer`, `answerVisuals`, `explanation`, `items` を使えます。`no` と `label` は小問見出し、`text` は小問本文です。`section` と `prompt.text` は親問題側の構造です。問題UIの組み立ては `app/src/renderers/ProblemRenderer.js`、文章・回答欄・答えの表示は `app/src/renderers/TextRenderer.js` にあります。
+小問では `id`, `no`, `label`, `text`, `context`, `visuals`, `work`, `response`, `answer`, `answerVisuals`, `explanation`, `items` を使えます。`no` と `label` は小問見出し、`text` は小問本文です。`section` と `prompt.text` は親問題側の構造です。prompt / context / item textの改行は表示上も保持します。長文contextは「本文・資料」として読みやすい幅と行間で表示し、各小問から本文へ戻れます。問題UIの組み立ては `app/src/renderers/ProblemRenderer.js`、文章・回答欄・答えの表示は `app/src/renderers/TextRenderer.js` にあります。
 
 `answer` は固定の型ではありません。既存データには `value`（数値・文字列・配列・キー付きオブジェクト）、`display`、`formula`、`unit`、`accepted`、`relation` があります。通常画面の「答え」は**`answer` オブジェクト全体をJSONとして表示**します。転記モードでは `display` が文字列または配列ならそれを優先し、なければ `value` を形式別に整形します。`formula`・`unit`・`accepted` は通常画面には表示されますが、採点規則ではありません。
 

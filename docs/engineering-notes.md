@@ -35,6 +35,7 @@
 - 保存済みページが消えていた場合は dataset 全体表示、dataset も無効なら `defaultDatasetId` にフォールバックする
 - `index.json` の各要素は少なくとも `id` `label` `subject` `path` を持つ
 - 教科IDは問題JSONの親フォルダ名。問題JSONの `meta.subject` は分類に使わない
+- 表示名は `main.js` の `SUBJECT_LABELS` 対応表で管理し、未知のsubjectはIDをそのまま表示する
 - `index.json` の `path` は `src/data/` からの相対パス（例 `english/lesson.json`）
 - `defaultDatasetId` が初期表示セットになる
 - ページ選択肢は選択中datasetのページだけを表示する
@@ -85,6 +86,9 @@
 - `context.text` は補足文、会話文、数列、前提条件など
 - `context` は `prompt` の下に別ブロックとして表示する前提で扱う
 - 将来は `item.context.text` も出る可能性があるので、描画側はトップレベルだけに固定しない
+- 長文または複数改行を含む `context.text` は「本文・資料」パネルとして表示し、各小問から本文へ戻るリンクを付ける
+- prompt、context、item textは `white-space: pre-wrap` 相当で改行を維持する。本文パネルは行間と幅を制限して可読性を保つ
+- 長文教材の横並び2カラムやsticky本文は必須にせず、現状は縦並びと本文アンカーで往復を支援する
 
 ### Visuals
 
@@ -140,8 +144,10 @@
 - 子itemにresponseがある場合、親problem/itemの共通explanationを引き継いで小問のフィードバック内に表示する
 - 判定結果は `main.js` の一時的なUI状態に保持し、回答値が変わったキーの状態だけ無効化する。localStorageや記憶データexportには含めない
 - 問題全体の旧答え・解説トグルは撤去した。`response.type: "none"` 等で子responseがなく答えデータを持つノードは、そのノード内の「答え・解説を見る」で参照できる
+- テキスト入力は`input`イベントで保存する。IME composition中は中間値を確定せず、`compositionend`で最終値を保存する。アプリ内keydown処理では`event.isComposing` / keyCode 229を無視する
 - 起動時にresponse形式を検証し、読み込みに失敗したdatasetは一覧から除外して他datasetの利用を継続する
 - 英語教材の詳細仕様とサンプルは `docs/english-learning-support.md` を参照する
+- 国語教材の長文・改行・IME対応は `docs/japanese-learning-support.md` を参照する
 
 ## Lessons learned from recent work
 

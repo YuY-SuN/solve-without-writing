@@ -1,4 +1,10 @@
-import { renderPrompt, renderResponse, renderAnswer, renderExplanation } from "./TextRenderer.js?v20261004-1";
+import {
+  isLongContextText,
+  renderPrompt,
+  renderResponse,
+  renderAnswer,
+  renderExplanation,
+} from "./TextRenderer.js?v20261005-1";
 import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
 
 function getItemResponseKey(problem, item) {
@@ -317,7 +323,7 @@ function createAnswerReveal(answer, explanation, answerVisuals = []) {
   return wrapper;
 }
 
-function renderItemNode(problem, item, options, depth = 0, inheritedExplanation = null) {
+function renderItemNode(problem, item, options, depth = 0, inheritedExplanation = null, contextAnchorId = null) {
   const itemNode = document.createElement("section");
   itemNode.className = "problem-item";
   itemNode.dataset.depth = String(depth);
@@ -330,8 +336,17 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
 
   if (item.text) {
     const itemText = document.createElement("p");
+    itemText.className = "problem-item-text";
     itemText.textContent = item.text;
     itemNode.appendChild(itemText);
+  }
+
+  if (contextAnchorId) {
+    const contextLink = document.createElement("a");
+    contextLink.className = "problem-context-return";
+    contextLink.href = `#${contextAnchorId}`;
+    contextLink.textContent = "本文を見る";
+    itemNode.appendChild(contextLink);
   }
 
   if (item.context?.text) {
@@ -391,6 +406,7 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
         options,
         depth + 1,
         item.explanation ?? inheritedExplanation,
+        contextAnchorId,
       ));
     }
     itemNode.appendChild(nestedItems);
@@ -491,7 +507,10 @@ function renderProblem(problem, options) {
 
   header.append(heading, headerSide);
 
-  const prompt = renderPrompt(problem);
+  const contextAnchorId = isLongContextText(problem.context?.text)
+    ? `problem-context-${String(problem.id).replace(/[^a-zA-Z0-9_-]/g, "-")}`
+    : null;
+  const prompt = renderPrompt(problem, { contextId: contextAnchorId });
   const visuals = document.createElement("div");
   visuals.className = "problem-visuals";
 
@@ -532,7 +551,7 @@ function renderProblem(problem, options) {
     items.appendChild(renderItemNode(problem, item, {
       ...options,
       onStatusChange: updateCompletionAfterResponse,
-    }, 0, problem.explanation));
+    }, 0, problem.explanation, contextAnchorId));
   }
 
   article.append(header, prompt, visuals);
