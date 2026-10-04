@@ -31,7 +31,7 @@ python3 sync_index.py
 
 `prompt.text` と `item.text` も改行を維持する。詩、古文と現代語の手がかり、引用、会話文、複数資料は既存の `context.text` のまま表現できる。
 
-長文contextがあるproblemでは、各小問の近くに `本文を見る` リンクを置く。リンク先の本文パネルへスクロールできるため、設問を解きながら本文へ戻れる。画面幅に応じた2カラム表示やsticky本文は今回追加せず、縦並びのまま利用する。
+長文contextを持ち複数の回答設問があるproblemでは、共通機能の `通常`・`2カラム`・`モーダル`を選べる。通常では従来どおり本文と設問を縦に並べ、2カラムではsticky本文を設問の横に表示する。モーダルでは本文を設問のボタンから開く。単一設問や短いcontextには切替UIを表示しない。詳しくは `docs/reference-text-layout.md` を参照。
 
 ## 日本語入力とIME
 
@@ -47,7 +47,7 @@ blank / free_text等の入力欄はUnicodeの値をそのままresponse stateと
 - `app/src/data/index.json`: `sync_index.py` が生成する教科・教材一覧
 - `app/src/main.js`: `SUBJECT_LABELS` 表示名対応表。未知subjectはIDをそのまま表示
 - `app/src/renderers/TextRenderer.js`: context長文表示、改行保持、日本語IMEのcomposition対応
-- `app/src/renderers/ProblemRenderer.js`: 小問から本文へ戻るリンク
+- `app/src/renderers/ProblemRenderer.js`: 本文参照型problemの表示切替、設問から本文への移動、共通本文モーダル
 - `app/src/renderers/NumberLineRenderer.js`, `GraphRenderer.js`: IME composition中のキー操作抑制
 - `app/src/styles/page.css`: 本文の幅・行間・段落と設問から戻るリンクの表示
 - `README.md`, `docs/engineering-notes.md`: 利用手順と横断仕様
@@ -59,7 +59,8 @@ JSON内容を変更した場合は既存response validationを実行し、選択
 - `japanese/` 配下の教材が `sync_index.py` で `subject: "japanese"` として登録される
 - 国語datasetの全responseが既存response validationを通る
 - 長文contextに「本文・資料」ラベルが付き、prompt / context / item textの改行が保持される
-- 各読解小問に本文へ戻るリンクがあり、親problem本文は答え合わせの正誤色で塗られない
+- 本文参照型problemで通常・2カラム・モーダルを切り替えられ、単一問題には切替UIが出ない
+- 各読解小問から本文へ移動またはモーダルを開け、親problem本文は答え合わせの正誤色で塗られない
 - choiceとmode_switch.choiceは自動判定し、mode_switch.inputは見比べ表示になる
 - IME composition中の中間値とkeydown操作を抑止し、compositionend後の日本語を保存する
 - 既存の数学・英語datasetがindexとresponse validationで引き続き読み込める

@@ -88,7 +88,12 @@
 - 将来は `item.context.text` も出る可能性があるので、描画側はトップレベルだけに固定しない
 - 長文または複数改行を含む `context.text` は「本文・資料」パネルとして表示し、各小問から本文へ戻るリンクを付ける
 - prompt、context、item textは `white-space: pre-wrap` 相当で改行を維持する。本文パネルは行間と幅を制限して可読性を保つ
-- 長文教材の横並び2カラムやsticky本文は必須にせず、現状は縦並びと本文アンカーで往復を支援する
+- 長文contextと複数response nodeを持つproblemでは、subjectに関係なく本文表示を `default` / `split` / `modal` で切り替えられる
+- `readingViewMode` は `benkyo-tool-prompt01:reading-view-mode:v1` に教科共通設定として保存する。初期値は `default`。未知値はdefaultへ戻す
+- splitは幅900px以下でCSS上1カラムにするが、保存値はsplitのまま維持する
+- mode切替でProblemRenderer全体を再描画するため、回答・完了・checked stateを保持する既存main stateを利用し、ページscrollとmodeボタンfocusを復元する
+- modal本文はdialog内の共有本文node一つを表示する。ネイティブdialogで背景を操作不能にし、本文内scroll、Escape、close時のfocusとscroll復元を行う
+- 印刷時に本文が閉じたdialog内へ隠れないよう、print CSSでdialog本文を通常フローへ出す
 
 ### Visuals
 
@@ -148,6 +153,7 @@
 - 起動時にresponse形式を検証し、読み込みに失敗したdatasetは一覧から除外して他datasetの利用を継続する
 - 英語教材の詳細仕様とサンプルは `docs/english-learning-support.md` を参照する
 - 国語教材の長文・改行・IME対応は `docs/japanese-learning-support.md` を参照する
+- 本文参照型problemの3レイアウトと保存仕様は `docs/reference-text-layout.md` を参照する
 
 ## Lessons learned from recent work
 
