@@ -221,6 +221,9 @@ export function renderGraphGrid(visual, container, options = {}) {
   });
 
   overlayCanvas.addEventListener("keydown", (event) => {
+    if (event.isComposing || event.keyCode === 229) {
+      return;
+    }
     if ((event.key === "Delete" || event.key === "Backspace") && selectedIndex !== null) {
       event.preventDefault();
       const nextBins = [...bins];

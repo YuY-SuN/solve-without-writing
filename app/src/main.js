@@ -1,4 +1,4 @@
-import { renderProblems } from "./renderers/ProblemRenderer.js?v20261004-1";
+import { renderProblems } from "./renderers/ProblemRenderer.js?v20261005-1";
 import { renderVisualList } from "./renderers/VisualRenderer.js?v20260617-1";
 import { validateDatasetResponses } from "./response-validation.js?v20261003-1";
 import { evaluateResponseCheck } from "./response-checking.js?v20261004-1";
@@ -448,8 +448,14 @@ function buildPageCatalog(catalog, datasetsById) {
   });
 }
 
+const SUBJECT_LABELS = {
+  math: "数学",
+  english: "英語",
+  japanese: "国語",
+};
+
 function getSubjectLabel(subject) {
-  return subject === "english" ? "英語" : subject === "math" ? "数学" : subject;
+  return SUBJECT_LABELS[subject] ?? subject;
 }
 
 function populateSubjectSelect(catalog) {

@@ -252,6 +252,50 @@ button:disabled {
   white-space: pre-wrap;
 }
 
+.problem-context-long {
+  max-width: 78ch;
+  padding: 18px 22px;
+  background: #f4f8ff;
+  scroll-margin-top: 20px;
+}
+
+.problem-context-label {
+  margin: 0 0 12px;
+  color: #40516d;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.problem-context-text {
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+
+.problem-prompt,
+.problem-item-text {
+  white-space: pre-wrap;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.problem-context-return {
+  width: fit-content;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid #b8c8e0;
+  border-radius: 7px;
+  background: #fff;
+  color: #2458ad;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.problem-context-return:hover {
+  background: #edf4ff;
+}
+
 .problem-visuals,
 .problem-items {
   display: grid;

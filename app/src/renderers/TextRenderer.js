@@ -1,7 +1,12 @@
 const choiceOrderCache = new WeakMap();
 const tokenOrderCache = new WeakMap();
 
-export function renderPrompt(problem) {
+export function isLongContextText(text) {
+  return typeof text === "string"
+    && (text.length >= 180 || (text.match(/\n/g) ?? []).length >= 2);
+}
+
+export function renderPrompt(problem, { contextId = null } = {}) {
   const wrapper = document.createElement("div");
   wrapper.className = "problem-prompt-block";
 
@@ -13,9 +18,23 @@ export function renderPrompt(problem) {
   }
 
   if (problem.context?.text) {
-    const context = document.createElement("p");
-    context.className = "problem-context";
-    context.textContent = problem.context.text;
+    const longContext = isLongContextText(problem.context.text);
+    const context = document.createElement("section");
+    context.className = longContext ? "problem-context problem-context-long" : "problem-context";
+    if (longContext && contextId) {
+      context.id = contextId;
+      context.tabIndex = -1;
+    }
+    if (longContext) {
+      const label = document.createElement("p");
+      label.className = "problem-context-label";
+      label.textContent = "本文・資料";
+      context.appendChild(label);
+    }
+    const text = document.createElement("div");
+    text.className = "problem-context-text";
+    text.textContent = problem.context.text;
+    context.appendChild(text);
     wrapper.appendChild(context);
   }
 
@@ -33,7 +52,18 @@ function createTextInput(value, { short = false, multiline = false, onChange } =
     input.type = "text";
   }
 
+  let isComposing = false;
+  input.addEventListener("compositionstart", () => {
+    isComposing = true;
+  });
+  input.addEventListener("compositionend", (event) => {
+    isComposing = false;
+    onChange?.(event.target.value);
+  });
   input.addEventListener("input", (event) => {
+    if (isComposing || event.isComposing) {
+      return;
+    }
     onChange?.(event.target.value);
   });
 

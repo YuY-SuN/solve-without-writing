@@ -1,6 +1,6 @@
 # mintao-benkyo-tool-memo.d
 
-数学・英語など複数教科の教材を、単一の静的Webアプリで表示・回答するリポジトリです。教材JSONを読み込み、回答入力、答え・解説表示、進捗管理、記憶データの入出力を行う共通ビューアを `app/` 配下で育てています。問題の描画は教科ではなく `response.type` に対応する共通UIを使います。
+数学・英語・国語など複数教科の教材を、単一の静的Webアプリで表示・回答するリポジトリです。教材JSONを読み込み、回答入力、答え・解説表示、進捗管理、記憶データの入出力を行う共通ビューアを `app/` 配下で育てています。問題の描画は教科ではなく `response.type` に対応する共通UIを使います。
 
 ## 主な場所
 
@@ -15,6 +15,7 @@
 - `docs/engineering-notes.md`: 横断的な設計方針、運用ルール、検証上の注意
 - `docs/answer-checking.md`: 小問単位の答え合わせと見比べ表示
 - `docs/english-learning-support.md`: 英語教材、回答モード切替、語順問題のJSON仕様と運用
+- `docs/japanese-learning-support.md`: 国語の長文・改行表示、本文へ戻る操作、日本語入力の扱い
 - `docs/app-root-layout.md`: 単一アプリ前提のディレクトリ構成と更新手順
 - `docs/transfer-mode-poc.md`: 完了済み問題の転記モード POC と印刷フロー
 - `docs/benkyo-tool-prompt01-dataset-selector.md`: dataset 切り替え、入力UI、データ更新の補足
@@ -34,7 +35,7 @@ python3 -m http.server 4173
 
 ツールバー下のページ進捗カード一覧は、ページ数の多い教材で画面を圧迫するため現在は一時的に非表示です。ページ選択欄の各ページ名には完了数が引き続き表示されます。
 
-新しい問題JSONは教科IDと同じ名前のフォルダへ置きます。例えば英語なら `app/src/data/english/lesson.json`、数学なら `app/src/data/math/problems.json` です。JSON本体に教科分類用フィールドを追加する必要はありません。
+新しい問題JSONは教科IDと同じ名前のフォルダへ置きます。例えば英語なら `app/src/data/english/lesson.json`、数学なら `app/src/data/math/problems.json`、国語なら `app/src/data/japanese/lesson.json` です。JSON本体に教科分類用フィールドを追加する必要はありません。
 
 問題JSONを追加・移動・削除したら、`app/src/data/` で次を実行してください。
 
@@ -52,6 +53,8 @@ python3 sync_index.py
 回答UIを持つ問題・小問ごとに、その場で `答え合わせ` または `見比べてみる` を押せます。choice / word_order と mode_switch の選択式は自動判定し、文字入力や自由作文は正誤を断定せず、自分の回答・解答例・解説を並べて表示します。既存の `完了` は問題カード単位で引き続き手動管理します。
 
 英語教材では `choice` の選択肢順シャッフルとキー非表示、選択式／記入式の切替、語句tokenをクリックして英文を組み立てる `word_order` を利用できます。詳細なJSON構造は `docs/english-learning-support.md`、答え合わせの動作は `docs/answer-checking.md` を参照してください。
+
+国語などの長文教材では、長い `context.text` を「本文・資料」として読みやすく表示し、各小問の `本文を見る` から本文へ戻れます。prompt・本文・小問文の改行を保持し、日本語IMEの変換中は入力値の確定処理を待ちます。国語も `mode_switch` など既存の共通responseで扱います。詳細は `docs/japanese-learning-support.md` を参照してください。
 
 ## 転記モード POC
 

@@ -288,6 +288,9 @@ export function renderNumberLine(visual, container, options = {}) {
   });
 
   overlayCanvas.addEventListener("keydown", (event) => {
+    if (event.isComposing || event.keyCode === 229) {
+      return;
+    }
     if (event.key === "Delete" || event.key === "Backspace") {
       event.preventDefault();
       deleteSelected();
