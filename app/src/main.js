@@ -1,4 +1,4 @@
-import { renderProblems } from "./renderers/ProblemRenderer.js?v20261005-1";
+import { renderProblems } from "./renderers/ProblemRenderer.js?v20261006-1";
 import { renderVisualList } from "./renderers/VisualRenderer.js?v20260617-1";
 import { validateDatasetResponses } from "./response-validation.js?v20261003-1";
 import { evaluateResponseCheck } from "./response-checking.js?v20261004-1";
@@ -7,12 +7,14 @@ const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
 const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
 const COMPLETION_STORAGE_KEY = "benkyo-tool-prompt01:completed-problems:v1";
 const VIEW_SELECTION_STORAGE_KEY = "benkyo-tool-prompt01:view-selection:v1";
+const READING_VIEW_MODE_STORAGE_KEY = "benkyo-tool-prompt01:reading-view-mode:v1";
 const STORAGE_EXPORT_SCHEMA = "benkyo-tool-prompt01-storage-export";
 const STORAGE_EXPORT_VERSION = 1;
 const MAX_HISTORY_ENTRIES = 10;
 
 const state = {
   selectedPageKey: "all",
+  readingViewMode: "default",
   selectedDatasetId: null,
   datasetCatalog: [],
   datasetsById: {},
@@ -714,6 +716,11 @@ function loadPersistedViewSelection() {
     datasetId: typeof parsed.datasetId === "string" ? parsed.datasetId : null,
     pageKey: typeof parsed.pageKey === "string" ? parsed.pageKey : "all",
   };
+}
+
+function loadPersistedReadingViewMode() {
+  const mode = loadPersistedJson(READING_VIEW_MODE_STORAGE_KEY);
+  return ["default", "split", "modal"].includes(mode) ? mode : "default";
 }
 
 function persistViewSelection() {
@@ -1490,6 +1497,8 @@ function render() {
     onResponseChange: handleResponseChange,
     isResponseComplete,
     onCheckResponse: checkResponse,
+    readingViewMode: state.readingViewMode,
+    onReadingViewModeChange: changeReadingViewMode,
     onClearProblem: clearProblemResponses,
     getProblemCompletionStatus,
     onToggleProblemComplete: toggleProblemComplete,
@@ -1497,6 +1506,25 @@ function render() {
   });
   renderProgressViews();
   updateToolbar();
+}
+
+function changeReadingViewMode(mode, problemId) {
+  if (!["default", "split", "modal"].includes(mode) || mode === state.readingViewMode) {
+    return;
+  }
+
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
+  state.readingViewMode = mode;
+  persistJson(READING_VIEW_MODE_STORAGE_KEY, mode);
+  render();
+
+  const matchingControls = [...elements.problemList.querySelectorAll(".reference-view-controls")]
+    .find((controls) => controls.dataset.problemId === problemId);
+  matchingControls
+    ?.querySelector(`[data-reading-view-mode="${mode}"]`)
+    ?.focus({ preventScroll: true });
+  window.scrollTo(scrollX, scrollY);
 }
 
 async function applyDataset(datasetId, pageKey = "all") {
@@ -1538,6 +1566,7 @@ async function applyPageSelection(pageKey) {
 async function bootstrap() {
   state.responseValues = loadPersistedResponseValues();
   state.completedProblems = loadPersistedCompletedProblems();
+  state.readingViewMode = loadPersistedReadingViewMode();
   const persistedViewSelection = loadPersistedViewSelection();
   const historyState = loadPersistedHistoryState();
   state.undoStack = historyState.undoStack;

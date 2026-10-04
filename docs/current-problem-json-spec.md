@@ -75,7 +75,7 @@ JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/
 | `explanation` | 任意。文字列の解説 |
 | `notes`, `uncertain` | 生成データにある補足メモ・不確実性フラグ。現在の問題UIや判定では参照しない |
 
-小問では `id`, `no`, `label`, `text`, `context`, `visuals`, `work`, `response`, `answer`, `answerVisuals`, `explanation`, `items` を使えます。`no` と `label` は小問見出し、`text` は小問本文です。`section` と `prompt.text` は親問題側の構造です。prompt / context / item textの改行は表示上も保持します。長文contextは「本文・資料」として読みやすい幅と行間で表示し、各小問から本文へ戻れます。問題UIの組み立ては `app/src/renderers/ProblemRenderer.js`、文章・回答欄・答えの表示は `app/src/renderers/TextRenderer.js` にあります。
+小問では `id`, `no`, `label`, `text`, `context`, `visuals`, `work`, `response`, `answer`, `answerVisuals`, `explanation`, `items` を使えます。`no` と `label` は小問見出し、`text` は小問本文です。`section` と `prompt.text` は親問題側の構造です。prompt / context / item textの改行は表示上も保持します。長文contextと複数response nodeがあるproblemは、教科に依存せず「本文・資料」の通常・2カラム・モーダル表示を選べます。問題UIの組み立ては `app/src/renderers/ProblemRenderer.js`、文章・回答欄・答えの表示は `app/src/renderers/TextRenderer.js` にあります。詳細は [reference-text-layout.md](reference-text-layout.md) を参照してください。
 
 `answer` は固定の型ではありません。既存データには `value`（数値・文字列・配列・キー付きオブジェクト）、`display`、`formula`、`unit`、`accepted`、`relation` があります。通常画面の「答え」は**`answer` オブジェクト全体をJSONとして表示**します。転記モードでは `display` が文字列または配列ならそれを優先し、なければ `value` を形式別に整形します。`formula`・`unit`・`accepted` は通常画面には表示されますが、採点規則ではありません。
 

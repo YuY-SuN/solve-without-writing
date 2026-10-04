@@ -280,6 +280,7 @@ button:disabled {
 
 .problem-context-return {
   width: fit-content;
+  height: auto;
   min-height: 36px;
   display: inline-flex;
   align-items: center;
@@ -294,6 +295,120 @@ button:disabled {
 
 .problem-context-return:hover {
   background: #edf4ff;
+}
+
+.reference-view-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0 12px;
+}
+
+.reference-view-label {
+  color: #40516d;
+  font-weight: 650;
+}
+
+.reference-view-buttons {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.reference-view-button {
+  height: 36px;
+  border-color: #b8c8e0;
+}
+
+.reference-view-button[aria-pressed="true"] {
+  border-color: #2458ad;
+  background: #eaf1ff;
+  color: #173f84;
+  font-weight: 700;
+}
+
+.reference-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.reference-source-pane,
+.reference-question-pane {
+  min-width: 0;
+}
+
+.reference-layout[data-reading-view-mode="default"],
+.reference-layout[data-reading-view-mode="modal"] {
+  display: block;
+}
+
+.reference-layout[data-reading-view-mode="split"] {
+  grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
+  gap: 24px;
+}
+
+.reference-layout[data-reading-view-mode="split"] .reference-source-pane {
+  position: sticky;
+  top: 16px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.reference-layout[data-reading-view-mode="modal"] .reference-source-pane {
+  display: none;
+}
+
+.reference-dialog {
+  width: min(900px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(90vh, 1000px);
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  color: #172033;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.28);
+}
+
+.reference-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.58);
+}
+
+.reference-dialog-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #dbe4f0;
+  background: #fff;
+}
+
+.reference-dialog-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.reference-dialog-close {
+  flex: 0 0 auto;
+}
+
+.reference-dialog-body {
+  max-height: calc(90vh - 68px);
+  overflow-y: auto;
+  padding: 20px;
+  overscroll-behavior: contain;
+}
+
+.reference-dialog-body .problem-context-long {
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .problem-visuals,
@@ -503,6 +618,18 @@ pre {
   color: #9f1239;
 }
 
+@media (max-width: 900px) {
+  .reference-layout[data-reading-view-mode="split"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .reference-layout[data-reading-view-mode="split"] .reference-source-pane {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
+
 @media (max-width: 760px) {
   .app-shell {
     padding: 16px;
@@ -521,6 +648,16 @@ pre {
   .toolbar-field,
   .toolbar-field-wide {
     min-width: 100%;
+  }
+
+  .reference-view-controls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .reference-dialog-body {
+    max-height: calc(88vh - 68px);
+    padding: 14px;
   }
 }
 
@@ -856,8 +993,48 @@ pre {
 
   .toolbar,
   .toolbar-status,
-  .page-progress-panel[data-mode="normal"] {
+  .page-progress-panel[data-mode="normal"],
+  .reference-view-controls,
+  .problem-context-return {
     display: none;
+  }
+
+  .reference-layout,
+  .reference-layout[data-reading-view-mode="split"] {
+    display: block;
+  }
+
+  .reference-layout[data-reading-view-mode="split"] .reference-source-pane {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .reference-layout[data-reading-view-mode="modal"] .reference-source-pane {
+    display: none;
+  }
+
+  .reference-dialog {
+    display: block;
+    position: static;
+    width: auto;
+    max-width: none;
+    max-height: none;
+    margin: 16px 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .reference-dialog::backdrop,
+  .reference-dialog-header {
+    display: none;
+  }
+
+  .reference-dialog-body {
+    max-height: none;
+    overflow: visible;
+    padding: 0;
   }
 
   .page-progress-panel {

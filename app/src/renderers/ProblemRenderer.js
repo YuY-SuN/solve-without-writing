@@ -4,7 +4,7 @@ import {
   renderResponse,
   renderAnswer,
   renderExplanation,
-} from "./TextRenderer.js?v20261005-1";
+} from "./TextRenderer.js?v20261006-1";
 import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
 
 function getItemResponseKey(problem, item) {
@@ -293,6 +293,127 @@ function hasResponseInTree(node) {
   return (node.items ?? []).some(hasResponseInTree);
 }
 
+const READING_VIEW_MODES = [
+  { value: "default", label: "通常" },
+  { value: "split", label: "2カラム" },
+  { value: "modal", label: "モーダル" },
+];
+
+function isReferenceProblem(problem) {
+  if (!problem.context?.text) {
+    return false;
+  }
+  if (problem.layout?.referenceText === true) {
+    return true;
+  }
+  const countResponses = (node) => Number(Boolean(node.response && node.response.type !== "none"))
+    + (node.items ?? []).reduce((count, child) => count + countResponses(child), 0);
+  return isLongContextText(problem.context.text) && countResponses(problem) >= 2;
+}
+
+function createReferenceViewControls(problem, selectedMode, onChange) {
+  const group = document.createElement("div");
+  group.className = "reference-view-controls";
+  group.dataset.problemId = problem.id;
+  group.setAttribute("role", "group");
+  group.setAttribute("aria-label", "本文表示モード");
+
+  const label = document.createElement("span");
+  label.className = "reference-view-label";
+  label.textContent = "本文表示";
+  group.appendChild(label);
+
+  const buttons = document.createElement("div");
+  buttons.className = "reference-view-buttons";
+  for (const mode of READING_VIEW_MODES) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "reference-view-button";
+    button.dataset.readingViewMode = mode.value;
+    button.textContent = mode.label;
+    button.setAttribute("aria-pressed", String(mode.value === selectedMode));
+    button.addEventListener("click", () => onChange?.(mode.value, problem.id));
+    buttons.appendChild(button);
+  }
+  group.appendChild(buttons);
+  return group;
+}
+
+function createReferenceDialog(problem, referenceContent) {
+  const safeId = String(problem.id).replace(/[^a-zA-Z0-9_-]/g, "-");
+  const dialog = document.createElement("dialog");
+  dialog.className = "reference-dialog";
+  dialog.setAttribute("aria-modal", "true");
+  dialog.setAttribute("aria-labelledby", `reference-dialog-title-${safeId}`);
+
+  const header = document.createElement("header");
+  header.className = "reference-dialog-header";
+  const title = document.createElement("h2");
+  title.id = `reference-dialog-title-${safeId}`;
+  title.textContent = "本文・資料";
+  const closeButton = document.createElement("button");
+  closeButton.type = "button";
+  closeButton.className = "reference-dialog-close";
+  closeButton.textContent = "閉じる";
+  closeButton.setAttribute("aria-label", "本文・資料を閉じる");
+  header.append(title, closeButton);
+
+  const body = document.createElement("div");
+  body.className = "reference-dialog-body";
+  body.tabIndex = -1;
+  body.appendChild(referenceContent);
+  dialog.append(header, body);
+
+  let opener = null;
+  let savedScrollX = 0;
+  let savedScrollY = 0;
+  let savedOverflow = "";
+  let savedPaddingRight = "";
+
+  function restorePage() {
+    if (document.body?.style) {
+      document.body.style.overflow = savedOverflow;
+      document.body.style.paddingRight = savedPaddingRight;
+    }
+    if (opener?.isConnected) {
+      opener.focus({ preventScroll: true });
+    }
+    if (typeof window !== "undefined") {
+      window.scrollTo(savedScrollX, savedScrollY);
+    }
+    opener = null;
+  }
+
+  function open(button) {
+    opener = button;
+    savedScrollX = window.scrollX;
+    savedScrollY = window.scrollY;
+    if (document.body?.style) {
+      savedOverflow = document.body.style.overflow;
+      savedPaddingRight = document.body.style.paddingRight;
+      const scrollbarWidth = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+      if (scrollbarWidth > 0) {
+        const currentPadding = Number.parseFloat(window.getComputedStyle(document.body).paddingRight) || 0;
+        document.body.style.paddingRight = `${currentPadding + scrollbarWidth}px`;
+      }
+      document.body.style.overflow = "hidden";
+    }
+    dialog.showModal();
+    closeButton.focus();
+  }
+
+  closeButton.addEventListener("click", () => dialog.close());
+  dialog.addEventListener("close", restorePage);
+  dialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && (event.isComposing || event.keyCode === 229)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  });
+
+  return { dialog, open };
+}
+
 function createAnswerReveal(answer, explanation, answerVisuals = []) {
   if (!answer && !explanation && answerVisuals.length === 0) {
     return null;
@@ -323,7 +444,7 @@ function createAnswerReveal(answer, explanation, answerVisuals = []) {
   return wrapper;
 }
 
-function renderItemNode(problem, item, options, depth = 0, inheritedExplanation = null, contextAnchorId = null) {
+function renderItemNode(problem, item, options, depth = 0, inheritedExplanation = null, referenceId = null, openReference = null) {
   const itemNode = document.createElement("section");
   itemNode.className = "problem-item";
   itemNode.dataset.depth = String(depth);
@@ -341,11 +462,12 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
     itemNode.appendChild(itemText);
   }
 
-  if (contextAnchorId) {
-    const contextLink = document.createElement("a");
+  if (referenceId) {
+    const contextLink = document.createElement("button");
+    contextLink.type = "button";
     contextLink.className = "problem-context-return";
-    contextLink.href = `#${contextAnchorId}`;
     contextLink.textContent = "本文を見る";
+    contextLink.addEventListener("click", () => openReference?.(contextLink));
     itemNode.appendChild(contextLink);
   }
 
@@ -406,7 +528,8 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
         options,
         depth + 1,
         item.explanation ?? inheritedExplanation,
-        contextAnchorId,
+        referenceId,
+        openReference,
       ));
     }
     itemNode.appendChild(nestedItems);
@@ -507,12 +630,62 @@ function renderProblem(problem, options) {
 
   header.append(heading, headerSide);
 
-  const contextAnchorId = isLongContextText(problem.context?.text)
+  const referenceId = isLongContextText(problem.context?.text)
     ? `problem-context-${String(problem.id).replace(/[^a-zA-Z0-9_-]/g, "-")}`
     : null;
-  const prompt = renderPrompt(problem, { contextId: contextAnchorId });
+  const hasReferenceLayout = isReferenceProblem(problem);
+  const readingViewMode = ["default", "split", "modal"].includes(options.readingViewMode)
+    ? options.readingViewMode
+    : "default";
+  const prompt = hasReferenceLayout
+    ? renderPrompt({ ...problem, context: null })
+    : renderPrompt(problem, { contextId: referenceId });
   const visuals = document.createElement("div");
   visuals.className = "problem-visuals";
+
+  let referenceLayout = null;
+  let sourcePane = null;
+  let questionPane = null;
+  let referenceContent = null;
+  let referenceDialog = null;
+  let readingControls = null;
+
+  if (hasReferenceLayout) {
+    referenceContent = renderPrompt(
+      { prompt: null, context: problem.context },
+      { contextId: referenceId },
+    );
+    referenceLayout = document.createElement("div");
+    referenceLayout.className = "reference-layout";
+    referenceLayout.dataset.readingViewMode = readingViewMode;
+    sourcePane = document.createElement("div");
+    sourcePane.className = "reference-source-pane";
+    questionPane = document.createElement("div");
+    questionPane.className = "reference-question-pane";
+    readingControls = createReferenceViewControls(
+      problem,
+      readingViewMode,
+      options.onReadingViewModeChange,
+    );
+
+    if (readingViewMode === "modal") {
+      referenceDialog = createReferenceDialog(problem, referenceContent);
+    } else {
+      sourcePane.appendChild(referenceContent);
+    }
+    referenceLayout.append(sourcePane, questionPane);
+  }
+
+  const openReference = (opener) => {
+    if (hasReferenceLayout && readingViewMode === "modal" && referenceDialog) {
+      referenceDialog.open(opener);
+      return;
+    }
+    const context = referenceContent?.querySelector(".problem-context")
+      ?? prompt.querySelector(".problem-context");
+    context?.scrollIntoView({ block: "start" });
+    context?.focus({ preventScroll: true });
+  };
 
   const updateCompletionAfterResponse = () => {
     updateCompletionUi();
@@ -551,20 +724,32 @@ function renderProblem(problem, options) {
     items.appendChild(renderItemNode(problem, item, {
       ...options,
       onStatusChange: updateCompletionAfterResponse,
-    }, 0, problem.explanation, contextAnchorId));
+    }, 0, problem.explanation, referenceId, openReference));
   }
 
-  article.append(header, prompt, visuals);
+  article.append(header, prompt);
+  if (readingControls) {
+    article.appendChild(readingControls);
+  }
+
+  if (hasReferenceLayout) {
+    article.appendChild(referenceLayout);
+  }
+  const problemContent = questionPane ?? article;
+  problemContent.appendChild(visuals);
   if (problemResponseUnit) {
-    article.appendChild(problemResponseUnit.node);
+    problemContent.appendChild(problemResponseUnit.node);
   } else if (!hasResponseInTree(problem)) {
     const answerReveal = createAnswerReveal(problem.answer, problem.explanation, problem.answerVisuals ?? []);
     if (answerReveal) {
-      article.appendChild(answerReveal);
+      problemContent.appendChild(answerReveal);
     }
   }
   if (items.childElementCount > 0) {
-    article.appendChild(items);
+    problemContent.appendChild(items);
+  }
+  if (referenceDialog) {
+    article.appendChild(referenceDialog.dialog);
   }
   article.appendChild(problemControls);
 

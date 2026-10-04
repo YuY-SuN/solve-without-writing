@@ -16,6 +16,7 @@
 - `docs/answer-checking.md`: 小問単位の答え合わせと見比べ表示
 - `docs/english-learning-support.md`: 英語教材、回答モード切替、語順問題のJSON仕様と運用
 - `docs/japanese-learning-support.md`: 国語の長文・改行表示、本文へ戻る操作、日本語入力の扱い
+- `docs/reference-text-layout.md`: 本文参照型problemの通常・2カラム・モーダル表示
 - `docs/app-root-layout.md`: 単一アプリ前提のディレクトリ構成と更新手順
 - `docs/transfer-mode-poc.md`: 完了済み問題の転記モード POC と印刷フロー
 - `docs/benkyo-tool-prompt01-dataset-selector.md`: dataset 切り替え、入力UI、データ更新の補足
@@ -55,6 +56,8 @@ python3 sync_index.py
 英語教材では `choice` の選択肢順シャッフルとキー非表示、選択式／記入式の切替、語句tokenをクリックして英文を組み立てる `word_order` を利用できます。詳細なJSON構造は `docs/english-learning-support.md`、答え合わせの動作は `docs/answer-checking.md` を参照してください。
 
 国語などの長文教材では、長い `context.text` を「本文・資料」として読みやすく表示し、各小問の `本文を見る` から本文へ戻れます。prompt・本文・小問文の改行を保持し、日本語IMEの変換中は入力値の確定処理を待ちます。国語も `mode_switch` など既存の共通responseで扱います。詳細は `docs/japanese-learning-support.md` を参照してください。
+
+長い本文・資料に複数設問が付く問題では、`通常`・`2カラム`・`モーダル`を切り替えられます。設定は教科共通で保存し、画面幅が狭い場合の2カラムは一時的に縦並びになります。詳細は `docs/reference-text-layout.md` を参照してください。
 
 ## 転記モード POC
 
