@@ -2,89 +2,118 @@
   "defaultDatasetId": "core-math",
   "datasets": [
     {
+      "id": "english-lesson3-3-chatgpt",
+      "label": "Lesson 3-3 人についてたずねたり、答えたりできる。",
+      "subject": "english",
+      "path": "english/english_lesson3_3_chatgpt.json"
+    },
+    {
+      "id": "english-workbook-p32-p69",
+      "label": "英語ワーク Lesson 3-3〜Lesson 6",
+      "subject": "english",
+      "path": "english/english_workbook_p32_p69.json"
+    },
+    {
       "id": "geometry-focus",
       "label": "図形中心セット",
-      "path": "geometry-focus.json"
+      "subject": "math",
+      "path": "math/geometry-focus.json"
     },
     {
       "id": "math-textbook-page-26-27",
       "label": "数の世界のひろがり・計算練習",
-      "path": "math_textbook_page_26_27.json"
+      "subject": "math",
+      "path": "math/math_textbook_page_26_27.json"
     },
     {
       "id": "math-textbook-pages-10-11",
       "label": "絶対値と数の大小",
-      "path": "math_textbook_pages_10_11.json"
+      "subject": "math",
+      "path": "math/math_textbook_pages_10_11.json"
     },
     {
       "id": "math-textbook-pages-12-13",
       "label": "3 正の数・負の数の加法",
-      "path": "math_textbook_pages_12_13.json"
+      "subject": "math",
+      "path": "math/math_textbook_pages_12_13.json"
     },
     {
       "id": "math-textbook-pages-14-15",
       "label": "正の数・負の数の減法",
-      "path": "math_textbook_pages_14_15.json"
+      "subject": "math",
+      "path": "math/math_textbook_pages_14_15.json"
     },
     {
       "id": "math-textbook-pages-18-19",
       "label": "6 正の数・負の数の乗法、除法①",
-      "path": "math_textbook_pages_18_19.json"
+      "subject": "math",
+      "path": "math/math_textbook_pages_18_19.json"
     },
     {
       "id": "math-textbook-pages-32-33",
       "label": "1章 基本問題でふり返ろう",
-      "path": "math_textbook_pages_32_33.json"
+      "subject": "math",
+      "path": "math/math_textbook_pages_32_33.json"
     },
     {
       "id": "math-workbook-pages-20-21",
       "label": "正の数・負の数の乗法，除法②",
-      "path": "math_workbook_pages_20_21.json"
+      "subject": "math",
+      "path": "math/math_workbook_pages_20_21.json"
     },
     {
       "id": "math-workbook-pages-24-25",
       "label": "9 いろいろな計算",
-      "path": "math_workbook_pages_24_25.json"
+      "subject": "math",
+      "path": "math/math_workbook_pages_24_25.json"
     },
     {
       "id": "math-workbook-pages-28-29",
       "label": "ドリル 正の数・負の数の計算",
-      "path": "math_workbook_pages_28_29.json"
+      "subject": "math",
+      "path": "math/math_workbook_pages_28_29.json"
     },
     {
       "id": "math-workbook-pages-30-31",
       "label": "11 自然数を素数の積で表す / 12 正の数・負の数の利用",
-      "path": "math_workbook_pages_30_31.json"
+      "subject": "math",
+      "path": "math/math_workbook_pages_30_31.json"
     },
     {
       "id": "math-workbook-pages-34-35",
       "label": "章末総合テスト",
-      "path": "math_workbook_pages_34_35.json"
+      "subject": "math",
+      "path": "math/math_workbook_pages_34_35.json"
     },
     {
       "id": "output-math-textbook-page-22-23",
       "label": "8 3数以上の乗法、除法",
-      "path": "output_math_textbook_page_22_23.json"
+      "subject": "math",
+      "path": "math/output_math_textbook_page_22_23.json"
     },
     {
       "id": "core-math",
       "label": "標準セット",
-      "path": "problems.json"
+      "subject": "math",
+      "path": "math/problems.json"
     },
     {
       "id": "problems002",
       "label": "小学校の復習",
-      "path": "problems002.json"
+      "subject": "math",
+      "path": "math/problems002.json"
     },
     {
       "id": "problems003-2",
       "label": "正の数・負の数で量を表すこと",
-      "path": "problems003-2.json"
+      "subject": "math",
+      "path": "math/problems003-2.json"
     },
     {
       "id": "workbook-p-16-p-17",
       "label": "正の数・負の数 3数以上の加法、減法",
-      "path": "workbook_p_16_p_17.json"
+      "subject": "math",
+      "path": "math/workbook_p_16_p_17.json"
     }
   ]
 }

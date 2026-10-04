@@ -21,30 +21,34 @@
 
 ### Static app
 
-- ブラウザが `fetch()` で `src/data/*.json` を読む構成
+- ブラウザが `fetch()` で `src/data/<subject>/*.json` を読む構成
 - `file://` 直開きではなく、ローカル静的サーバー経由で開く必要がある
 - 動作確認は通常 `python3 -m http.server 4173` を使う
 
 ### Dataset loading
 
 - アプリは単一JSON固定ではなく、`src/data/index.json` を読んで問題セット一覧を構築する
-- 上部ツールバーの「問題セット」コンボボックスから dataset 全体を切り替える
-- 上部ツールバーの「ページ」コンボボックスから全 dataset を横断して特定ページへ直接切り替える
+- 上部ツールバーで「教科 → 問題セット → ページ」の順に選ぶ
+- 教科はindexのsubject、問題セットはその教科内、ページは選択中dataset内で絞り込む
 - 最後に開いていた dataset / page 選択は `localStorage` に保存し、次回起動時に復元する
 - `localStorage` の回答・完了・履歴・閲覧位置は JSON ファイルへ export / import できる
 - 保存済みページが消えていた場合は dataset 全体表示、dataset も無効なら `defaultDatasetId` にフォールバックする
-- `index.json` の各要素は少なくとも `id` `label` `path` を持つ
+- `index.json` の各要素は少なくとも `id` `label` `subject` `path` を持つ
+- 教科IDは問題JSONの親フォルダ名。問題JSONの `meta.subject` は分類に使わない
+- `index.json` の `path` は `src/data/` からの相対パス（例 `english/lesson.json`）
 - `defaultDatasetId` が初期表示セットになる
-- ページ選択肢は dataset ごとの再構築ではなく、起動時に全 dataset を読んで横断生成する
+- ページ選択肢は選択中datasetのページだけを表示する
 
 ### Dataset index sync
 
-- `src/data/sync_index.py` が `data/` 配下のJSONから `index.json` を再生成する
-- `index.json` 自身は走査対象外
+- `src/data/sync_index.py` が `data/` 以下を再帰走査して `index.json` を再生成する
+- `index.json` と、トップレベルに `meta` オブジェクトと `pages` 配列を持たない管理用JSONはdataset対象外
+- 問題JSONは `data/<subject>/...json` に置く。subjectにはそのファイルの親ディレクトリ名を使う
 - 既存 `label` は対応ファイルが残っている限り保持する
 - 既存 `defaultDatasetId` は有効なら保持し、無効なら先頭 dataset に補正する
-- 新規 dataset の `id` はファイル名ベースで生成する
+- 新規 dataset の `id` はファイル名ベースで生成する。既存datasetは同じファイル名の登録情報を引き継ぎ、移動後の相対pathへ更新する
 - `meta.title` があれば新規 `label` 候補に使う
+- `subject` はファイルの親ディレクトリ名からindexへ出力する
 
 ## Data model knowledge
 
@@ -108,6 +112,8 @@
 - `table_fill`
 - `ladder_fill`
 - `none`
+- `word_order`
+- `mode_switch`
 
 重要:
 - `response.type: "none"` は「解答欄を出さない」が正しい
@@ -124,6 +130,14 @@
 - `response.type: "ladder_fill"` は `factorization_ladder` 内の空欄 key を `response.targets` で列挙し、階段図の入力欄へ直接結び付ける
 - `response.type: "multi_blank"` に後から field を足す場合は、既存 `localStorage` の回答オブジェクトを削除せず、不足 field だけ `answer.value` で補完する。既存キーの上書きや field 順ずれは起こさない
 - `items` は1段とは限らず、教材によっては小問の中にさらに `items` が入るので、描画・完了判定・回答クリアは再帰構造を前提にする
+- 教科固有の分岐を問題全体のrendererへ広げず、回答操作は `response.type` ごとの共通rendererとして追加する
+- `choice.shuffle` の順序はrendererのdataset内responseオブジェクト単位でキャッシュし、DOM再描画中に変わらないようにする。再読み込み後は新しい順序になりうる
+- `choice.showKeys: false` は選択肢keyの表示だけを抑制する。省略時は既存どおりkeyを表示する
+- `mode_switch` の保存値は `{ mode, values: { [mode]: answerValue } }`。完了判定は選択中modeのresponseへ委譲する
+- `mode_switch` のmode内にある `multi_blank` の欄追加では、既存のmode別回答を保持し、不足キーだけ `answer.modes[mode].value` で補完する
+- `word_order` の回答値はtoken keyの配列。すべてのtokenを選ぶと入力済みとなる。順序の正誤判定は行わない
+- 起動時にresponse形式を検証し、読み込みに失敗したdatasetは一覧から除外して他datasetの利用を継続する
+- 英語教材の詳細仕様とサンプルは `docs/english-learning-support.md` を参照する
 
 ## Lessons learned from recent work
 
@@ -170,7 +184,7 @@
 - 完了フラグの保存キーは `benkyo-tool-prompt01:completed-problems:v1`
 - 完了は手動で付けるが、その前提として問題内の必要入力がすべて埋まっている必要がある
 - `response` を持たない問題は最初から完了可能とみなす
-- ページ進捗は dataset ごとに `完了数 / 総問題数 / 残り` を集計して表示する
+- ページ進捗は dataset ごとに集計し、現在はページセレクトのラベルに完了数を表示する。ツールバー下の進捗カード一覧はページ数の多い教材で画面を圧迫するため一時非表示
 - 転記モード POC は、現在の問題セットの全ページから `完了` 済みの問題だけを抽出し、`入力内容` または `解答` を印刷向け一覧として表示する
 - 転記モードでは入れ子の小問を個別行として扱い、表・数直線・ヒストグラムなどの図表も該当する行ごとに再描画する
 - `p014_q01` のように既存設問へ計算結果欄を追加する更新では、保存済み `sign` / `value` を維持したまま、新設 `result` だけ答えデータから補完して回収する
