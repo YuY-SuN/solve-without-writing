@@ -8,6 +8,12 @@
       "path": "english/english_lesson3_3_chatgpt.json"
     },
     {
+      "id": "english-workbook-p32-p69",
+      "label": "英語ワーク Lesson 3-3〜Lesson 6",
+      "subject": "english",
+      "path": "english/english_workbook_p32_p69.json"
+    },
+    {
       "id": "geometry-focus",
       "label": "図形中心セット",
       "subject": "math",

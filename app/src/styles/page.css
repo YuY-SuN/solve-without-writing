@@ -110,7 +110,7 @@ button:disabled {
 }
 
 .page-progress-panel {
-  margin-bottom: 20px;
+  display: none;
 }
 
 .page-progress-grid {
