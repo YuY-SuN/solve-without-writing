@@ -24,6 +24,9 @@
 - ブラウザが `fetch()` で `src/data/<subject>/*.json` を読む構成
 - `file://` 直開きではなく、ローカル静的サーバー経由で開く必要がある
 - 動作確認は通常 `python3 -m http.server 4173` を使う
+- GitHub Pages では repository root ではなく `app/` を公開rootとして扱う。`.github/workflows/pages.yml` の Pages artifact path は `./app` に固定し、`./src/...` の相対参照を維持する
+- Pages workflow は `main` への push と手動実行で起動し、commit 済みの `app/` をそのまま artifact 化する。`sync_index.py` は自動実行せず、教材JSONを追加・移動・削除した場合は従来どおり手元で同期して `index.json` を commit する
+- 初回のPages利用時は repository Settings → Pages → Build and deployment → Source を GitHub Actions に設定する。公開URLは Pages 設定または成功した deploy job から確認する
 
 ### Dataset loading
 
@@ -217,6 +220,7 @@
 - タグ付けもローカルで行い、push は別指示まで行わない
 - 無関係な未追跡ファイルはコミットに含めない
 - ただし、機能に必要な新規 data file は `index.json` との整合のため一緒に含める
+- GitHub Pages 対応のデプロイは `.github/workflows/pages.yml` が `main` に push されたときに行う。ページ公開物は `app/` のみ
 
 ## Documentation rules
 

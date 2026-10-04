@@ -30,6 +30,12 @@ python3 -m http.server 4173
 
 ブラウザで `http://127.0.0.1:4173` を開きます。Windows では `python3` の代わりに `py` や `python` を使って構いません。
 
+## GitHub Pages 公開
+
+`main` への push または Actions の `workflow_dispatch` を起点に、`.github/workflows/pages.yml` が `app/` だけを Pages artifact として公開します。Pages の公開ルートでは `app/index.html` が `/index.html` になり、アプリ内の `./src/...` 相対パスをそのまま利用します。リポジトリ直下の `docs/` や `misc/` は公開対象に含まれません。
+
+初回は GitHub repository の **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に設定してください。workflow の実行後は同じ Pages 画面または Actions の deploy job に公開URLが表示されます。教材JSONの追加・移動・削除時は、従来どおり手元で `app/src/data/sync_index.py` を実行して `index.json` を更新し、その変更を commit してください。Pages workflow は同期スクリプトを実行せず、commit 済みの `app/` をそのまま配信します。
+
 ## データ追加と更新
 
 上部の選択欄で「教科 → 問題セット → ページ」の順に選びます。教科と問題セットは `app/src/data/index.json` から作り、ページ欄には選択中の問題セットのページだけを表示します。最後に開いていた問題セットとページ選択は `localStorage` に保存されるため、再読み込み後も同じ場所を開きます。保存済みの選択先がデータ更新で消えていた場合は、選択可能な問題セットへ戻します。
