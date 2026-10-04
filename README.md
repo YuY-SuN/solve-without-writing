@@ -13,6 +13,7 @@
 
 - `AGENTS.md`: このリポジトリでのドキュメント運用ルール
 - `docs/engineering-notes.md`: 横断的な設計方針、運用ルール、検証上の注意
+- `docs/answer-checking.md`: 小問単位の答え合わせと見比べ表示
 - `docs/english-learning-support.md`: 英語教材、回答モード切替、語順問題のJSON仕様と運用
 - `docs/app-root-layout.md`: 単一アプリ前提のディレクトリ構成と更新手順
 - `docs/transfer-mode-poc.md`: 完了済み問題の転記モード POC と印刷フロー
@@ -48,9 +49,9 @@ python3 sync_index.py
 
 ## 問題カードの操作
 
-各問題カードでは、下部の操作ラインに `この問題の答えを表示` `この問題の解説を表示` `完了` をまとめて配置しています。`この問題をクリア` は従来どおりヘッダー側に残し、解答確認と完了チェックだけを同じ場所で続けて操作できる前提です。
+回答UIを持つ問題・小問ごとに、その場で `答え合わせ` または `見比べてみる` を押せます。choice / word_order と mode_switch の選択式は自動判定し、文字入力や自由作文は正誤を断定せず、自分の回答・解答例・解説を並べて表示します。既存の `完了` は問題カード単位で引き続き手動管理します。
 
-英語教材では `choice` の選択肢順シャッフルとキー非表示、選択式／記入式の切替、語句tokenをクリックして英文を組み立てる `word_order` を利用できます。回答は保存されますが、自動採点は行いません。詳細なJSON構造・入力制約・追加手順は `docs/english-learning-support.md` を参照してください。
+英語教材では `choice` の選択肢順シャッフルとキー非表示、選択式／記入式の切替、語句tokenをクリックして英文を組み立てる `word_order` を利用できます。詳細なJSON構造は `docs/english-learning-support.md`、答え合わせの動作は `docs/answer-checking.md` を参照してください。
 
 ## 転記モード POC
 

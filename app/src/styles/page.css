@@ -265,6 +265,101 @@ button:disabled {
   border-radius: 8px;
 }
 
+.response-unit {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  background: #fbfdff;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+.response-unit > .response-block {
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.response-unit.is-checked-correct {
+  border-color: #a8d5b3;
+  background: #edf8f0;
+}
+
+.response-unit.is-checked-incorrect {
+  border-color: #e5c36d;
+  background: #fff7e6;
+}
+
+.response-unit.is-compare-open {
+  border-color: #cbd5e1;
+}
+
+.response-check-button {
+  min-height: 40px;
+  margin-top: 12px;
+  padding: 0 16px;
+  border: 1px solid #2458ad;
+  border-radius: 8px;
+  background: #2f6fed;
+  color: #fff;
+  font: inherit;
+  font-weight: 650;
+}
+
+.response-check-feedback {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #dbe4f0;
+}
+
+.response-check-status {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+.is-checked-correct .response-check-status {
+  color: #166534;
+}
+
+.is-checked-incorrect .response-check-status {
+  color: #8a5b00;
+}
+
+.response-check-value {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.response-check-value-label,
+.response-check-value-text {
+  margin: 0;
+}
+
+.response-check-value-label {
+  margin-bottom: 4px;
+  color: #55627a;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.response-check-value-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.answer-reveal {
+  margin-top: 16px;
+}
+
+.answer-reveal-content > :first-child {
+  margin-top: 12px;
+}
+
 .visual-panel {
   overflow-x: auto;
   padding: 12px;

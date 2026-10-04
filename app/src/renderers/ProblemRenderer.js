@@ -1,4 +1,4 @@
-import { renderPrompt, renderResponse, renderAnswer, renderExplanation } from "./TextRenderer.js?v20261003-1";
+import { renderPrompt, renderResponse, renderAnswer, renderExplanation } from "./TextRenderer.js?v20261004-1";
 import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
 
 function getItemResponseKey(problem, item) {
@@ -26,39 +26,298 @@ function appendAnswerVisuals(node, answerVisuals) {
   node.appendChild(wrapper);
 }
 
-function itemHasAnswerContent(item) {
-  if (item.answer || (item.answerVisuals?.length ?? 0) > 0) {
-    return true;
+function getActiveResponse(response, answer, value) {
+  if (response?.type !== "mode_switch") {
+    return { response, answer, value };
   }
 
-  return (item.items ?? []).some((child) => itemHasAnswerContent(child));
+  const mode = value?.mode && Object.hasOwn(response.modes ?? {}, value.mode)
+    ? value.mode
+    : response.defaultMode;
+  return {
+    response: response.modes?.[mode],
+    answer: answer?.modes?.[mode],
+    value: value?.values?.[mode],
+    mode,
+  };
 }
 
-function itemHasExplanationContent(item) {
-  if (item.explanation) {
-    return true;
+function formatWordOrder(response, value) {
+  if (!Array.isArray(value)) {
+    return "未入力";
+  }
+  const textByKey = new Map((response.tokens ?? []).map((token) => [token.key, token.text]));
+  return value
+    .map((key) => textByKey.get(key))
+    .filter((text) => typeof text === "string")
+    .join(" ")
+    .replace(/\s+([.,!?;:])/g, "$1")
+    .trim();
+}
+
+function formatResponseValue(response, value, answer = null) {
+  if (response?.type === "mode_switch") {
+    const active = getActiveResponse(response, answer, value);
+    return formatResponseValue(active.response, active.value, active.answer);
+  }
+  if (response?.type === "choice") {
+    const values = response.multiple ? (Array.isArray(value) ? value : []) : [value];
+    const labels = values
+      .filter((entry) => entry !== null && entry !== undefined && entry !== "")
+      .map((entry) => response.choices?.find((choice) => choice.key === entry)?.text ?? String(entry));
+    return labels.length > 0 ? labels.join("、") : "未入力";
+  }
+  if (response?.type === "word_order") {
+    return formatWordOrder(response, value);
+  }
+  if (response?.type === "multi_blank") {
+    return (response.fields ?? [])
+      .map((field) => `${field.label}: ${value?.[field.key] ?? ""}`)
+      .join(" / ") || JSON.stringify(value ?? {});
+  }
+  if (response?.type === "table_fill" || response?.type === "ladder_fill") {
+    return (response.targets ?? [])
+      .map((target) => `${target.label ?? target.key}: ${value?.[target.key] ?? ""}`)
+      .join(" / ") || JSON.stringify(value ?? {});
+  }
+  if (value === null || value === undefined || value === "") {
+    return "未入力";
+  }
+  return typeof value === "string" || typeof value === "number"
+    ? String(value)
+    : JSON.stringify(value);
+}
+
+function getAnswerText(response, answer, value) {
+  const active = getActiveResponse(response, answer, value);
+  const activeDisplay = active.answer?.display;
+  if (typeof activeDisplay === "string") {
+    return activeDisplay;
+  }
+  if (Array.isArray(activeDisplay)) {
+    return activeDisplay.join("、");
+  }
+  if (typeof answer?.display === "string") {
+    return answer.display;
+  }
+  if (Array.isArray(answer?.display)) {
+    return answer.display.join("、");
+  }
+  if (active.answer?.value !== undefined) {
+    return formatResponseValue(active.response, active.answer.value, active.answer);
+  }
+  return answer?.value !== undefined
+    ? formatResponseValue(response, answer.value, answer)
+    : "答えデータなし";
+}
+
+function getChoiceExplanations(response, value) {
+  const active = getActiveResponse(response, null, value);
+  if (active.response?.type !== "choice") {
+    return [];
+  }
+  const selected = active.response.multiple
+    ? (Array.isArray(active.value) ? active.value : [])
+    : [active.value];
+  return [...new Set(selected
+    .map((key) => active.response.choices?.find((choice) => choice.key === key)?.explanation)
+    .filter((explanation) => typeof explanation === "string" && explanation.length > 0))];
+}
+
+function appendValuePanel(parent, labelText, value) {
+  const panel = document.createElement("div");
+  panel.className = "response-check-value";
+  const label = document.createElement("p");
+  label.className = "response-check-value-label";
+  label.textContent = labelText;
+  const text = document.createElement("p");
+  text.className = "response-check-value-text";
+  text.textContent = value;
+  panel.append(label, text);
+  parent.appendChild(panel);
+}
+
+function renderResponseFeedback(feedbackNode, stateClassNode, status, response, answer, value, explanation, answerVisuals) {
+  feedbackNode.innerHTML = "";
+  stateClassNode.classList.remove("is-checked-correct", "is-checked-incorrect", "is-compare-open");
+  if (!status) {
+    return;
   }
 
-  return (item.items ?? []).some((child) => itemHasExplanationContent(child));
-}
+  const feedback = document.createElement("div");
+  feedback.className = "response-check-feedback";
+  feedback.setAttribute("aria-live", "polite");
+  const statusText = document.createElement("p");
+  statusText.className = "response-check-status";
 
-function hasAnswerContent(problem) {
-  if (problem.answer || (problem.answerVisuals?.length ?? 0) > 0) {
-    return true;
+  if (status === "unanswered") {
+    statusText.textContent = "まず回答してください。";
+    feedback.appendChild(statusText);
+    feedbackNode.appendChild(feedback);
+    return;
   }
 
-  return (problem.items ?? []).some((item) => itemHasAnswerContent(item));
+  const isAutoChecked = status === "correct" || status === "incorrect";
+  if (status === "correct") {
+    statusText.textContent = "✓ 正解";
+    stateClassNode.classList.add("is-checked-correct");
+  } else if (status === "incorrect") {
+    statusText.textContent = "△ 確認してみよう";
+    stateClassNode.classList.add("is-checked-incorrect");
+  } else {
+    statusText.textContent = "見比べてみよう";
+    stateClassNode.classList.add("is-compare-open");
+  }
+  feedback.appendChild(statusText);
+
+  appendValuePanel(feedback, "あなたの回答", formatResponseValue(response, value, answer));
+  appendValuePanel(
+    feedback,
+    isAutoChecked ? "正答" : "正答・解答例",
+    getAnswerText(response, answer, value),
+  );
+
+  if (status === "incorrect") {
+    for (const choiceExplanation of getChoiceExplanations(response, value)) {
+      const choiceBlock = renderExplanation(choiceExplanation);
+      choiceBlock.querySelector(".answer-label").textContent = "この選択肢について";
+      feedback.appendChild(choiceBlock);
+    }
+  }
+  if (explanation) {
+    feedback.appendChild(renderExplanation(explanation));
+  }
+  if (answerVisuals?.length) {
+    appendAnswerVisuals(feedback, answerVisuals);
+  }
+  feedbackNode.appendChild(feedback);
 }
 
-function hasExplanationContent(problem) {
-  if (problem.explanation) {
-    return true;
+function createResponseUnit(response, answer, explanation, responseKey, options, answerVisuals = []) {
+  const initialValue = options.responseValues?.[responseKey] ?? null;
+  let currentValue = initialValue;
+  let checkState = options.checkedResponses?.[responseKey] ?? null;
+
+  function commitValue(nextValue) {
+    const resolvedValue = typeof nextValue === "function" ? nextValue(currentValue) : nextValue;
+    if (JSON.stringify(currentValue) === JSON.stringify(resolvedValue)) {
+      return;
+    }
+    currentValue = resolvedValue;
+    checkState = null;
+    options.onResponseChange?.(responseKey, nextValue);
+    options.onStatusChange?.();
+    renderFeedback();
+    updateCheckButton();
   }
 
-  return (problem.items ?? []).some((item) => itemHasExplanationContent(item));
+  const responseNode = renderResponse(response, {
+    responseKey,
+    value: currentValue,
+    onChange: commitValue,
+  });
+  if (!responseNode) {
+    return null;
+  }
+
+  const unit = document.createElement("div");
+  unit.className = "response-unit";
+  unit.appendChild(responseNode);
+
+  const checkButton = document.createElement("button");
+  checkButton.type = "button";
+  checkButton.className = "response-check-button";
+  const feedbackNode = document.createElement("div");
+  feedbackNode.className = "response-check-result";
+  unit.append(checkButton, feedbackNode);
+
+  function updateCheckButton() {
+    const active = getActiveResponse(response, answer, currentValue);
+    const canAutoCheck = (
+      active.response?.type === "choice"
+      && active.answer?.value !== undefined
+    ) || (
+      active.response?.type === "word_order"
+      && Array.isArray(active.answer?.value)
+    );
+    checkButton.textContent = canAutoCheck ? "答え合わせ" : "見比べてみる";
+    checkButton.disabled = (Boolean(checkState) && checkState !== "unanswered")
+      || (options.isResponseComplete?.(response, currentValue, answer) === false);
+  }
+
+  function renderFeedback(status = checkState) {
+    renderResponseFeedback(
+      feedbackNode,
+      unit,
+      status,
+      response,
+      answer,
+      currentValue,
+      explanation,
+      answerVisuals,
+    );
+  }
+
+  function syncExternalValue(nextValue) {
+    const resolvedValue = typeof nextValue === "function" ? nextValue(currentValue) : nextValue;
+    if (JSON.stringify(currentValue) === JSON.stringify(resolvedValue)) {
+      return;
+    }
+    currentValue = resolvedValue;
+    checkState = null;
+    renderFeedback();
+    updateCheckButton();
+  }
+
+  checkButton.addEventListener("click", () => {
+    checkState = options.onCheckResponse?.(responseKey, response, answer, currentValue) ?? "compare";
+    renderFeedback(checkState);
+    updateCheckButton();
+  });
+
+  renderFeedback();
+  updateCheckButton();
+  return { node: unit, syncExternalValue };
 }
 
-function renderItemNode(problem, item, options, depth = 0) {
+function hasResponseInTree(node) {
+  if (node.response && node.response.type !== "none") {
+    return true;
+  }
+  return (node.items ?? []).some(hasResponseInTree);
+}
+
+function createAnswerReveal(answer, explanation, answerVisuals = []) {
+  if (!answer && !explanation && answerVisuals.length === 0) {
+    return null;
+  }
+  const wrapper = document.createElement("div");
+  wrapper.className = "answer-reveal";
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "secondary-button answer-reveal-toggle";
+  button.textContent = "答え・解説を見る";
+  const content = document.createElement("div");
+  content.className = "answer-reveal-content";
+  content.hidden = true;
+  if (answer) {
+    content.appendChild(renderAnswer(answer));
+  }
+  if (explanation) {
+    content.appendChild(renderExplanation(explanation));
+  }
+  if (answerVisuals.length) {
+    appendAnswerVisuals(content, answerVisuals);
+  }
+  button.addEventListener("click", () => {
+    content.hidden = !content.hidden;
+    button.textContent = content.hidden ? "答え・解説を見る" : "答え・解説を隠す";
+  });
+  wrapper.append(button, content);
+  return wrapper;
+}
+
+function renderItemNode(problem, item, options, depth = 0, inheritedExplanation = null) {
   const itemNode = document.createElement("section");
   itemNode.className = "problem-item";
   itemNode.dataset.depth = String(depth);
@@ -79,7 +338,19 @@ function renderItemNode(problem, item, options, depth = 0) {
     itemNode.appendChild(renderPrompt({ prompt: null, context: item.context }));
   }
 
-  const responseKey = item.response ? getItemResponseKey(problem, item) : null;
+  const responseKey = item.response && item.response.type !== "none"
+    ? getItemResponseKey(problem, item)
+    : null;
+  const responseUnit = responseKey
+    ? createResponseUnit(
+        item.response,
+        item.answer,
+        item.explanation ?? inheritedExplanation,
+        responseKey,
+        options,
+        item.answerVisuals ?? [],
+      )
+    : null;
 
   if (item.visuals?.length) {
     const itemVisuals = document.createElement("div");
@@ -91,6 +362,7 @@ function renderItemNode(problem, item, options, depth = 0) {
       onChange: responseKey
         ? (nextValue) => {
             options.onResponseChange?.(responseKey, nextValue);
+            responseUnit?.syncExternalValue(nextValue);
             options.onStatusChange?.();
           }
         : null,
@@ -100,35 +372,26 @@ function renderItemNode(problem, item, options, depth = 0) {
     itemNode.appendChild(itemVisuals);
   }
 
-  if (item.response) {
-    const responseNode = renderResponse(item.response, {
-      responseKey,
-      value: options.responseValues?.[responseKey] ?? null,
-      onChange: (nextValue) => {
-        options.onResponseChange?.(responseKey, nextValue);
-        options.onStatusChange?.();
-      },
-    });
-    if (responseNode) {
-      itemNode.appendChild(responseNode);
+  if (responseUnit) {
+    itemNode.appendChild(responseUnit.node);
+  } else if (!hasResponseInTree(item)) {
+    const answerReveal = createAnswerReveal(item.answer, item.explanation, item.answerVisuals ?? []);
+    if (answerReveal) {
+      itemNode.appendChild(answerReveal);
     }
-  }
-
-  if (options.showAnswers && item.answer) {
-    itemNode.appendChild(renderAnswer(item.answer));
-  }
-  if (options.showAnswers) {
-    appendAnswerVisuals(itemNode, item.answerVisuals ?? []);
-  }
-  if (options.showExplanations && item.explanation) {
-    itemNode.appendChild(renderExplanation(item.explanation));
   }
 
   if (item.items?.length) {
     const nestedItems = document.createElement("div");
     nestedItems.className = "problem-items problem-items-nested";
     for (const child of item.items) {
-      nestedItems.appendChild(renderItemNode(problem, child, options, depth + 1));
+      nestedItems.appendChild(renderItemNode(
+        problem,
+        child,
+        options,
+        depth + 1,
+        item.explanation ?? inheritedExplanation,
+      ));
     }
     itemNode.appendChild(nestedItems);
   }
@@ -172,22 +435,6 @@ function renderProblem(problem, options) {
   const problemControls = document.createElement("div");
   problemControls.className = "problem-controls";
 
-  const detailActions = document.createElement("div");
-  detailActions.className = "problem-detail-actions";
-  const canShowAnswer = hasAnswerContent(problem);
-  const canShowExplanation = hasExplanationContent(problem);
-
-  const answerToggle = document.createElement("button");
-  answerToggle.type = "button";
-  answerToggle.className = "secondary-button";
-
-  const explanationToggle = document.createElement("button");
-  explanationToggle.type = "button";
-  explanationToggle.className = "secondary-button";
-
-  detailActions.append(answerToggle, explanationToggle);
-  problemControls.appendChild(detailActions);
-
   const completionBlock = document.createElement("div");
   completionBlock.className = "problem-completion-block";
 
@@ -225,25 +472,6 @@ function renderProblem(problem, options) {
         : "locked";
   }
 
-  function updateDetailToggleUi() {
-    const showAnswers = options.getProblemAnswerVisibility?.(problem) ?? false;
-    const showExplanations = options.getProblemExplanationVisibility?.(problem) ?? false;
-    answerToggle.disabled = !canShowAnswer;
-    explanationToggle.disabled = !canShowExplanation;
-    answerToggle.textContent = showAnswers ? "この問題の答えを隠す" : "この問題の答えを表示";
-    explanationToggle.textContent = showExplanations
-      ? "この問題の解説を隠す"
-      : "この問題の解説を表示";
-  }
-
-  answerToggle.addEventListener("click", () => {
-    options.onToggleProblemAnswerVisibility?.(problem);
-  });
-
-  explanationToggle.addEventListener("click", () => {
-    options.onToggleProblemExplanationVisibility?.(problem);
-  });
-
   completionCheckbox.addEventListener("change", (event) => {
     options.onToggleProblemComplete?.(problem, event.target.checked);
     updateCompletionUi();
@@ -272,68 +500,55 @@ function renderProblem(problem, options) {
     options.onProblemStatusChange?.();
   };
 
+  const problemResponseKey = problem.response && problem.response.type !== "none" ? problem.id : null;
+  const problemResponseUnit = problemResponseKey
+    ? createResponseUnit(
+        problem.response,
+        problem.answer,
+        problem.explanation,
+        problemResponseKey,
+        { ...options, onStatusChange: updateCompletionAfterResponse },
+        problem.answerVisuals ?? [],
+      )
+    : null;
+
   renderVisualList(problem.visuals ?? [], visuals, {
     response: problem.response,
-    responseKey: problem.id,
-    value: options.responseValues?.[problem.id] ?? null,
-    onChange: (nextValue) => {
-      options.onResponseChange?.(problem.id, nextValue);
+    responseKey: problemResponseKey,
+    value: problemResponseKey ? options.responseValues?.[problemResponseKey] ?? null : null,
+    onChange: problemResponseKey ? (nextValue) => {
+      options.onResponseChange?.(problemResponseKey, nextValue);
+      problemResponseUnit?.syncExternalValue(nextValue);
       updateCompletionAfterResponse();
-    },
+    } : null,
     answer: problem.answer,
     answerVisuals: problem.answerVisuals ?? [],
   });
 
   const items = document.createElement("div");
   items.className = "problem-items";
-  const showAnswers = options.getProblemAnswerVisibility?.(problem) ?? false;
-  const showExplanations = options.getProblemExplanationVisibility?.(problem) ?? false;
 
   for (const item of problem.items ?? []) {
     items.appendChild(renderItemNode(problem, item, {
-      responseValues: options.responseValues,
-      onResponseChange: options.onResponseChange,
+      ...options,
       onStatusChange: updateCompletionAfterResponse,
-      showAnswers,
-      showExplanations,
-    }));
-  }
-
-  const footer = document.createElement("footer");
-  footer.className = "problem-footer";
-  if (problem.response) {
-    const responseNode = renderResponse(problem.response, {
-      responseKey: problem.id,
-      value: options.responseValues?.[problem.id] ?? null,
-      onChange: (nextValue) => {
-        options.onResponseChange?.(problem.id, nextValue);
-        updateCompletionAfterResponse();
-      },
-    });
-    if (responseNode) {
-      footer.appendChild(responseNode);
-    }
-  }
-  if (showAnswers && problem.answer) {
-    footer.appendChild(renderAnswer(problem.answer));
-  }
-  if (showExplanations && problem.explanation) {
-    footer.appendChild(renderExplanation(problem.explanation));
+    }, 0, problem.explanation));
   }
 
   article.append(header, prompt, visuals);
+  if (problemResponseUnit) {
+    article.appendChild(problemResponseUnit.node);
+  } else if (!hasResponseInTree(problem)) {
+    const answerReveal = createAnswerReveal(problem.answer, problem.explanation, problem.answerVisuals ?? []);
+    if (answerReveal) {
+      article.appendChild(answerReveal);
+    }
+  }
   if (items.childElementCount > 0) {
     article.appendChild(items);
   }
-  if (showAnswers) {
-    appendAnswerVisuals(article, problem.answerVisuals ?? []);
-  }
-  if (footer.childElementCount > 0) {
-    article.appendChild(footer);
-  }
   article.appendChild(problemControls);
 
-  updateDetailToggleUi();
   updateCompletionUi();
 
   return article;
