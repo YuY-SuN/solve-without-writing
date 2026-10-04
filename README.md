@@ -5,7 +5,7 @@
 ## 主な場所
 
 - `app/`: ブラウザで配信する静的アプリ本体
-- `app/src/data/`: 問題データと `index.json`
+- `app/src/data/`: 教科フォルダ別の問題データと `index.json`
 - `docs/`: 機能追加ごとの設計・運用メモ
 - `misc/GPTs-prompts/`: データ生成や変換に使うプロンプト置き場
 
@@ -29,18 +29,18 @@ python3 -m http.server 4173
 
 ## データ追加と更新
 
-上部の「問題セット」コンボボックスと「ページ」コンボボックスは `app/src/data/index.json` を起点に全 dataset を読み、ページを横断して選べるようにしています。最後に開いていた問題セットとページ選択は `localStorage` に保存されるため、再読み込みや次回起動後も同じページを開き直せます。保存済みのページが `index.json` や dataset 更新で消えていた場合は、その dataset 全体表示、さらに dataset 自体も無効なら `defaultDatasetId` へ自動で戻します。
+上部の選択欄で「教科 → 問題セット → ページ」の順に選びます。教科と問題セットは `app/src/data/index.json` から作り、ページ欄には選択中の問題セットのページだけを表示します。最後に開いていた問題セットとページ選択は `localStorage` に保存されるため、再読み込み後も同じ場所を開きます。保存済みの選択先がデータ更新で消えていた場合は、選択可能な問題セットへ戻します。
 
-新しい問題JSONを追加したら、`app/src/data/` で次を実行してください。
+新しい問題JSONは教科IDと同じ名前のフォルダへ置きます。例えば英語なら `app/src/data/english/lesson.json`、数学なら `app/src/data/math/problems.json` です。JSON本体に教科分類用フィールドを追加する必要はありません。
+
+問題JSONを追加・移動・削除したら、`app/src/data/` で次を実行してください。
 
 ```bash
 cd app/src/data
 python3 sync_index.py
 ```
 
-このツールは `data/` 配下の `index.json` 以外の `.json` を走査し、`index.json` を再生成します。既存の `label` と `defaultDatasetId` は、対応するファイルが残っている限り保持します。
-
-新しいdatasetでは `meta.subject` を指定します。英語教材は `"subject": "english"`、従来の数学教材は省略可能で、省略時は `math` として扱います。indexの更新時にはsubjectも登録されます。
+このツールは `data/` 以下を再帰走査し、問題dataset形式（トップレベルに `meta` オブジェクトと `pages` 配列がある）のJSONをindexへ登録します。`index.json` や管理用JSONは問題datasetとして登録しません。教科IDには問題JSONの親フォルダ名を使い、indexの `path` は `data/` からの相対パスになります。既存の `label` と `defaultDatasetId` は、対応するファイルが残っている限り保持します。
 
 問題データを修正するときは、問題文と `answer` だけでなく `explanation` も同じ規則で見直してください。特に `「aよりb大きい数」= a+b` と `「aよりb小さい数」= a-b` のように符号付きの量を文で扱う設問では、`b` が負数でも記号を読み飛ばさずに整合確認する運用にしています。表形式の問題では、左端に行見出しがあるならheader行にも空の先頭セルを置いて列ずれを防ぎます。`choice` のkeyは既存教材では画面ラベルに使われるため、省略時は表示されます。keyを見せない選択肢では `showKeys: false` を指定します。
 

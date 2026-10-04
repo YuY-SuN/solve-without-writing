@@ -1,4 +1,4 @@
-import { renderProblems } from "./renderers/ProblemRenderer.js?v20261003-1";
+import { renderProblems } from "./renderers/ProblemRenderer.js?v20261003-2";
 import { renderVisualList } from "./renderers/VisualRenderer.js?v20260617-1";
 import { validateDatasetResponses } from "./response-validation.js?v20261003-1";
 
@@ -33,6 +33,7 @@ const elements = {
   appShell: document.querySelector(".app-shell"),
   title: document.querySelector("#app-title"),
   source: document.querySelector("#app-source"),
+  subjectSelect: document.querySelector("#subject-select"),
   datasetSelect: document.querySelector("#dataset-select"),
   pageFilter: document.querySelector("#page-filter"),
   clearVisible: document.querySelector("#clear-visible"),
@@ -66,6 +67,11 @@ async function loadDataset(datasetPath) {
     throw new Error(`Failed to load dataset ${datasetPath}: ${res.status}`);
   }
   return res.json();
+}
+
+function getDatasetSubjectFromPath(datasetPath) {
+  const segments = datasetPath.split("/").filter(Boolean);
+  return segments.length > 1 ? segments.at(-2) : null;
 }
 
 function cloneSerializable(value) {
@@ -489,6 +495,7 @@ function buildPageCatalog(catalog, datasetsById) {
         key: makePageKey(entry.id, page.page),
         datasetId: entry.id,
         datasetLabel: entry.label,
+        subject: entry.subject,
         page: page.page,
       });
     }
@@ -502,9 +509,26 @@ function buildPageCatalog(catalog, datasetsById) {
   });
 }
 
-function populateDatasetSelect(catalog) {
+function getSubjectLabel(subject) {
+  return subject === "english" ? "英語" : subject === "math" ? "数学" : subject;
+}
+
+function populateSubjectSelect(catalog) {
+  const subjects = [...new Set(catalog.datasets.map((entry) => entry.subject))]
+    .filter((subject) => typeof subject === "string" && subject.length > 0)
+    .sort((left, right) => left.localeCompare(right, "ja"));
+  elements.subjectSelect.innerHTML = "";
+  for (const subject of subjects) {
+    const option = document.createElement("option");
+    option.value = subject;
+    option.textContent = getSubjectLabel(subject);
+    elements.subjectSelect.appendChild(option);
+  }
+}
+
+function populateDatasetSelect(catalog, subject = elements.subjectSelect.value) {
   elements.datasetSelect.innerHTML = "";
-  for (const entry of catalog.datasets) {
+  for (const entry of catalog.datasets.filter((candidate) => candidate.subject === subject)) {
     const option = document.createElement("option");
     option.value = entry.id;
     option.textContent = entry.label;
@@ -512,7 +536,7 @@ function populateDatasetSelect(catalog) {
   }
 }
 
-function populatePageFilter(pageCatalog, progressMap) {
+function populatePageFilter(pageCatalog, progressMap, datasetId = state.selectedDatasetId) {
   elements.pageFilter.innerHTML = "";
 
   const allOption = document.createElement("option");
@@ -520,7 +544,7 @@ function populatePageFilter(pageCatalog, progressMap) {
   allOption.textContent = "すべて（現在の問題セット）";
   elements.pageFilter.appendChild(allOption);
 
-  for (const entry of pageCatalog) {
+  for (const entry of pageCatalog.filter((candidate) => candidate.datasetId === datasetId)) {
     const option = document.createElement("option");
     option.value = entry.key;
     option.textContent = formatPageOptionLabel(entry, progressMap);
@@ -584,8 +608,7 @@ function updateHeader() {
 
   elements.title.textContent = state.dataset.meta.title;
 
-  const subject = state.dataset.meta.subject ?? selectedEntry.subject ?? "math";
-  const subjectLabel = subject === "english" ? "英語" : subject === "math" ? "数学" : subject;
+  const subjectLabel = getSubjectLabel(selectedEntry.subject ?? "math");
   const sourceParts = [selectedEntry.label, subjectLabel];
   if (state.selectedPageKey !== "all") {
     const pageEntry = findPageEntry(state.selectedPageKey);
@@ -959,9 +982,9 @@ function buildPageProgressMap() {
 function formatPageOptionLabel(entry, progressMap) {
   const progress = progressMap?.[entry.key];
   if (!progress) {
-    return `${entry.page}ページ / ${entry.datasetLabel}`;
+    return `${entry.page}ページ`;
   }
-  return `${entry.page}ページ / ${entry.datasetLabel} / ${progress.completeCount}/${progress.totalCount} 完了`;
+  return `${entry.page}ページ / ${progress.completeCount}/${progress.totalCount} 完了`;
 }
 
 function renderPageProgress(progressMap) {
@@ -1528,7 +1551,12 @@ async function applyDataset(datasetId, pageKey = "all") {
   state.selectedDatasetId = selectedEntry.id;
   state.selectedPageKey = pageKey;
 
+  if (elements.subjectSelect.value !== selectedEntry.subject) {
+    elements.subjectSelect.value = selectedEntry.subject;
+    populateDatasetSelect({ datasets: state.datasetCatalog }, selectedEntry.subject);
+  }
   elements.datasetSelect.value = selectedEntry.id;
+  populatePageFilter(state.pageCatalog, buildPageProgressMap(), selectedEntry.id);
   elements.pageFilter.value = pageKey;
   persistViewSelection();
   updateHeader();
@@ -1574,8 +1602,13 @@ async function bootstrap() {
       if (issues.length > 0) {
         throw new Error(issues.join("; "));
       }
-      const subject = dataset.meta?.subject ?? entry.subject ?? "math";
-      return { entry: { ...entry, subject }, dataset };
+      return {
+        entry: {
+          ...entry,
+          subject: getDatasetSubjectFromPath(entry.path) ?? entry.subject ?? "math",
+        },
+        dataset,
+      };
     } catch (error) {
       skippedDatasets.push(`${entry.label ?? entry.id}: ${error.message}`);
       return null;
@@ -1585,7 +1618,10 @@ async function bootstrap() {
   if (validDatasets.length === 0) {
     throw new Error(`読み込める問題セットがありません。${skippedDatasets.join(" / ")}`);
   }
-  state.datasetCatalog = validDatasets.map(({ entry }) => entry);
+  state.datasetCatalog = validDatasets.map(({ entry }) => ({
+    ...entry,
+    subject: entry.subject || "math",
+  }));
   state.datasetsById = Object.fromEntries(validDatasets.map(({ entry, dataset }) => [entry.id, dataset]));
   const responseKeyOwners = new Map();
   const duplicateResponseKeys = new Set();
@@ -1624,8 +1660,9 @@ async function bootstrap() {
   sanitizeCompletedProblems();
 
   const progressMap = buildPageProgressMap();
+  populateSubjectSelect(validCatalog);
   populateDatasetSelect(validCatalog);
-  populatePageFilter(state.pageCatalog, progressMap);
+  populatePageFilter(state.pageCatalog, progressMap, validCatalog.defaultDatasetId);
   const startupWarnings = [];
   if (skippedDatasets.length > 0) {
     startupWarnings.push(`一部の問題セットを読み込めませんでした: ${skippedDatasets.join(" / ")}`);
@@ -1636,6 +1673,16 @@ async function bootstrap() {
   if (startupWarnings.length > 0) {
     setStorageTransferStatus(startupWarnings.join(" / "), "error");
   }
+
+  elements.subjectSelect.addEventListener("change", async (event) => {
+    const subjectDatasets = state.datasetCatalog.filter((entry) => entry.subject === event.target.value);
+    populateDatasetSelect({ datasets: state.datasetCatalog }, event.target.value);
+    const nextDataset = subjectDatasets.find((entry) => entry.id === validCatalog.defaultDatasetId)
+      ?? subjectDatasets[0];
+    if (nextDataset) {
+      await applyDataset(nextDataset.id, "all");
+    }
+  });
 
   elements.datasetSelect.addEventListener("change", async (event) => {
     await applyDataset(event.target.value, "all");

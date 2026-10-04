@@ -21,32 +21,34 @@
 
 ### Static app
 
-- ブラウザが `fetch()` で `src/data/*.json` を読む構成
+- ブラウザが `fetch()` で `src/data/<subject>/*.json` を読む構成
 - `file://` 直開きではなく、ローカル静的サーバー経由で開く必要がある
 - 動作確認は通常 `python3 -m http.server 4173` を使う
 
 ### Dataset loading
 
 - アプリは単一JSON固定ではなく、`src/data/index.json` を読んで問題セット一覧を構築する
-- 上部ツールバーの「問題セット」コンボボックスから dataset 全体を切り替える
-- 上部ツールバーの「ページ」コンボボックスから全 dataset を横断して特定ページへ直接切り替える
+- 上部ツールバーで「教科 → 問題セット → ページ」の順に選ぶ
+- 教科はindexのsubject、問題セットはその教科内、ページは選択中dataset内で絞り込む
 - 最後に開いていた dataset / page 選択は `localStorage` に保存し、次回起動時に復元する
 - `localStorage` の回答・完了・履歴・閲覧位置は JSON ファイルへ export / import できる
 - 保存済みページが消えていた場合は dataset 全体表示、dataset も無効なら `defaultDatasetId` にフォールバックする
-- `index.json` の各要素は少なくとも `id` `label` `path` を持つ
-- `index.json` の `subject` は任意。問題JSONの `meta.subject` が優先され、どちらにもない既存datasetは `math` として扱う
+- `index.json` の各要素は少なくとも `id` `label` `subject` `path` を持つ
+- 教科IDは問題JSONの親フォルダ名。問題JSONの `meta.subject` は分類に使わない
+- `index.json` の `path` は `src/data/` からの相対パス（例 `english/lesson.json`）
 - `defaultDatasetId` が初期表示セットになる
-- ページ選択肢は dataset ごとの再構築ではなく、起動時に全 dataset を読んで横断生成する
+- ページ選択肢は選択中datasetのページだけを表示する
 
 ### Dataset index sync
 
-- `src/data/sync_index.py` が `data/` 配下のJSONから `index.json` を再生成する
-- `index.json` 自身は走査対象外
+- `src/data/sync_index.py` が `data/` 以下を再帰走査して `index.json` を再生成する
+- `index.json` と、トップレベルに `meta` オブジェクトと `pages` 配列を持たない管理用JSONはdataset対象外
+- 問題JSONは `data/<subject>/...json` に置く。subjectにはそのファイルの親ディレクトリ名を使う
 - 既存 `label` は対応ファイルが残っている限り保持する
 - 既存 `defaultDatasetId` は有効なら保持し、無効なら先頭 dataset に補正する
-- 新規 dataset の `id` はファイル名ベースで生成する
+- 新規 dataset の `id` はファイル名ベースで生成する。既存datasetは同じファイル名の登録情報を引き継ぎ、移動後の相対pathへ更新する
 - `meta.title` があれば新規 `label` 候補に使う
-- `meta.subject` があればindexに出力し、省略時は `math` とする
+- `subject` はファイルの親ディレクトリ名からindexへ出力する
 
 ## Data model knowledge
 

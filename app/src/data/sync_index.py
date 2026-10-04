@@ -27,13 +27,31 @@ def load_existing_index():
 
 def list_dataset_files():
     return sorted(
-        path for path in DATA_DIR.glob("*.json") if path.name not in SKIP_FILES
+        path
+        for path in DATA_DIR.rglob("*.json")
+        if path.parent != DATA_DIR
+        and path.name not in SKIP_FILES
+        and is_problem_dataset(path)
+    )
+
+
+def is_problem_dataset(path: Path) -> bool:
+    """Only JSON documents with the app's dataset shape are indexed."""
+    try:
+        data = load_json(path)
+    except (OSError, json.JSONDecodeError):
+        return False
+    return (
+        isinstance(data, dict)
+        and isinstance(data.get("meta"), dict)
+        and isinstance(data.get("pages"), list)
     )
 
 
 def make_entry(path: Path, existing_by_path: dict[str, dict], used_ids: set[str]):
     data = load_json(path)
-    existing = existing_by_path.get(path.name, {})
+    relative_path = path.relative_to(DATA_DIR).as_posix()
+    existing = existing_by_path.get(relative_path, existing_by_path.get(path.name, {}))
 
     base_id = existing.get("id") or slugify(path.stem)
     dataset_id = base_id
@@ -44,12 +62,11 @@ def make_entry(path: Path, existing_by_path: dict[str, dict], used_ids: set[str]
     used_ids.add(dataset_id)
 
     label = existing.get("label") or data.get("meta", {}).get("title") or path.stem
-    subject = data.get("meta", {}).get("subject") or "math"
     return {
         "id": dataset_id,
         "label": label,
-        "subject": subject,
-        "path": path.name,
+        "subject": path.parent.name,
+        "path": relative_path,
     }
 
 
@@ -60,6 +77,10 @@ def build_index():
         for entry in existing_index.get("datasets", [])
         if entry.get("path")
     }
+    for entry in existing_index.get("datasets", []):
+        path = entry.get("path")
+        if path and "/" in path:
+            existing_by_path.setdefault(Path(path).name, entry)
 
     used_ids = set()
     datasets = [make_entry(path, existing_by_path, used_ids) for path in list_dataset_files()]

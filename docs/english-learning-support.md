@@ -8,7 +8,7 @@
 
 ## 設計
 
-- `meta.subject` は教材の識別情報として使う。既存の数学JSONには追加不要で、省略時は `math` 扱い。
+- 教科分類はJSON本文ではなく、JSONを置くフォルダ名で決める。英語教材は `app/src/data/english/`、数学教材は `app/src/data/math/` に配置する。
 - 問題と小問の `prompt`, `context`, `items`, `visuals`, `work`, `response`, `answer`, `explanation` 構造を維持する。
 - `choice`, `blank`, `free_text`, `multi_blank` など教科共通の回答形式は共通rendererで描画する。
 - 英語教材では `choice` に選択肢シャッフルとkey表示設定を加え、`mode_switch` と `word_order` を追加する。
@@ -17,14 +17,9 @@
 
 ## データ仕様
 
-### subject
+### 教科と配置フォルダ
 
-| フィールド | 型 | 必須性 | 既定値・制約 |
-|---|---|---|---|
-| `meta.subject` | string | 新規英語datasetでは必須 | `english`。未指定なら既存互換のため `math` |
-| `index.json` の `datasets[].subject` | string | 任意 | JSONの `meta.subject` が優先。省略時は `math` |
-
-`subject` はヘッダーの出典行に「英語」「数学」等を表示するために使う。問題全体のrenderer選択には使わない。
+問題JSON内部に教科分類用フィールドは不要で、`meta.subject` があっても分類には使用しない。index生成時に問題JSONの親ディレクトリ名を `datasets[].subject` として登録する。たとえば `app/src/data/english/lesson3.json` はsubject `english` になる。subject IDは選択UIに表示し、`math` は「数学」、`english` は「英語」と表示する。問題rendererの選択には使わず、共通response UIを使う。
 
 ### choice
 
@@ -159,15 +154,14 @@
 
 ## 完成JSON例
 
-以下は5種類の問題を1つの読み込み可能なdatasetにまとめた例。ファイルを `app/src/data/` に置き、indexへ登録して利用する。
+以下は5種類の問題を1つの読み込み可能なdatasetにまとめた例。ファイルを `app/src/data/english/` に置き、`cd app/src/data && python3 sync_index.py` でindexを更新して利用する。
 
 ```json
 {
   "meta": {
     "title": "English response examples",
     "source": "英語教材",
-    "version": "1",
-    "subject": "english"
+    "version": "1"
   },
   "pages": [
     {
@@ -279,25 +273,25 @@
 - `app/src/renderers/TextRenderer.js`: 安定した選択肢順、key表示制御、モード切替、tokenクリック操作、answer.display
 - `app/src/renderers/ProblemRenderer.js`: 共通response renderer呼び出し（教科別分岐なし）
 - `app/src/styles/page.css`: モード切替と語順tokenの表示
-- `app/src/data/sync_index.py`: datasetのsubjectをindexへ反映。省略時は `math`
-- `app/src/data/english_lesson3_3_chatgpt.json`: `_inputs/english_lesson3_3_chatgpt.json` から配置した動作確認用の英語サンプル
+- `app/src/data/sync_index.py`: data以下を再帰走査し、問題JSONの親ディレクトリ名をsubjectとしてindexへ反映
+- `app/src/data/english/english_lesson3_3_chatgpt.json`: `_inputs/english_lesson3_3_chatgpt.json` から配置した動作確認用の英語サンプル
 - `app/src/data/index.json`: 英語サンプルdatasetを登録
 - `app/src/main.js`: dataset間で重複したresponse IDがある場合は状態欄に警告
 - `README.md`, `docs/engineering-notes.md`: アプリ説明、横断仕様、データ運用を更新
 
 ## 運用・更新手順
 
-1. ChatGPTが教材PDFを読み、`meta.subject` と問題JSONを生成する。英語教材には `"subject": "english"` を指定する。
+1. ChatGPTが教材PDFを読み、問題JSONを生成する。教科分類用のJSONフィールドは作らない。
 2. `response.type` を元教材が要求する操作に合わせて選ぶ。元から選択式なら `choice`、語順を組み立てるなら `word_order`、選択／記入を切り替えるなら `mode_switch` を使う。
 3. 4択にする場合は、ChatGPT側で誤答と誤答理由をJSONに記載する。アプリは生成しない。
-4. JSONを `app/src/data/` に追加し、`cd app/src/data && python3 sync_index.py` を実行してindexを再生成する。既存 `label` と既定datasetは保持され、各datasetのsubjectが登録される。
+4. JSONを `app/src/data/english/` に配置し、`cd app/src/data && python3 sync_index.py` を実行してindexを再生成する。追加・移動・削除は再帰走査で反映され、親フォルダ名がsubjectとして登録される。
 5. 起動時に新datasetのresponse構造が検証される。失敗したdataset名と問題IDは画面に表示され、そのdatasetは一覧から外れる。他の正常なdatasetは使える。
 6. 静的サーバー経由で開き、回答保存、モード切替、語順操作、答え表示、転記を確認する。
 
 ## 検証結果
 
 - 起動時に問題セットを個別に読み込み、response形式エラーのあるセットだけ除外する構成。
-- 既存数学datasetで使っているresponse typeは検証対象として引き続き許容し、`meta.subject` 欠落は `math` にフォールバックする。
+- 既存数学datasetで使っているresponse typeは検証対象として引き続き許容する。教科分類は配置フォルダから得るため、既存問題JSONの本文変更は不要。
 - 英語サンプル `english_lesson3_3_chatgpt.json` を含む18個のdatasetでJSON parseとresponse検証を実行し、全件エラーなし。
 - 18個のdatasetを通じて回答保存IDに重複がないことを確認。
 - JavaScript変更4ファイルのmodule構文確認に成功。

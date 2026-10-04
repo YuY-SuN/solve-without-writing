@@ -2,9 +2,9 @@
 
 ## Summary
 
-単一アプリ構成の `app/` に、`data/` 配下の複数問題セットを切り替えて表示する機能を追加した。
+単一アプリ構成の `app/` に、教科フォルダ別の複数問題セットを切り替えて表示する機能を追加した。現在の選択順は「教科 → 問題セット → ページ」。
 
-あわせて、`src/data/index.json` を手作業で保守しなくてよいように、`data/` 配下のJSONを走査して `index.json` を再生成する独立ツール `sync_index.py` を追加した。
+あわせて、`src/data/index.json` を手作業で保守しなくてよいように、`data/` 以下を再帰走査して `index.json` を再生成する独立ツール `sync_index.py` を追加した。subjectはJSONの親ディレクトリ名から決め、問題JSONに教科分類用フィールドを加えない。
 
 ## Goal
 
@@ -27,7 +27,7 @@
 - UIに表示するラベルの定義
 - 実ファイル名のマッピング
 
-形式:
+形式（`path` は `src/data/` からの相対パス）:
 
 ```json
 {
@@ -36,7 +36,8 @@
     {
       "id": "core-math",
       "label": "標準セット",
-      "path": "problems.json"
+      "subject": "math",
+      "path": "math/problems.json"
     }
   ]
 }
@@ -44,27 +45,29 @@
 
 ### 2. UI behavior
 
-画面上部ツールバーに「問題セット」コンボボックスを置き、あわせて全 dataset を横断する「ページ」コンボボックスを置く。
+画面上部ツールバーに「教科」「問題セット」「ページ」のコンボボックスを置く。各欄は順に絞り込まれ、ページ欄には選択中datasetのページだけを表示する。
 
 処理の流れ:
 1. `main.js` が `src/data/index.json` を読む
 2. `datasets` 配列でコンボボックスを構築する
 3. 起動時に `datasets` 配列の全JSONを読み込む
-4. 全 dataset のページ一覧から横断ページコンボボックスを構築する
-5. 問題セット選択時はその dataset 全体を表示し、ページ選択時は対応する dataset と page に直接切り替える
+4. 選択中datasetのページ一覧からページコンボボックスを構築する
+5. 教科変更時はその教科のdatasetへ、dataset変更時はそのdataset全体へ切り替える
 6. 最後に開いていた dataset / page の組を `localStorage` に保存し、次回起動時は有効な範囲で復元する
 7. 問題カードを再描画する
 
 ### 3. Index sync tool
 
-`src/data/sync_index.py` は `data/` 配下の `.json` を走査し、`index.json` を再生成する。
+`src/data/sync_index.py` は `data/` 以下を再帰走査し、問題dataset形式のJSONを `index.json` に登録する。
 
 設計方針:
-- `index.json` 自身は走査対象から除外する
-- 既存 `index.json` にある `label` は、同じ `path` が残っていれば保持する
+- `index.json` とトップレベルに `meta` オブジェクトと `pages` 配列を持たない管理用JSONは走査対象外
+- `data/<subject>/...json` の親ディレクトリ名をsubjectとして出力する
+- 既存 `index.json` にある `label` は、同じファイル名の登録が残っていれば保持する
 - 既存 `defaultDatasetId` も、有効な `id` が残っていれば保持する
 - 新規JSONはファイル名から `id` を生成する
 - `meta.title` があれば新規ラベル候補に使う
+- indexの `path` は `data/` からの相対パス
 
 ## Implementation
 
@@ -76,7 +79,7 @@
 - `app/src/main.js`
 - `app/src/styles/page.css`
 - `app/src/data/index.json`
-- `app/src/data/geometry-focus.json`
+- `app/src/data/math/geometry-focus.json`
 - `app/src/data/sync_index.py`
 - `README.md`
 
@@ -109,7 +112,7 @@
 
 ### Add a new dataset
 
-1. `app/src/data/` に新しい問題JSONを置く
+1. `app/src/data/<subject>/` に新しい問題JSONを置く（例: `app/src/data/english/lesson.json`）
 2. 次を実行する
 
 ```bash
@@ -118,12 +121,13 @@ python3 sync_index.py
 ```
 
 3. 必要なら `index.json` 上で `label` や `defaultDatasetId` を調整する
-4. 静的サーバー上で問題セットコンボボックスと横断ページコンボボックスの両方に反映されたことを確認する
+4. 静的サーバー上で教科、問題セット、ページの各選択欄に反映されたことを確認する
 5. 必要なら一度ページを選んで再読み込みし、同じページ選択が復元されることを確認する
 
 ### Notes
 
-- `sync_index.py` は `data/` 配下のすべてのJSONを候補として扱うため、問題セットではないJSONを置く場合は配置ルールを別途決める必要がある。
+- `sync_index.py` は `data/` 以下を走査し、トップレベルに `meta` オブジェクトと `pages` 配列を持つJSONをdatasetとして扱う。`index.json` や管理用JSONは候補から除外する。
+- subjectは対象JSONの親フォルダ名から決まる。`meta.subject` は分類に使わない。
 - 現状は `meta.title` を表示名候補にしているため、問題JSONには `meta.title` を入れておく方がよい。
 
 ## Future maintenance rule

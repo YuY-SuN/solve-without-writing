@@ -2,11 +2,11 @@
 
 このアプリは問題JSONを表示し、回答を保存し、入力がそろった問題に利用者が「完了」を付ける構成です。回答と `answer` を比較する正誤判定や点数計算は実装されていません。`answer.accepted` などがデータにあっても、採点には使われません。
 
-以下は新仕様の提案ではなく、現在のコードと収録データの事実です。主な問題JSONの実例は `app/src/data/problems.json`、各形式の実例は `app/src/data/problems003-2.json`、`app/src/data/problems002.json`、`app/src/data/math_workbook_pages_30_31.json` にあります。
+以下は現在のコードと収録データの仕様です。問題JSONの実例は `app/src/data/math/problems.json`、各形式の実例は `app/src/data/math/problems003-2.json`、`app/src/data/math/problems002.json`、`app/src/data/math/math_workbook_pages_30_31.json` にあります。
 
 ## 1. ファイルの構造と読み込み
 
-問題セットは `app/src/data/` のJSONファイルです。アプリはまず `app/src/data/index.json` を読み、列挙された**全問題セット**を起動時に読み込みます。問題JSONを置くだけでは画面の選択肢に現れず、`index.json` への登録が必要です。読み込み処理は `app/src/main.js` にあります。
+問題セットは `app/src/data/<subject>/*.json` に置きます。アプリはまず `app/src/data/index.json` を読み、列挙された問題セットを起動時に読み込みます。新しい問題JSONを教科フォルダに配置した後、`sync_index.py` を実行してindexを再生成します。subjectはJSON内の `meta.subject` ではなく、JSONの親ディレクトリ名から決まります。読み込み処理は `app/src/main.js` にあります。
 
 ```json
 {
@@ -15,7 +15,8 @@
     {
       "id": "core-math",
       "label": "標準セット",
-      "path": "problems.json"
+      "subject": "math",
+      "path": "math/problems.json"
     }
   ]
 }
@@ -25,14 +26,15 @@
 |---|---|---|
 | `index.json` | `defaultDatasetId` | 初期表示する `datasets[].id`。省略時は先頭セットへフォールバック |
 | `index.json` | `datasets` | 問題セット一覧。空配列だと起動エラー |
-| `datasets[]` | `id`, `label`, `path` | 保存用ID、選択肢の表示名、`app/src/data/` からのファイル名 |
+| `datasets[]` | `id`, `label`, `subject`, `path` | 保存用ID、表示名、教科フォルダ名、`app/src/data/` からの相対パス |
+| 問題JSONの配置場所 | 親ディレクトリ名 | 教科ID。例: `app/src/data/english/lesson.json` のsubjectは `english` |
 | 問題JSONのルート | `meta.title`, `meta.source`, `meta.version` | 画面ヘッダーで使用。`meta.language` の実例はあるが表示処理では参照しない |
 | 問題JSONのルート | `pages` | ページ配列 |
 | `pages[]` | `page`, `problems` | ページ番号と問題配列。ページ選択・進捗集計に使用 |
 
 `pages[].page` は数値として扱うのが安全です。ページ選択肢は番号順に並びます。問題オブジェクトに別途 `page` が書かれた実例もありますが、表示・集計時には**外側の `pages[].page` で上書き**されます。`meta` と `pages`、各ページの `problems` は正常な画面表示に実質必須です。
 
-JSON Schema、TypeScriptの型・interface、dataclassはありません。英語教材対応後は `app/src/response-validation.js` が新形式を含むresponse構造を起動時に検証します。仕様はこの検証処理とJavaScriptの分岐で決まります。`index.json` の更新ツールは `app/src/data/sync_index.py` です。英語responseの詳細は [english-learning-support.md](english-learning-support.md) を参照してください。
+JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/src/response-validation.js` が新形式を含むresponse構造を起動時に検証します。仕様はこの検証処理とJavaScriptの分岐で決まります。`index.json` の更新ツールは `app/src/data/sync_index.py` です。同ツールはdata以下を再帰走査し、トップレベルに `meta` オブジェクトと `pages` 配列を持つ問題JSONだけを登録します。index自身や管理用JSONは対象外です。教科選択UIと英語responseの詳細は [english-learning-support.md](english-learning-support.md) を参照してください。
 
 ## 2. 問題・小問の共通構造
 
@@ -139,7 +141,7 @@ IDに厳密な命名検証はありません。収録データには `p006_q08`�
 
 ## 最小JSON例
 
-これは**問題セットファイルの内容**です。表示するには、このファイル名を前述の `index.json` の `datasets` に登録します。
+これは**問題セットファイルの内容**です。`app/src/data/<subject>/` に置き、`cd app/src/data && python3 sync_index.py` を実行するとindexへ登録されます。
 
 ```json
 {
