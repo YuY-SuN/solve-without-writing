@@ -1,6 +1,7 @@
-import { renderProblems } from "./renderers/ProblemRenderer.js?v20261003-2";
+import { renderProblems } from "./renderers/ProblemRenderer.js?v20261004-1";
 import { renderVisualList } from "./renderers/VisualRenderer.js?v20260617-1";
 import { validateDatasetResponses } from "./response-validation.js?v20261003-1";
+import { evaluateResponseCheck } from "./response-checking.js?v20261004-1";
 
 const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
 const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
@@ -11,16 +12,13 @@ const STORAGE_EXPORT_VERSION = 1;
 const MAX_HISTORY_ENTRIES = 10;
 
 const state = {
-  showAnswers: false,
-  showExplanations: false,
-  answerVisibilityOverrides: {},
-  explanationVisibilityOverrides: {},
   selectedPageKey: "all",
   selectedDatasetId: null,
   datasetCatalog: [],
   datasetsById: {},
   pageCatalog: [],
   responseValues: {},
+  checkedResponses: {},
   completedProblems: {},
   undoStack: [],
   redoStack: [],
@@ -39,8 +37,6 @@ const elements = {
   clearVisible: document.querySelector("#clear-visible"),
   undoClear: document.querySelector("#undo-clear"),
   redoClear: document.querySelector("#redo-clear"),
-  toggleAnswers: document.querySelector("#toggle-answers"),
-  toggleExplanations: document.querySelector("#toggle-explanations"),
   toggleTransferMode: document.querySelector("#toggle-transfer-mode"),
   toggleTransferContent: document.querySelector("#toggle-transfer-content"),
   printTransfer: document.querySelector("#print-transfer"),
@@ -93,10 +89,6 @@ function makePageKey(datasetId, page) {
 }
 
 function makeProblemCompletionKey(datasetId, page, problemId) {
-  return `${datasetId}::${page}::${problemId}`;
-}
-
-function makeProblemViewKey(datasetId, page, problemId) {
   return `${datasetId}::${page}::${problemId}`;
 }
 
@@ -288,60 +280,6 @@ function buildTransferVisualsForNode(node, responseValue) {
   return visuals;
 }
 
-function getProblemViewKey(problem, datasetId = state.selectedDatasetId) {
-  return makeProblemViewKey(datasetId, problem.page, problem.id);
-}
-
-function getProblemAnswerVisibility(problem) {
-  const problemKey = getProblemViewKey(problem);
-  return state.answerVisibilityOverrides[problemKey] ?? state.showAnswers;
-}
-
-function getProblemExplanationVisibility(problem) {
-  const problemKey = getProblemViewKey(problem);
-  return state.explanationVisibilityOverrides[problemKey] ?? state.showExplanations;
-}
-
-function setProblemVisibilityOverride(kind, problem, isVisible) {
-  const overridesKey = kind === "answer"
-    ? "answerVisibilityOverrides"
-    : "explanationVisibilityOverrides";
-  const baseVisible = kind === "answer" ? state.showAnswers : state.showExplanations;
-  const problemKey = getProblemViewKey(problem);
-  const nextOverrides = { ...state[overridesKey] };
-
-  if (isVisible === baseVisible) {
-    delete nextOverrides[problemKey];
-  } else {
-    nextOverrides[problemKey] = isVisible;
-  }
-
-  state[overridesKey] = nextOverrides;
-}
-
-function toggleProblemAnswerVisibility(problem) {
-  setProblemVisibilityOverride("answer", problem, !getProblemAnswerVisibility(problem));
-  render();
-}
-
-function toggleProblemExplanationVisibility(problem) {
-  setProblemVisibilityOverride("explanation", problem, !getProblemExplanationVisibility(problem));
-  render();
-}
-
-function syncAnswerVisibility(isVisible) {
-  state.showAnswers = isVisible;
-  state.answerVisibilityOverrides = {};
-  render();
-}
-
-function syncExplanationVisibility(isVisible) {
-  state.showExplanations = isVisible;
-  state.explanationVisibilityOverrides = {};
-  render();
-}
-
-
 function setStorageTransferStatus(message, kind = "info") {
   if (!elements.storageTransferStatus) {
     return;
@@ -446,6 +384,7 @@ async function applyImportedState(importedState) {
   const migratedRedoStack = migrateHistoryStackWithDataset(importedState.redoStack, state.datasetsById);
 
   state.responseValues = migratedResponseState.responseValues;
+  state.checkedResponses = {};
   state.completedProblems = cloneSerializable(importedState.completedProblems) ?? {};
   state.undoStack = migratedUndoStack.historyStack;
   state.redoStack = migratedRedoStack.historyStack;
@@ -576,12 +515,6 @@ function updateToolbar() {
   elements.clearVisible.disabled = state.transferMode || getVisibleResponseKeys().length === 0;
   elements.undoClear.disabled = state.transferMode || state.undoStack.length === 0;
   elements.redoClear.disabled = state.transferMode || state.redoStack.length === 0;
-  elements.toggleAnswers.textContent = state.showAnswers ? "答えを隠す" : "答えを表示";
-  elements.toggleExplanations.textContent = state.showExplanations
-    ? "解説を隠す"
-    : "解説を表示";
-  elements.toggleAnswers.disabled = state.transferMode;
-  elements.toggleExplanations.disabled = state.transferMode;
   elements.toggleTransferMode.textContent = state.transferMode ? "通常表示に戻る" : "転記モード";
   elements.toggleTransferContent.disabled = !state.transferMode;
   elements.toggleTransferContent.textContent = state.transferContentMode === "answer"
@@ -811,6 +744,8 @@ function commitResponseValues(nextResponseValues) {
     return false;
   }
 
+  invalidateChangedCheckedResponses(previous, next);
+
   state.undoStack.push(previous);
   trimHistory(state.undoStack);
   state.redoStack = [];
@@ -885,6 +820,22 @@ function isResponseComplete(response, value, answer) {
   }
 
   return false;
+}
+
+function checkResponse(responseKey, response, answer, value) {
+  const status = evaluateResponseCheck(response, answer, value, isResponseComplete);
+  if (status !== "unanswered") {
+    state.checkedResponses[responseKey] = status;
+  }
+  return status;
+}
+
+function invalidateChangedCheckedResponses(previous, next) {
+  for (const responseKey of Object.keys(state.checkedResponses)) {
+    if (!areEqual(previous[responseKey], next[responseKey])) {
+      delete state.checkedResponses[responseKey];
+    }
+  }
 }
 
 function getProblemCompletionStatus(problem, datasetId = state.selectedDatasetId) {
@@ -1493,6 +1444,7 @@ function undoHistory() {
   const previous = state.undoStack.pop();
   state.redoStack.push(current);
   trimHistory(state.redoStack);
+  invalidateChangedCheckedResponses(current, previous);
   state.responseValues = cloneSerializable(previous) ?? {};
   persistResponseValues();
   persistHistoryState();
@@ -1509,6 +1461,7 @@ function redoHistory() {
   const next = state.redoStack.pop();
   state.undoStack.push(current);
   trimHistory(state.undoStack);
+  invalidateChangedCheckedResponses(current, next);
   state.responseValues = cloneSerializable(next) ?? {};
   persistResponseValues();
   persistHistoryState();
@@ -1526,12 +1479,11 @@ function render() {
   }
 
   renderProblems(elements.problemList, visibleProblems, {
-    getProblemAnswerVisibility,
-    getProblemExplanationVisibility,
-    onToggleProblemAnswerVisibility: toggleProblemAnswerVisibility,
-    onToggleProblemExplanationVisibility: toggleProblemExplanationVisibility,
     responseValues: state.responseValues,
+    checkedResponses: state.checkedResponses,
     onResponseChange: handleResponseChange,
+    isResponseComplete,
+    onCheckResponse: checkResponse,
     onClearProblem: clearProblemResponses,
     getProblemCompletionStatus,
     onToggleProblemComplete: toggleProblemComplete,
@@ -1702,14 +1654,6 @@ async function bootstrap() {
 
   elements.redoClear.addEventListener("click", () => {
     redoHistory();
-  });
-
-  elements.toggleAnswers.addEventListener("click", () => {
-    syncAnswerVisibility(!state.showAnswers);
-  });
-
-  elements.toggleExplanations.addEventListener("click", () => {
-    syncExplanationVisibility(!state.showExplanations);
   });
 
   elements.toggleTransferMode.addEventListener("click", () => {

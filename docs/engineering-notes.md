@@ -135,7 +135,11 @@
 - `choice.showKeys: false` は選択肢keyの表示だけを抑制する。省略時は既存どおりkeyを表示する
 - `mode_switch` の保存値は `{ mode, values: { [mode]: answerValue } }`。完了判定は選択中modeのresponseへ委譲する
 - `mode_switch` のmode内にある `multi_blank` の欄追加では、既存のmode別回答を保持し、不足キーだけ `answer.modes[mode].value` で補完する
-- `word_order` の回答値はtoken keyの配列。すべてのtokenを選ぶと入力済みとなる。順序の正誤判定は行わない
+- `word_order` の回答値はtoken keyの配列。すべてのtokenを選ぶと入力済みとなり、答え合わせ操作では正答配列と順序込みで比較する
+- 答え合わせはresponseを持つ最小problem/item単位に置く。choice / word_order と mode_switch.choice は自動判定し、文字入力系は正誤色を付けずに回答・解答例・解説を並べて表示する
+- 子itemにresponseがある場合、親problem/itemの共通explanationを引き継いで小問のフィードバック内に表示する
+- 判定結果は `main.js` の一時的なUI状態に保持し、回答値が変わったキーの状態だけ無効化する。localStorageや記憶データexportには含めない
+- 問題全体の旧答え・解説トグルは撤去した。`response.type: "none"` 等で子responseがなく答えデータを持つノードは、そのノード内の「答え・解説を見る」で参照できる
 - 起動時にresponse形式を検証し、読み込みに失敗したdatasetは一覧から除外して他datasetの利用を継続する
 - 英語教材の詳細仕様とサンプルは `docs/english-learning-support.md` を参照する
 

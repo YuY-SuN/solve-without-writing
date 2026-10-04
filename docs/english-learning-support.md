@@ -4,7 +4,7 @@
 
 数学教材用の静的ビューアを、既存の数学問題を保ったまま英語など複数教科の教材も表示・回答できる共通ビューアへ拡張する。教科別の問題rendererは設けず、問題の共通構造と `response.type` によって回答UIを選ぶ。
 
-英語データの問題文、正答、選択肢、誤答理由、語順token、解説は教材JSON側で完成させる。アプリは誤答を生成しない。自動採点、正誤判定、点数、部分点、英文同値判定も行わない。利用者は回答を保存し、答え・解説を確認した後に完了を付ける。
+英語データの問題文、正答、選択肢、誤答理由、語順token、解説は教材JSON側で完成させる。アプリは誤答を生成しない。choice / word_order と mode_switch.choice は答え合わせ操作で自動判定する。blank / free_text など文字入力は英文の表現差があるため正誤を断定せず、回答・解答例・解説を見比べる。点数、部分点、英文同値判定は行わない。
 
 ## 設計
 
@@ -13,7 +13,7 @@
 - `choice`, `blank`, `free_text`, `multi_blank` など教科共通の回答形式は共通rendererで描画する。
 - 英語教材では `choice` に選択肢シャッフルとkey表示設定を加え、`mode_switch` と `word_order` を追加する。
 - 既存数学用visualとwork機能はそのまま維持する。英語教材は必要に応じて共通回答形式を使い、数学向け機能は使わない。
-- 回答の完了条件は入力がそろったかだけで判断し、正答との比較はしない。
+- 回答完了は入力がそろったかだけで判断する。答え合わせは独立操作で行い、完了を自動付与しない。
 
 ## データ仕様
 
@@ -126,13 +126,13 @@
 | `answer.value` | string[] | 必須 | 正しい順序で並べたtoken key。各keyはtokensに存在し、重複しない |
 | `answer.display` | string | 推奨 | 完成英文。答え表示と転記で優先利用 |
 
-学習者は候補tokenをクリックして回答欄へ移し、回答欄のtokenをクリックして戻せる。「最後の1語を戻す」操作もある。保存値は全文文字列ではなく選択順のkey配列。句読点前の空白を除去して転記する。全tokenを選び終えると入力済みになるが、順序が正しいかは判定しない。
+学習者は候補tokenをクリックして回答欄へ移し、回答欄のtokenをクリックして戻せる。「最後の1語を戻す」操作もある。保存値は全文文字列ではなく選択順のkey配列。句読点前の空白を除去して転記する。全tokenを選び終えると入力済みになり、「答え合わせ」で正答key配列と順序込みで比較する。
 
 ### answer.display / answer.accepted
 
-`answer.display` が文字列なら答えとしてその文字列を表示する。配列なら「、」でつないで表示する。これらがない場合は既存互換のためanswer全体をJSON表示する。転記の解答欄も `display` を優先する。
+`answer.display` が文字列なら答えとしてその文字列を表示する。配列なら「、」でつないで表示する。小問の見比べ表示では `display` がない場合もresponse形式に合わせてchoice keyやword_order key配列を読める形に変換する。転記の解答欄も `display` を優先する。
 
-`answer.accepted` は値を持たせられるが、アプリは利用しない。`answer.value`、`answer.modes`、`answer.accepted` は答え表示や将来の拡張用データであり、現時点では正誤判定に使わない。
+`answer.accepted` は将来用データとして保持できるが、文字入力の自動採点には利用しない。choice / word_order の答え合わせでは対応するresponseと `answer.value` を比較し、mode_switchでは現在のmodeに応じてchoiceを判定、inputを見比べ表示にする。
 
 ### 読み込み時の検証
 
@@ -149,6 +149,8 @@
 | `free_text` | 文字列 | 空白以外の文字がある | 入力文字列 |
 | `mode_switch` | `{"mode":"choice","values":{"choice":"a","input":"..."}}` | 現在選択中modeの条件 | 現在modeの回答。choiceはtextに変換 |
 | `word_order` | `["t4","t3",...]` | 選択token数が全token数に達する | token textを順につないだ英文 |
+
+答え合わせの状態はlocalStorageへ保存せず、現在の画面状態として保持する。回答値を変更すると、そのresponseの判定・見比べ表示を解除する。
 
 既存のlocalStorage保存key、Undo/Redo、問題単位クリア、表示中クリアは継続利用する。新response形式でも、回答の更新は既存の状態保存を通る。`mode_switch` 内の `multi_blank` に欄を追加した場合は、既存のmode別回答を残し、不足欄を対応する `answer.modes[mode].value` から補う。
 
@@ -268,7 +270,9 @@
 ## 実装上の要点と更新対象
 
 - `app/index.html`: 「Study Tool」表記と更新後のCSS・module version
-- `app/src/main.js`: subject表示、response完了判定、英語形式の転記、dataset単位の検証・読み込み継続
+- `app/src/main.js`: subject表示、response完了判定、答え合わせ結果の一時保持、英語形式の転記、dataset単位の検証・読み込み継続
+- `app/src/response-checking.js`: choice / word_order / mode_switch の判定区分
+- `docs/answer-checking.md`: 小問単位の答え合わせ、状態管理と操作
 - `app/src/response-validation.js`: choice / mode_switch / word_order の読み込み検証
 - `app/src/renderers/TextRenderer.js`: 安定した選択肢順、key表示制御、モード切替、tokenクリック操作、answer.display
 - `app/src/renderers/ProblemRenderer.js`: 共通response renderer呼び出し（教科別分岐なし）
@@ -292,9 +296,10 @@
 
 - 起動時に問題セットを個別に読み込み、response形式エラーのあるセットだけ除外する構成。
 - 既存数学datasetで使っているresponse typeは検証対象として引き続き許容する。教科分類は配置フォルダから得るため、既存問題JSONの本文変更は不要。
-- 英語サンプル `english_lesson3_3_chatgpt.json` を含む18個のdatasetでJSON parseとresponse検証を実行し、全件エラーなし。
-- 18個のdatasetを通じて回答保存IDに重複がないことを確認。
-- JavaScript変更4ファイルのmodule構文確認に成功。
+- 英語サンプル `english_lesson3_3_chatgpt.json` を含む19個の登録datasetでJSON parseとresponse検証を実行し、全件エラーなし。
+- 19個のdatasetを通じて回答保存IDに重複がないことを確認。
+- `main.js`、`ProblemRenderer.js`、`response-checking.js` のmodule構文確認に成功。
 - rendererを簡易DOMで実行し、choiceの再描画時順序保持・key非表示、mode_switchの入力保持、word_orderのtoken移動、`answer.display` の表示を確認。
+- 答え合わせの8ケース（choice、word_order、mode_switchのchoice/input、free_text、未回答）を確認。
 - 実ブラウザを使った全画面操作はこの環境では実行していない。
-- 自動採点と正誤判定は追加していない。
+- choice / word_order / mode_switch.choice の自動判定と、文字入力の見比べ表示をresponse単位に追加。
