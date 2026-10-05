@@ -418,4 +418,86 @@ export const englishInteractionOverrides = {
       }],
     }],
   },
+  eng_p35_5_1: {
+    type: "conversation",
+    initialState: "（質問を組み立てよう）",
+    goalState: "Who is she?",
+    partnerLabel: "相手の返事",
+    partnerReply: "She is Maria.",
+    hints: [
+      "相手は何を答えていますか？",
+      "Maria は人の名前ですね。",
+      "人がだれなのか聞くときの疑問詞を考えてみよう。",
+    ],
+    steps: [
+      {
+        id: "intent",
+        prompt: "どんなことを聞いた会話だろう？",
+        options: [
+          { id: "person-identity", label: "人がだれなのか聞く", outcome: "progress", result: "Who ___ ___ ?", nextStep: "subject", highlight: "Who" },
+          { id: "what-about-person", label: "何者・何について聞く", outcome: "conversation_mismatch", message: "この返事は Maria という人の名前を答えています。What の質問とは少しずれていそうです。" },
+          { id: "yes-no", label: "Yes / No で答えられることを聞く", outcome: "conversation_mismatch", message: "相手は Yes / No ではなく、女性の名前を答えています。だれなのかを聞く会話かもしれません。" },
+        ],
+      },
+      {
+        id: "subject",
+        prompt: "誰について聞いている？",
+        options: [
+          { id: "she", label: "she", outcome: "progress", result: "Who ___ she?", nextStep: "be-verb", highlight: "she" },
+          { id: "maria", label: "Maria", outcome: "conversation_mismatch", message: "Who is Maria? は Maria について聞く形です。相手が答えた Maria を、質問の対象と取り違えていないか考えてみよう。" },
+          { id: "this", label: "this person", outcome: "conversation_mismatch", message: "この返事では女性を she と呼んでいます。返事の中の代名詞を使うと会話がつながりそうです。" },
+        ],
+      },
+      {
+        id: "be-verb",
+        prompt: "she に続く be動詞を選びましょう。",
+        options: [
+          { id: "is", label: "is", outcome: "progress", result: "Who is she?", complete: true, highlight: "is" },
+          { id: "are", label: "are", outcome: "grammar_invalid", message: "she は1人を表す主語なので、are とは組み合わせません。" },
+          { id: "does", label: "does", outcome: "grammar_invalid", message: "この返事は be動詞 is を使っています。質問にも be動詞を使います。" },
+        ],
+      },
+    ],
+  },
+  eng_p35_5_2: {
+    type: "conversation",
+    initialState: "（質問を組み立てよう）",
+    goalState: "Is that your dog?",
+    partnerLabel: "相手の返事",
+    partnerReply: "Yes, it is.",
+    hints: [
+      "相手はどんな言葉で返事をしていますか？",
+      "Yes / No で答えられる質問です。",
+      "返事が it is なので、be動詞を使う質問を考えてみよう。",
+    ],
+    steps: [
+      {
+        id: "intent",
+        prompt: "どんな質問なら “Yes, it is.” と答えられそう？",
+        options: [
+          { id: "yes-no", label: "Yes / No で答える質問", outcome: "progress", result: "___ ___ ___ ___?", nextStep: "topic" },
+          { id: "person-identity", label: "人がだれかを聞く質問", outcome: "conversation_mismatch", message: "相手は人の名前ではなく、it を使って物について答えています。" },
+          { id: "place", label: "場所を聞く質問", outcome: "conversation_mismatch", message: "Yes, it is. は場所を答える返事ではありません。Yes / No で答える質問を考えてみよう。" },
+        ],
+      },
+      {
+        id: "topic",
+        prompt: "何について聞いている？",
+        options: [
+          { id: "dog", label: "あの犬のこと", outcome: "progress", result: "___ that your dog?", nextStep: "be-verb", highlight: "that your dog" },
+          { id: "partner", label: "相手本人のこと", outcome: "conversation_mismatch", message: "相手の返事は it で物を受けています。人についての質問とは合わなそうです。" },
+          { id: "dog-name", label: "犬の名前", outcome: "conversation_mismatch", message: "犬の名前を尋ねるなら、Yes, it is. だけでは名前を答えられません。" },
+        ],
+      },
+      {
+        id: "be-verb",
+        prompt: "この質問をどの形で始める？",
+        options: [
+          { id: "is", label: "Is", outcome: "progress", result: "Is that your dog?", complete: true, highlight: "Is" },
+          { id: "does", label: "Does", outcome: "grammar_invalid", message: "Does の後ろには一般動詞が必要です。この質問は be動詞の文なので Does は使いません。" },
+          { id: "who", label: "Who", outcome: "grammar_invalid", message: "この質問は人を尋ねる形ではありません。be動詞を使った Yes / No 質問の形を考えよう。" },
+        ],
+      },
+    ],
+  },
 };

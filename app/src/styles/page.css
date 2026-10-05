@@ -769,6 +769,31 @@ pre {
   transition: opacity 160ms ease;
 }
 
+.interaction-partner-reply {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: baseline;
+  margin: 8px 38px 8px 0;
+  padding: 9px 12px;
+  border-left: 3px solid #cbd8c7;
+  border-radius: 0 8px 8px 0;
+  background: #f1f4ef;
+  color: #3e4b40;
+  font-size: 0.98rem;
+}
+
+.interaction-partner-reply[hidden] {
+  display: none;
+}
+
+.interaction-speaker-label {
+  color: #657566;
+  font-size: 0.78em;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
 .interaction-current-state mark {
   border-radius: 3px;
   background: #fff0b8;
@@ -831,6 +856,16 @@ pre {
 
 .interaction-status[data-kind="invalid"] {
   color: #536174;
+  font-size: 0.94rem;
+}
+
+.interaction-status[data-kind="grammar_invalid"] {
+  color: #536174;
+  font-size: 0.94rem;
+}
+
+.interaction-status[data-kind="conversation_mismatch"] {
+  color: #705b29;
   font-size: 0.94rem;
 }
 
@@ -963,6 +998,7 @@ pre {
 
 @media (prefers-reduced-motion: reduce) {
   .interaction-current-state,
+  .interaction-partner-reply,
   .interaction-word,
   .interaction-growth-stem,
   .interaction-growth-leaf,

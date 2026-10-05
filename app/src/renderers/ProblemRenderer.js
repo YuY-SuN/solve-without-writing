@@ -6,7 +6,7 @@ import {
   renderExplanation,
 } from "./TextRenderer.js?v20261006-1";
 import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
-import { englishInteractionOverrides } from "../interactions/english.js?v20261006-3";
+import { englishInteractionOverrides } from "../interactions/english.js?v20261006-4";
 import { inspectWordOrderPrefix } from "../interactions/word-order-feedback.js?v20261006-1";
 
 let interactionSessionGrowth = 0;
@@ -246,6 +246,9 @@ function createInteractionUnit(definition, response, answer, explanationText, on
   const current = document.createElement("p");
   current.className = "interaction-current-state";
   current.setAttribute("aria-live", "polite");
+  const conversationReply = document.createElement("div");
+  conversationReply.className = "interaction-partner-reply";
+  conversationReply.hidden = true;
   const prompt = document.createElement("p");
   prompt.className = "interaction-prompt";
   const options = document.createElement("div");
@@ -284,7 +287,7 @@ function createInteractionUnit(definition, response, answer, explanationText, on
     explain.textContent = explanation.hidden ? "どうしてこの形になる？" : "説明を閉じる";
   });
   actions.append(undo, explain);
-  root.append(growth, current, prompt, options, status, moreHint, actions, explanation);
+  root.append(growth, conversationReply, current, prompt, options, status, moreHint, actions, explanation);
 
   let stateIndex = 0;
   let stateText = definition.initialState ?? "";
@@ -299,6 +302,7 @@ function createInteractionUnit(definition, response, answer, explanationText, on
   const history = [];
   const wordOrder = definition.type === "word_order";
   const targetRepair = definition.type === "repair" && Array.isArray(definition.repairTargets);
+  const conversation = definition.type === "conversation";
   const wordOrderGoal = Array.isArray(answer?.value) ? answer.value : (definition.tokenOrder ?? []);
   interactionGrowthIndicators.add(growth);
   const saveHistory = () => history.push({
@@ -321,6 +325,16 @@ function createInteractionUnit(definition, response, answer, explanationText, on
       : { matchedPrefixLength: 0, mismatchIndex: -1 };
     const { mismatchIndex } = wordOrderInspection;
     const displayText = wordOrder ? (formatInteractionWordOrder(response, wordKeys) || "単語を選んで英文を作ります") : stateText;
+    conversationReply.hidden = !conversation;
+    conversationReply.replaceChildren();
+    if (conversation) {
+      const replyLabel = document.createElement("span");
+      replyLabel.className = "interaction-speaker-label";
+      replyLabel.textContent = `${definition.partnerLabel ?? "相手の返事"}：`;
+      const replyText = document.createElement("span");
+      replyText.textContent = definition.partnerReply ?? "";
+      conversationReply.append(replyLabel, replyText);
+    }
     if (targetRepair) {
       renderRepairSentence(
         current,
@@ -347,18 +361,22 @@ function createInteractionUnit(definition, response, answer, explanationText, on
       current.textContent = "単語を選んで英文を作ります";
     } else {
       current.replaceChildren();
-    }
-    const activeHighlight = !wordOrder && !targetRepair ? currentHighlight : null;
-    const highlightIndex = activeHighlight ? displayText.indexOf(activeHighlight) : -1;
-    if (targetRepair) {
-      // The repair sentence is already rendered as tappable words above.
-    } else if (!wordOrder && highlightIndex >= 0) {
-      current.append(document.createTextNode(displayText.slice(0, highlightIndex)));
-      const marked = document.createElement("mark");
-      marked.textContent = activeHighlight;
-      current.append(marked, document.createTextNode(displayText.slice(highlightIndex + activeHighlight.length)));
-    } else if (!wordOrder) {
-      current.textContent = displayText;
+      if (conversation) {
+        const speaker = document.createElement("span");
+        speaker.className = "interaction-speaker-label";
+        speaker.textContent = "あなた：";
+        current.appendChild(speaker);
+      }
+      const activeHighlight = currentHighlight;
+      const highlightIndex = activeHighlight ? displayText.indexOf(activeHighlight) : -1;
+      if (highlightIndex >= 0) {
+        current.append(document.createTextNode(displayText.slice(0, highlightIndex)));
+        const marked = document.createElement("mark");
+        marked.textContent = activeHighlight;
+        current.append(marked, document.createTextNode(displayText.slice(highlightIndex + activeHighlight.length)));
+      } else {
+        current.appendChild(document.createTextNode(displayText));
+      }
     }
     current.classList.toggle("is-complete", completed);
     const selectedRepairTarget = definition.repairTargets?.find((target) => target.id === selectedRepairTargetId);
@@ -370,11 +388,11 @@ function createInteractionUnit(definition, response, answer, explanationText, on
           : definition.repairPrompt ?? "直したい語を英文の中からタップしてみましょう。"
         : definition.steps[stateIndex]?.prompt ?? "";
     options.innerHTML = "";
-    if (targetRepair) {
+    if (targetRepair || conversation) {
       const hints = definition.hints ?? [];
       moreHint.hidden = completed || hints.length === 0 || hintLevel >= hints.length;
       moreHint.textContent = hintLevel === 0 ? "ヒント" : "もう少しヒント";
-      if (hintLevel > 0 && !completed) {
+      if (targetRepair && hintLevel > 0 && !completed) {
         status.textContent = hints[hintLevel - 1];
         status.dataset.kind = "hint";
       }
@@ -418,12 +436,48 @@ function createInteractionUnit(definition, response, answer, explanationText, on
           options.appendChild(button);
         }
       }
+      if (conversation && !completed) {
+        for (const option of definition.steps[stateIndex]?.options ?? []) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "interaction-option";
+          button.textContent = option.label;
+          button.addEventListener("click", () => {
+            if (["grammar_invalid", "conversation_mismatch", "invalid"].includes(option.outcome)) {
+              status.textContent = option.message ?? "別の聞き方を考えてみましょう。";
+              status.dataset.kind = option.outcome === "invalid" ? "invalid" : option.outcome;
+              return;
+            }
+            saveHistory();
+            stateText = option.result ?? stateText;
+            currentHighlight = option.highlight ?? null;
+            if (option.outcome === "progress") advanceInteractionGrowth(option.complete ? 0.9 : 0.6);
+            status.textContent = option.message ?? "";
+            status.dataset.kind = option.outcome ?? "progress";
+            const reachedGoal = definition.goalState
+              && stateText.trim().replace(/\s+/g, " ") === definition.goalState.trim().replace(/\s+/g, " ");
+            if (option.complete || reachedGoal) {
+              completed = true;
+              status.textContent = "できた";
+              status.dataset.kind = "complete";
+              onComplete?.();
+            } else if (option.nextStep) {
+              const nextIndex = definition.steps.findIndex((step) => step.id === option.nextStep);
+              if (nextIndex >= 0) stateIndex = nextIndex;
+            }
+            renderState();
+          });
+          options.appendChild(button);
+        }
+      }
     } else {
       moreHint.hidden = true;
     }
     if (!completed) {
       if (targetRepair) {
         // Repair choices are shown only after a tappable word is selected.
+      } else if (conversation) {
+        // Conversation choices are defined by each item and rendered above.
       } else if (wordOrder) {
         if (mismatchIndex >= 0) {
           const okayPrefix = mismatchIndex > 0
@@ -482,9 +536,9 @@ function createInteractionUnit(definition, response, answer, explanationText, on
           button.className = "interaction-option";
           button.textContent = option.label;
           button.addEventListener("click", () => {
-            if (option.outcome === "invalid") {
+            if (["invalid", "grammar_invalid", "conversation_mismatch"].includes(option.outcome)) {
               status.textContent = option.message ?? "この操作は使えません。別の操作を試してみましょう。";
-              status.dataset.kind = "invalid";
+              status.dataset.kind = option.outcome === "invalid" ? "invalid" : option.outcome;
               return;
             }
             saveHistory();
@@ -493,7 +547,10 @@ function createInteractionUnit(definition, response, answer, explanationText, on
             if (option.outcome === "progress") advanceInteractionGrowth(option.complete ? 0.9 : 0.6);
             status.textContent = option.message ?? "";
             status.dataset.kind = option.outcome ?? "progress";
-            if (option.complete) {
+            const reachedConversationGoal = conversation
+              && definition.goalState
+              && stateText.trim().replace(/\s+/g, " ") === definition.goalState.trim().replace(/\s+/g, " ");
+            if (option.complete || reachedConversationGoal) {
               completed = true;
               status.textContent = "できた";
               onComplete?.();
@@ -523,8 +580,12 @@ function createInteractionUnit(definition, response, answer, explanationText, on
     renderState();
   });
   moreHint.addEventListener("click", () => {
-    if (targetRepair) {
+    if (targetRepair || conversation) {
       hintLevel = Math.min(hintLevel + 1, definition.hints?.length ?? 0);
+      if (!targetRepair && hintLevel > 0) {
+        status.textContent = definition.hints[hintLevel - 1];
+        status.dataset.kind = "hint";
+      }
     } else {
       showMoreHint = true;
     }
