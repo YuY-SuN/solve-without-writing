@@ -500,4 +500,398 @@ export const englishInteractionOverrides = {
       },
     ],
   },
+  eng_p40_a2_1: {
+    type: "transform",
+    initialState: "I go to the park every Saturday.",
+    goalState: "I went to the park last Saturday.",
+    hints: ["文の中に過去を示す語があります。", "go は規則的に -ed を付ける動詞ではありません。"],
+    steps: [
+      { id: "time", prompt: "まず、いつのことかを過去に変えましょう。", options: [
+        { id: "past-time", label: "毎週のことから、先週のことにする", outcome: "progress", result: "I go to the park last Saturday.", nextStep: "verb", highlight: "last Saturday" },
+      ] },
+      { id: "verb", prompt: "過去を表すために、動詞も変えましょう。", options: [
+        { id: "went", label: "go → went", outcome: "progress", result: "I went to the park last Saturday.", complete: true },
+        { id: "goed", label: "go → goed", outcome: "invalid", message: "go は -ed を付けず、形が不規則に変わります。" },
+      ] },
+    ],
+  },
+  eng_p40_a2_2: {
+    type: "transform",
+    initialState: "I see flowers in Hokkaido every spring.",
+    goalState: "I saw flowers in Hokkaido.",
+    hints: ["日本文は過去の出来事を表しています。", "see は形が変わる過去形です。"],
+    steps: [{ id: "verb", prompt: "動詞を過去の形に変えましょう。", options: [
+      { id: "saw", label: "see → saw", outcome: "progress", result: "I saw flowers in Hokkaido.", complete: true },
+      { id: "seed", label: "see → seed", outcome: "invalid", message: "see は -ed を付けず、不規則に形が変わります。" },
+    ] }],
+  },
+  eng_p40_a3_1: {
+    type: "transform",
+    initialState: "I see many beautiful fish every May.",
+    goalState: "I saw many beautiful fish last May.",
+    hints: ["last May は過去の時を示しています。", "see の過去形を考えよう。"],
+    steps: [{ id: "verb", prompt: "過去の時に合う動詞へ変えましょう。", options: [
+      { id: "saw", label: "see → saw", outcome: "progress", result: "I saw many beautiful fish last May.", complete: true },
+    ] }],
+  },
+  eng_p40_a3_2: {
+    type: "transform",
+    initialState: "I enjoy hiking every summer.",
+    goalState: "I enjoyed hiking last summer.",
+    hints: ["last summer は過去の時を示しています。", "過去を表すのは enjoy の部分です。"],
+    steps: [{ id: "verb", prompt: "過去の時に合う動詞へ変えましょう。", options: [
+      { id: "enjoyed", label: "enjoy → enjoyed", outcome: "progress", result: "I enjoyed hiking last summer.", complete: true },
+    ] }],
+  },
+  eng_p44_1_2: {
+    type: "transform",
+    initialState: "We enjoy running in the park every Saturday.",
+    goalState: "We enjoyed running in the park last Saturday.",
+    hints: ["last Saturday が過去を表しています。", "enjoy の後ろの running は動作を表すまとまりです。"],
+    steps: [
+      { id: "time", prompt: "文を過去の出来事にしましょう。", options: [
+        { id: "past", label: "毎週から、この前の土曜日にする", outcome: "progress", result: "We enjoy running in the park last Saturday.", nextStep: "verb", highlight: "last Saturday" },
+      ] },
+      { id: "verb", prompt: "過去を表す動詞の形に直しましょう。", options: [
+        { id: "enjoyed", label: "enjoy → enjoyed", outcome: "progress", result: "We enjoyed running in the park last Saturday.", complete: true },
+      ] },
+    ],
+  },
+  eng_p48_a3_1: {
+    type: "transform",
+    initialState: "I want a bag.",
+    goalState: "Ellen wants a bag.",
+    hints: ["文の主語を確認しよう。", "Ellen は1人なので、現在形の動詞も主語に合わせます。"],
+    steps: [
+      { id: "subject", prompt: "バッグをほしがっている人に主語を変えましょう。", options: [
+        { id: "ellen", label: "I → Ellen にする", outcome: "progress", result: "Ellen want a bag.", nextStep: "verb", highlight: "want" },
+      ] },
+      { id: "verb", prompt: "主語が Ellen になったので、動詞を確認しましょう。", options: [
+        { id: "wants", label: "want → wants", outcome: "progress", result: "Ellen wants a bag.", complete: true },
+      ] },
+    ],
+  },
+  eng_p48_a3_3: {
+    type: "transform",
+    initialState: "I study Japanese on Sundays.",
+    goalState: "Peter studies Japanese on Sundays.",
+    hints: ["主語が Peter に変わります。", "study は子音字 + y で終わる動詞です。"],
+    steps: [
+      { id: "subject", prompt: "勉強する人を Peter に変えましょう。", options: [
+        { id: "peter", label: "I → Peter にする", outcome: "progress", result: "Peter study Japanese on Sundays.", nextStep: "verb", highlight: "study" },
+      ] },
+      { id: "verb", prompt: "主語に合わせて、現在形の動詞を直しましょう。", options: [
+        { id: "studies", label: "study → studies", outcome: "progress", result: "Peter studies Japanese on Sundays.", complete: true },
+      ] },
+    ],
+  },
+  eng_p49_b2_2: {
+    type: "transform",
+    initialState: "They watch rugby games often.",
+    goalState: "He often watches rugby games.",
+    hints: ["主語は He です。", "頻度を表す often の位置と、動詞の形を見直そう。"],
+    steps: [
+      { id: "subject-adverb", prompt: "文の情報に合わせて主語と often の位置を整えましょう。", options: [
+        { id: "he-often", label: "主語を He にし、often を動詞の前へ", outcome: "progress", result: "He often watch rugby games.", nextStep: "verb", highlight: "watch" },
+      ] },
+      { id: "verb", prompt: "He に合わせて動詞を変えましょう。", options: [
+        { id: "watches", label: "watch → watches", outcome: "progress", result: "He often watches rugby games.", complete: true },
+      ] },
+    ],
+  },
+  eng_p50_a3_2: {
+    type: "transform",
+    initialState: "My mother uses this computer.",
+    goalState: "My mother does not use this computer.",
+    hints: ["一般動詞の否定には do / does を使います。", "does が入ったあとの動詞は原形です。"],
+    steps: [
+      { id: "negative", prompt: "一般動詞の文を否定にしましょう。", options: [
+        { id: "does-not", label: "does not を加える", outcome: "progress", result: "My mother does not uses this computer.", nextStep: "base", highlight: "uses", message: "does not が入りました。動詞にも変化が必要そうです。" },
+      ] },
+      { id: "base", prompt: "does not の後ろの動詞を確認しましょう。", options: [
+        { id: "use", label: "uses → use", outcome: "progress", result: "My mother does not use this computer.", complete: true },
+      ] },
+    ],
+  },
+  eng_p50_a3_3: {
+    type: "transform",
+    initialState: "Tom has brothers.",
+    goalState: "Does Tom have any brothers?",
+    hints: ["Tom は1人です。一般動詞の疑問文の形を考えよう。", "Does を使うと、have / has の形はどうなるでしょう。"],
+    steps: [
+      { id: "question", prompt: "一般動詞の文を疑問文にしましょう。", options: [
+        { id: "does", label: "Does を文頭に置く", outcome: "progress", result: "Does Tom has any brothers?", nextStep: "verb", highlight: "has" },
+      ] },
+      { id: "verb", prompt: "Does の後ろの動詞を整えましょう。", options: [
+        { id: "have", label: "has → have", outcome: "progress", result: "Does Tom have any brothers?", complete: true },
+      ] },
+    ],
+  },
+  eng_p63_b2_1: {
+    type: "transform",
+    initialState: "I practice the piano on weekends.",
+    goalState: "I am practicing the piano now.",
+    hints: ["on weekends は習慣、now は今していることを表します。", "今している動作には be動詞と -ing 形を使います。"],
+    steps: [
+      { id: "now", prompt: "習慣の文を「今していること」に変えましょう。", options: [
+        { id: "present-progressive", label: "今している形にする", outcome: "progress", result: "I am practice the piano now.", nextStep: "verb", highlight: "practice", message: "今のことを表す形になりました。動詞も見直してみよう。" },
+      ] },
+      { id: "verb", prompt: "be動詞の後ろの動詞を -ing 形にしましょう。", options: [
+        { id: "practicing", label: "practice → practicing", outcome: "progress", result: "I am practicing the piano now.", complete: true },
+      ] },
+    ],
+  },
+  eng_p62_a2_1: {
+    type: "transform",
+    initialState: "Jim is use a computer now.",
+    goalState: "Jim is using a computer now.",
+    steps: [{ id: "ing-form", prompt: "now があるので、動作を進行中の形にしましょう。", options: [
+      { id: "drop-e", label: "use の e を取って -ing を加える", outcome: "progress", result: "Jim is using a computer now.", complete: true },
+    ] }],
+  },
+  eng_p62_a2_2: {
+    type: "transform",
+    initialState: "They are see a movie now.",
+    goalState: "They are seeing a movie now.",
+    steps: [{ id: "ing-form", prompt: "now があるので、動作を進行中の形にしましょう。", options: [
+      { id: "add-ing", label: "see に -ing を加える", outcome: "progress", result: "They are seeing a movie now.", complete: true },
+    ] }],
+  },
+  eng_p62_a3_1: {
+    type: "transform",
+    initialState: "I am swim now.",
+    goalState: "I am swimming now.",
+    steps: [{ id: "ing-form", prompt: "進行中の動作を表す形にしましょう。", options: [
+      { id: "double-consonant", label: "最後の m を重ねて -ing を加える", outcome: "progress", result: "I am swimming now.", complete: true },
+    ] }],
+  },
+  eng_p62_a3_2: {
+    type: "transform",
+    initialState: "They eat lunch now.",
+    goalState: "They are eating lunch now.",
+    hints: ["now は今している動作を表します。", "進行形には be動詞と動詞の -ing 形が必要です。"],
+    steps: [
+      { id: "be", prompt: "主語 They に合う be動詞を加えましょう。", options: [
+        { id: "are", label: "are を加える", outcome: "progress", result: "They are eat lunch now.", nextStep: "verb", highlight: "eat" },
+      ] },
+      { id: "verb", prompt: "進行中の動作を表す形に変えましょう。", options: [
+        { id: "eating", label: "eat → eating", outcome: "progress", result: "They are eating lunch now.", complete: true },
+      ] },
+    ],
+  },
+  eng_p62_a3_3: {
+    type: "transform",
+    initialState: "Eric write a letter now.",
+    goalState: "Eric is writing a letter now.",
+    hints: ["Eric は1人です。", "現在進行形は be動詞 + -ing 形です。"],
+    steps: [
+      { id: "be", prompt: "主語 Eric に合う be動詞を加えましょう。", options: [
+        { id: "is", label: "is を加える", outcome: "progress", result: "Eric is write a letter now.", nextStep: "verb", highlight: "write" },
+      ] },
+      { id: "verb", prompt: "進行中の動作を表す形に変えましょう。", options: [
+        { id: "writing", label: "write → writing", outcome: "progress", result: "Eric is writing a letter now.", complete: true },
+      ] },
+    ],
+  },
+  eng_p64_a2_1: {
+    type: "transform",
+    initialState: "You play the piano.",
+    goalState: "Are you playing the piano?",
+    hints: ["今しているかをたずねています。", "現在進行形の疑問文は be動詞を主語の前に置きます。"],
+    steps: [
+      { id: "question", prompt: "今していることをたずねる形にしましょう。", options: [
+        { id: "are-front", label: "Are を主語の前に置く", outcome: "progress", result: "Are you play the piano?", nextStep: "ing", highlight: "play" },
+      ] },
+      { id: "ing", prompt: "進行中の動作を表す形に直しましょう。", options: [
+        { id: "playing", label: "play → playing", outcome: "progress", result: "Are you playing the piano?", complete: true },
+      ] },
+    ],
+  },
+  eng_p64_a2_2: {
+    type: "transform",
+    initialState: "Kota drinks milk.",
+    goalState: "Is Kota drinking milk?",
+    hints: ["Kota は1人です。", "進行形の疑問文は be動詞を前に置き、動作を -ing 形にします。"],
+    steps: [
+      { id: "question", prompt: "今しているかをたずねる形にしましょう。", options: [
+        { id: "is-front", label: "Is を文頭に置く", outcome: "progress", result: "Is Kota drink milk?", nextStep: "ing", highlight: "drink" },
+      ] },
+      { id: "ing", prompt: "進行中の動作を表す形に直しましょう。", options: [
+        { id: "drinking", label: "drink → drinking", outcome: "progress", result: "Is Kota drinking milk?", complete: true },
+      ] },
+    ],
+  },
+  eng_p64_a2_3: {
+    type: "transform",
+    initialState: "Yuka and Mami watch TV.",
+    goalState: "Are Yuka and Mami watching TV?",
+    hints: ["主語は2人です。", "進行形の疑問文では be動詞を主語の前に置きます。"],
+    steps: [
+      { id: "question", prompt: "今しているかをたずねる形にしましょう。", options: [
+        { id: "are-front", label: "Are を主語の前に置く", outcome: "progress", result: "Are Yuka and Mami watch TV?", nextStep: "ing", highlight: "watch" },
+      ] },
+      { id: "ing", prompt: "進行中の動作を表す形に直しましょう。", options: [
+        { id: "watching", label: "watch → watching", outcome: "progress", result: "Are Yuka and Mami watching TV?", complete: true },
+      ] },
+    ],
+  },
+  eng_p59_4_1: {
+    type: "repair",
+    initialState: "My mother like animals very much.",
+    goalState: "My mother likes animals very much.",
+    repairTargets: [{ id: "like", token: "like", tokenIndex: 2, operations: [
+      { id: "likes", label: "主語に合わせて現在形にする", replacement: "likes", outcome: "progress" },
+    ] }],
+    hints: ["主語が1人か複数か見てみよう。", "My mother は3人称単数です。", "動詞の形を見直してみよう。"],
+  },
+  eng_p59_4_2: {
+    type: "repair",
+    initialState: "My father often studys English.",
+    goalState: "My father often studies English.",
+    repairTargets: [{ id: "studys", token: "studys", tokenIndex: 3, operations: [
+      { id: "studies", label: "主語に合う現在形へ直す", replacement: "studies", outcome: "progress" },
+    ] }],
+    hints: ["主語 My father に合わせると、動詞はどうなるでしょう。", "study は子音字 + y で終わります。", "語尾の y の変化を考えよう。"],
+  },
+  eng_p59_4_3: {
+    type: "repair",
+    initialState: "My brothers sometimes watches movies.",
+    goalState: "My brothers sometimes watch movies.",
+    repairTargets: [{ id: "watches", token: "watches", tokenIndex: 3, operations: [
+      { id: "watch", label: "複数の主語に合う形へ直す", replacement: "watch", outcome: "progress" },
+    ] }],
+    hints: ["主語が何人か見てみよう。", "My brothers は複数です。", "複数の主語に合う動詞の形を考えよう。"],
+  },
+  eng_p57_5_1: {
+    type: "repair",
+    initialState: "Takeshi like rugby.",
+    goalState: "Takeshi likes rugby.",
+    repairTargets: [{ id: "like", token: "like", tokenIndex: 1, operations: [
+      { id: "likes", label: "主語 Takeshi に合う現在形へ直す", replacement: "likes", outcome: "progress" },
+    ] }],
+    hints: ["主語はだれですか。", "Takeshi は1人なので3人称単数です。", "一般動詞の語尾を見直そう。"],
+  },
+  eng_p57_5_2: {
+    type: "repair",
+    initialState: "He study English every day.",
+    goalState: "He studies English every day.",
+    repairTargets: [{ id: "study", token: "study", tokenIndex: 1, operations: [
+      { id: "studies", label: "He に合う現在形へ直す", replacement: "studies", outcome: "progress" },
+    ] }],
+    hints: ["主語 He は1人です。", "study は子音字 + y で終わります。", "現在形の語尾を整えよう。"],
+  },
+  eng_p55_1_2: {
+    type: "role_change",
+    initialState: "This is Ms. Sato’s bike.",
+    goalState: "This is her bike.",
+    steps: [{ id: "ownership-role", prompt: "bike の前で、持ち主との関係をどう表しますか。", options: [
+      { id: "possessive-adjective", label: "名詞の前で「彼女の」と表す", outcome: "progress", result: "This is her bike.", complete: true },
+      { id: "possessive-pronoun", label: "名詞なしで「彼女のもの」と表す", outcome: "invalid", message: "ここには bike が続くので、名詞の前に置く所有の形を使います。" },
+    ] }],
+  },
+  eng_p55_1_3: {
+    type: "role_change",
+    initialState: "This bag is Mr. Green’s.",
+    goalState: "This bag is his.",
+    steps: [{ id: "ownership-role", prompt: "名詞をくり返さず、「彼のもの」を表しましょう。", options: [
+      { id: "possessive-pronoun", label: "名詞なしで所有を表す", outcome: "progress", result: "This bag is his.", complete: true },
+      { id: "possessive-adjective", label: "後ろに名詞を続ける所有の形を使う", outcome: "invalid", message: "この文では所有する名詞 bag がすでに示されています。「彼のもの」を単独で表します。" },
+    ] }],
+  },
+  eng_p55_1_5: {
+    type: "role_change",
+    initialState: "Does Ichiro know Tomomi and me?",
+    goalState: "Does Ichiro know us?",
+    steps: [{ id: "object-role", prompt: "know の後ろにある Tomomi and me は、文の中でどんな役割ですか。", options: [
+      { id: "object-plural", label: "知っている相手を、ひとまとまりで表す", outcome: "progress", result: "Does Ichiro know us?", complete: true },
+      { id: "subject-plural", label: "動作する人として表す", outcome: "invalid", message: "Tomomi and me は know の後ろにあり、知っている相手を表しています。" },
+    ] }],
+  },
+  eng_p34_1_2: {
+    type: "conversation",
+    initialState: "（質問を組み立てよう）",
+    goalState: "What is this?",
+    partnerLabel: "相手の返事",
+    partnerReply: "It’s a park.",
+    hints: ["相手は park について答えています。", "人ではなく、物・場所について聞いています。", "答えが It’s なので、be動詞を使います。"],
+    steps: [
+      { id: "intent", prompt: "この返事から、何について聞いたと考えられますか。", options: [
+        { id: "place", label: "場所・物について聞く", outcome: "progress", result: "What ___ this?", nextStep: "be", highlight: "What" },
+        { id: "person", label: "人がだれか聞く", outcome: "conversation_mismatch", message: "相手は park という場所について答えています。人の名前を聞く会話とはずれています。" },
+      ] },
+      { id: "be", prompt: "返事と同じ be動詞を使って質問を完成しましょう。", options: [
+        { id: "is", label: "is", outcome: "progress", result: "What is this?", complete: true },
+        { id: "does", label: "does", outcome: "grammar_invalid", message: "返事は be動詞 is を使っています。ここでは does ではなく is を使います。" },
+      ] },
+    ],
+  },
+  eng_p34_1_3: {
+    type: "conversation",
+    initialState: "（質問を組み立てよう）",
+    goalState: "Who is that?",
+    partnerLabel: "相手の返事",
+    partnerReply: "That is my friend.",
+    hints: ["返事の中に my friend とあります。", "相手は人について答えています。", "人について「だれ」と聞く疑問詞を考えよう。"],
+    steps: [
+      { id: "intent", prompt: "この返事から、何について聞いた会話でしょう。", options: [
+        { id: "person", label: "人がだれか聞く", outcome: "progress", result: "Who ___ that?", nextStep: "be", highlight: "Who" },
+        { id: "thing", label: "物の名前を聞く", outcome: "conversation_mismatch", message: "相手は物の名前ではなく、my friend と人について答えています。" },
+      ] },
+      { id: "be", prompt: "返事と同じ be動詞を使って質問を完成しましょう。", options: [
+        { id: "is", label: "is", outcome: "progress", result: "Who is that?", complete: true },
+        { id: "are", label: "are", outcome: "grammar_invalid", message: "that は1人を指しています。この文では are ではなく is を使います。" },
+      ] },
+    ],
+  },
+  eng_p45_3_2: {
+    type: "conversation",
+    initialState: "（注文して、値段をたずねよう）",
+    goalState: "I want the ramen with corn. How much is it?",
+    partnerLabel: "店員の返事",
+    partnerReply: "It’s ten dollars.",
+    hints: ["最初に、注文する品を伝えます。", "値段を聞くときは How much を使います。", "返事の it’s に対応する疑問文の語順を考えよう。"],
+    steps: [
+      { id: "order", prompt: "最初に何を伝えますか。", options: [
+        { id: "order-food", label: "ラーメンを注文する", outcome: "progress", result: "I want the ramen with corn.", nextStep: "price" },
+        { id: "ask-price-first", label: "先に値段を聞く", outcome: "conversation_mismatch", message: "相手の返事は値段を答えています。まず何を注文したいか伝える流れです。" },
+      ] },
+      { id: "price", prompt: "値段を聞く質問を続けましょう。", options: [
+        { id: "how-much", label: "How much is it? とたずねる", outcome: "progress", result: "I want the ramen with corn. How much is it?", complete: true },
+      ] },
+    ],
+  },
+  eng_p50_a2_1: {
+    type: "conversation",
+    initialState: "（質問に短く答えよう）",
+    goalState: "Yes, she does.",
+    partnerLabel: "質問",
+    partnerReply: "Does Maiko want the book?",
+    hints: ["質問は Does で始まっています。", "肯定の返事なら Yes を使います。", "Does の質問には does で答えます。"],
+    steps: [
+      { id: "polarity", prompt: "Maiko は本をほしがっています。どのように答えますか。", options: [
+        { id: "yes", label: "肯定して答える", outcome: "progress", result: "Yes, ___ ___.", nextStep: "short-answer" },
+        { id: "no", label: "否定して答える", outcome: "conversation_mismatch", message: "問題の答えは肯定です。相手の質問に Yes で応じる形を考えよう。" },
+      ] },
+      { id: "short-answer", prompt: "主語と、質問を受ける語を入れましょう。", options: [
+        { id: "she-does", label: "she does", outcome: "progress", result: "Yes, she does.", complete: true },
+        { id: "she-is", label: "she is", outcome: "grammar_invalid", message: "質問は一般動詞 want を Does でたずねています。be動詞 is では受けません。" },
+      ] },
+    ],
+  },
+  eng_p66_a2_2: {
+    type: "conversation",
+    initialState: "（2つの食べ物から選ぶ質問を作ろう）",
+    goalState: "Which does your brother eat, apples or oranges?",
+    hints: ["apples と oranges の2つから選ぶ質問です。", "your brother は1人なので do / does を考えよう。", "does の後ろは動詞の原形です。"],
+    steps: [
+      { id: "intent", prompt: "2つの候補から選ぶ質問では、何を聞きますか。", options: [
+        { id: "which", label: "どちらを選ぶか聞く", outcome: "progress", result: "Which ___ your brother eat, apples ___ oranges?", nextStep: "auxiliary" },
+        { id: "where", label: "場所を聞く", outcome: "conversation_mismatch", message: "返答候補は食べ物2つです。場所ではなく、どちらを選ぶか尋ねます。" },
+      ] },
+      { id: "auxiliary", prompt: "主語 your brother に合う疑問文の形を整えましょう。", options: [
+        { id: "does-or", label: "does と or を入れる", outcome: "progress", result: "Which does your brother eat, apples or oranges?", complete: true },
+        { id: "do-and", label: "do と and を入れる", outcome: "grammar_invalid", message: "your brother は1人なので does を使います。2つから選ぶ関係は or で表します。" },
+      ] },
+    ],
+  },
 };

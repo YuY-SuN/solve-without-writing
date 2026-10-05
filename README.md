@@ -15,7 +15,7 @@
 - `docs/engineering-notes.md`: 横断的な設計方針、運用ルール、検証上の注意
 - `docs/answer-checking.md`: 小問単位の答え合わせと見比べ表示
 - `docs/english-learning-support.md`: 英語教材、回答モード切替、語順問題、操作型学習モードの仕様と運用
-- `docs/english-interaction-candidates.md`: 英語JSON全itemの操作型適用候補一覧（全面適用前の調査）
+- `docs/english-interaction-coverage.md` / `.json`: 英語JSON全itemの適用判定・coverage一覧
 - `docs/japanese-learning-support.md`: 国語の長文・改行表示、本文へ戻る操作、日本語入力の扱い
 - `docs/reference-text-layout.md`: 本文参照型problemの通常・2カラム・モーダル表示
 - `docs/app-root-layout.md`: 単一アプリ前提のディレクトリ構成と更新手順
@@ -60,7 +60,7 @@ python3 sync_index.py
 
 回答UIを持つ問題・小問ごとに、その場で `答え合わせ` または `見比べてみる` を押せます。choice / word_order と mode_switch の選択式は自動判定し、文字入力や自由作文は正誤を断定せず、自分の回答・解答例・解説を並べて表示します。通常モードの `完了` は従来どおり問題カード単位で管理します。操作型モードはgoal到達時に回答を自動判定し、カード内の全回答がそろった場合に完了進捗へ反映します。
 
-英語教材では `choice` の選択肢順シャッフルとキー非表示、選択式／記入式の切替、語句tokenをクリックして英文を組み立てる `word_order` を利用できます。さらに一部の問題では、同じカード内で英文を変化させる実験的な「操作して解く」を選べます。word_order型では正答prefixから外れた位置を示し、repair型では英文中の語をタップして修理し、conversation型では相手の返答から質問を組み立てます。現在27問に対応し、三単現・過去形・否定文・疑問文・代名詞・文の拡張・壊れた英文の修理・会話意図の組み立てを試せます。goal到達時は答え合わせを求めず、既存の回答判定・完了進捗へ自動反映します。途中状態は保存しません。対象IDと操作定義は `app/src/interactions/english.js` にあります。追加手順と対象IDは `docs/english-learning-support.md`、全itemの候補一覧は `docs/english-interaction-candidates.md`、通常モードの答え合わせ動作は `docs/answer-checking.md` を参照してください。
+英語教材では `choice`、選択式／記入式切替、`word_order` を利用できます。2つの英語datasetにある432 itemを判定し、53 itemにtransform / repair / conversation / role_change / expandを、54 itemすべてのword_orderに途中prefixフィードバックを適用しています。1問（`eng_p65_b2_3`）は既存transformを保ったままword_order feedbackも追加しており、対象は重複を除いて106 itemです。残る326 itemは語彙、読解、自由作文、短い確認など理由を記録して従来形式を維持します。操作型はgoal到達時に答え合わせを求めず、既存の回答判定・完了進捗へ自動反映します。途中状態は保存しません。静的な操作定義は `app/src/interactions/english.js`、全件の判断・answer・explanation・context・distractor情報は `docs/english-interaction-coverage.json`、レビュー用一覧は `docs/english-interaction-coverage.md` にあります。catalogとJSONの整合確認・一覧再生成には `node scripts/english-interaction-coverage.mjs --write` を使います。通常モードの答え合わせ動作は `docs/answer-checking.md` を参照してください。
 
 国語などの長文教材では、長い `context.text` を「本文・資料」として読みやすく表示し、各小問の `本文を見る` から本文へ戻れます。prompt・本文・小問文の改行を保持し、日本語IMEの変換中は入力値の確定処理を待ちます。国語も `mode_switch` など既存の共通responseで扱います。詳細は `docs/japanese-learning-support.md` を参照してください。
 

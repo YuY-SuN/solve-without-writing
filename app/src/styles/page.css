@@ -731,12 +731,40 @@ pre {
   background: #eaf1ff;
 }
 
+.word-order-token-mismatch {
+  border-color: #d4ad62;
+  background: #fff5df;
+}
+
 .word-order-placeholder {
   color: #7b879b;
 }
 
 .word-order-actions {
   margin-top: 8px;
+}
+
+.word-order-prefix-feedback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.7rem;
+  margin-top: 0.65rem;
+  color: #56616d;
+  font-size: 0.9rem;
+}
+
+.word-order-prefix-message[data-kind="hint"] {
+  color: #725a30;
+}
+
+.word-order-prefix-detail {
+  flex-basis: 100%;
+  color: #56616d;
+}
+
+.word-order-prefix-hint-button {
+  min-height: 2.5rem;
 }
 
 .mode-switch-button:focus-visible,

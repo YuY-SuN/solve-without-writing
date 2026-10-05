@@ -1,4 +1,4 @@
-import { renderProblems } from "./renderers/ProblemRenderer.js?v20261006-5";
+import { renderProblems } from "./renderers/ProblemRenderer.js?v20261006-6";
 import { renderVisualList } from "./renderers/VisualRenderer.js?v20260617-1";
 import { validateDatasetResponses } from "./response-validation.js?v20261003-1";
 import { evaluateResponseCheck } from "./response-checking.js?v20261004-1";

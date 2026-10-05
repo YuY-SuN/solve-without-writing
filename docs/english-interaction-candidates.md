@@ -1,5 +1,7 @@
 # 英語JSONのinteraction適用候補一覧
 
+> この一覧は全面展開前の一次候補調査です。適用後の全item判定・実装status・通常形式を維持した理由は、[最新coverage一覧](english-interaction-coverage.md)を参照してください。
+
 全英語datasetのitemを走査した候補調査。これは全面適用の指示ではなく、次フェーズで優先度を決めるための棚卸しである。response・prompt・answer・explanation・選択肢を使った一次分類を含むため、新規候補は教材意図と正答を人が再確認する。
 
 対象: `english_lesson3_3_chatgpt.json`、`english_workbook_p32_p69.json` / 432 items

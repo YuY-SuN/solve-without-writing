@@ -4,9 +4,9 @@ import {
   renderResponse,
   renderAnswer,
   renderExplanation,
-} from "./TextRenderer.js?v20261006-1";
+} from "./TextRenderer.js?v20261006-2";
 import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
-import { englishInteractionOverrides } from "../interactions/english.js?v20261006-4";
+import { englishInteractionOverrides } from "../interactions/english.js?v20261006-5";
 import { inspectWordOrderPrefix } from "../interactions/word-order-feedback.js?v20261006-1";
 
 let interactionSessionGrowth = 0;
@@ -381,7 +381,7 @@ function createInteractionUnit(definition, response, answer, explanationText, on
     current.classList.toggle("is-complete", completed);
     const selectedRepairTarget = definition.repairTargets?.find((target) => target.id === selectedRepairTargetId);
     prompt.textContent = wordOrder
-      ? "次の単語をタップして、英文を組み立てましょう。"
+      ? "次の語句をタップして、答えを組み立てましょう。"
       : targetRepair
         ? selectedRepairTarget
           ? definition.repairSelectionPrompt ?? "この語にできる修理を選びましょう。"
@@ -668,6 +668,7 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
   const initialValue = options.responseValues?.[responseKey] ?? null;
   let currentValue = initialValue;
   let checkState = options.checkedResponses?.[responseKey] ?? null;
+  let refreshWordOrderFeedback = () => {};
 
   function commitValue(nextValue) {
     const resolvedValue = typeof nextValue === "function" ? nextValue(currentValue) : nextValue;
@@ -676,6 +677,7 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
     }
     currentValue = resolvedValue;
     checkState = null;
+    refreshWordOrderFeedback();
     options.onResponseChange?.(responseKey, nextValue);
     options.onStatusChange?.();
     renderFeedback();
@@ -696,6 +698,9 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
   unit.className = "response-unit";
   const interactionDefinition = options.subjectId === "english"
     ? englishInteractionOverrides[responseKey]
+      ?? (response.type === "word_order"
+        ? { type: "word_order", moreHint: "文の意味と、今置いた語の役割を見直してみよう。" }
+        : null)
     : null;
   let valueBeforeInteractionCompletion;
   let checkStateBeforeInteractionCompletion = null;
@@ -706,6 +711,60 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
   const responsePane = document.createElement("div");
   responsePane.className = "response-mode-pane";
   responsePane.appendChild(responseNode);
+  if (options.subjectId === "english" && response.type === "word_order") {
+    const wordOrderFeedback = document.createElement("div");
+    wordOrderFeedback.className = "word-order-prefix-feedback";
+    wordOrderFeedback.setAttribute("aria-live", "polite");
+    responsePane.appendChild(wordOrderFeedback);
+    refreshWordOrderFeedback = () => {
+      const keys = Array.isArray(currentValue) ? currentValue : [];
+      wordOrderFeedback.replaceChildren();
+      if (keys.length === 0) return;
+      const { matchedPrefixLength, mismatchIndex } = inspectWordOrderPrefix(keys, answer?.value ?? []);
+      responseNode.querySelectorAll(".word-order-token-mismatch").forEach((token) => token.classList.remove("word-order-token-mismatch"));
+      const message = document.createElement("span");
+      message.className = "word-order-prefix-message";
+      if (mismatchIndex >= 0) {
+        const prefix = (answer?.value ?? []).slice(0, matchedPrefixLength)
+          .map((key) => response.tokens?.find((token) => token.key === key)?.text)
+          .filter(Boolean)
+          .join(" ");
+        message.textContent = prefix
+          ? `${prefix} まではよさそうです。その次から見直してみよう。`
+          : "最初に置いた語から、もう一度見直してみよう。";
+        message.dataset.kind = "hint";
+        const mismatchedKey = keys[mismatchIndex];
+        const highlightMismatch = () => {
+          [...responseNode.querySelectorAll("[data-token-key]")]
+            .find((token) => token.dataset.tokenKey === mismatchedKey)
+            ?.classList.add("word-order-token-mismatch");
+        };
+        if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+          window.requestAnimationFrame(highlightMismatch);
+        } else {
+          setTimeout(highlightMismatch, 0);
+        }
+        const hintButton = document.createElement("button");
+        hintButton.type = "button";
+        hintButton.className = "secondary-button word-order-prefix-hint-button";
+        hintButton.textContent = "ヒント";
+        hintButton.addEventListener("click", () => {
+          const hint = document.createElement("span");
+          hint.className = "word-order-prefix-detail";
+          hint.textContent = englishInteractionOverrides[responseKey]?.moreHint
+            ?? "文の意味と、今置いた語の役割を見直してみよう。";
+          wordOrderFeedback.appendChild(hint);
+          hintButton.disabled = true;
+        });
+        wordOrderFeedback.append(message, hintButton);
+      } else {
+        message.textContent = "ここまではよさそうです。続けてみよう。";
+        message.dataset.kind = "prefix";
+        wordOrderFeedback.appendChild(message);
+      }
+    };
+    refreshWordOrderFeedback();
+  }
   const interactionPane = interactionDefinition
     ? createInteractionUnit(
         interactionDefinition,
@@ -825,6 +884,7 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
     }
     currentValue = resolvedValue;
     checkState = null;
+    refreshWordOrderFeedback();
     renderFeedback();
     updateCheckButton();
   }

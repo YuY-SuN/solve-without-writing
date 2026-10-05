@@ -129,7 +129,7 @@
 
 学習者は候補tokenをクリックして回答欄へ移し、回答欄のtokenをクリックして戻せる。「最後の1語を戻す」操作もある。保存値は全文文字列ではなく選択順のkey配列。句読点前の空白を除去して転記する。全tokenを選び終えると入力済みになり、「答え合わせ」で正答key配列と順序込みで比較する。
 
-操作型モードを持つ `word_order` では、各token追加後に既存 `answer.value` との最長一致prefixを調べる。prefix内なら途中でもヒントを出さず、prefixから外れた最初のtokenを軽く強調し、「ここまでよさそう」な範囲を伝える。「もう少しヒント」を押すと定義側の補助ヒントを表示する。誤ったtokenも置いたまま続けられ、1手戻すで修正できる。正答prefixが前回より進んだときだけ成長を進め、誤操作・Undoでは成長を減らさない。
+英語dataset内のすべての `word_order` では、通常の語句配置に加えて「操作して解く」からも同じtokenを使える。各token追加後に既存 `answer.value` との最長一致prefixを調べる。prefix内なら途中でも誤り表示をせず、prefixから外れた最初のtokenを軽く示し、「ここまでよさそう」な範囲を伝える。「もう少しヒント」からitem別補助ヒント、未定義の場合は共通ヒントを表示する。誤ったtokenも置いたまま続けられ、1手戻すで修正できる。正答prefixが前回より進んだときだけ成長を進め、誤操作・Undoでは成長を減らさない。
 
 ## 実験的な操作型学習モード
 
@@ -137,7 +137,7 @@
 
 英文の現在状態を見ながら操作を選び、結果を同じ回答カード内ですぐ確認する短いフィードバックループを試す。既存の回答方法を置き換えず、定義を持つ英語問題だけに「操作して解く」を表示する。問題文、ナビゲーション、カード構造は共通UIを使う。
 
-現時点では27問に対応する。主な変形・段階修理問題は `eng_p34_2_1`、`eng_p34_2_2`、`eng_p34_2_3`、`eng_p41_b2_1`、`eng_p43_b2_2`、`eng_p55_1_1`、`eng_p55_2_1`、`eng_p55_2_2`、`eng_p55_2_3`、`eng_p56_2_1`、`eng_p56_2_2`、`eng_p56_2_3`、`eng_p65_b2_3`。主語変更と三単現、eat → ate、be動詞と一般動詞の否定・疑問、he/him・she/herの役割変更、意味単位で文を伸ばす操作を扱う。タップして修理するrepair問題は `eng_p32_a2_1`、`eng_p32_a2_2`、`eng_p33_b2_3`、`eng_p33_b3_1`、`eng_p33_b3_2`、`eng_p41_b2_2`。be動詞一致・疑問文語順・目的格・Do/Does・see → saw、2箇所を順に直す状態を試せる。`eng_p41_b2_1` の既存eat → ate transformは維持し、過去形repairには別の既存distractorを使う。conversation型は `eng_p35_5_1`、`eng_p35_5_2` で、相手の返答を表示したまま質問意図・対象・英文構造を順番に決める。語順の1語ずつ組み立ては `eng_p32_a3_1`、`eng_p33_b1_1`、`eng_p33_b1_2`、`eng_p34_4_1`、`eng_p34_4_2`、`eng_p34_4_3` で試せる。既存の語順モードと逐次操作の両方を利用できる。
+英語JSON 2件の全432 itemを判定し、53 itemにtransform / repair / conversation / role_change / expandを定義した。response.typeが `word_order` の54 itemすべてで途中prefixフィードバックを使える。word_orderはitem別ヒントのある既存6件、共通ヒントを使う47件、既存transformを維持し回答欄にprefix表示も加えた `eng_p65_b2_3` で構成する。カタログ全体と保持理由は [coverage一覧](english-interaction-coverage.md) と [詳細JSON](english-interaction-coverage.json) を参照する。主語変更・三単現、現在形から過去形、一般動詞の疑問・否定、現在進行形の組み立て、語形の修理、会話意図、代名詞の役割、文の拡張を扱う。語彙・読解・固定表現・短い語形確認・複数正答の自由表現など326 itemは操作負荷を増やさないよう通常形式を維持し、各itemに理由を記録する。
 
 操作typeは `transform`、`repair`、`conversation`、`role_change`、`expand`、`word_order`。通常の段階型は (`initialState`、`steps`、`options`) で動く。repairは同じ `type: "repair"` でも、`repairTargets` がある場合に限って語タップ型になる。各targetは `id`、`token`、空白区切りの英文中の0始まり `tokenIndex`、`operations` を持つ。操作には説明用 `label` と、単語置換なら `replacement`、語順移動など文全体を変える場合は `result` を指定する。`outcome: "progress"` の操作は修理ごとに成長し、英文が `goalState` と一致すると自動完了する。`hints` は1回ずつ表示する段階ヒント。修理済みtargetは操作中に記録し、同じ箇所を再度修理対象にはしない。conversationは `partnerLabel` / `partnerReply` で相手の返答を固定表示し、`steps[].options[]` で意味判断から英文構造へ進める。`conversation_mismatch` は文法的であっても返答と噛み合わない選択、`grammar_invalid` は文構造上使えない選択を示し、どちらも状態と成長を変えずに試行を続けられる。これらはJSON教材へ追加せず `english.js` だけを更新する。既存の段階型repairは従来どおり `steps` を使う。be動詞の否定は `eng_p65_b2_3` の「No, I am not.」で試す。各操作には `progress`、`valid_but_detour`、`invalid` のいずれかを付ける。無効操作は英文を変更せず短い説明を出し、別操作を続けられる。寄り道操作は英文を変えたうえで、今回のゴールとの違いを小さく知らせる。
 
@@ -146,10 +146,12 @@
 ### 定義の追加・更新手順
 
 1. 英語datasetの実際の `item.id` または `problem.id`、response、answer、explanationを確認する。
-2. `app/src/interactions/english.js` の `englishInteractionOverrides` にIDをキーとして定義を追加する。変形問題は `type`、`initialState`、`goalState`、`steps[].options[]` を指定する。repairは `repairTargets` に対象token位置と操作を定義し、ヒントは `hints` に段階順で書く。conversationは `partnerReply`、`goalState`、意図から語句へ進む `steps`、`conversation_mismatch` / `grammar_invalid` の案内を定義する。word_orderは `type: "word_order"` と必要に応じた `moreHint` を定義し、正答token列はJSONの `answer.value` をそのまま参照する。適用候補の全item一覧は `docs/english-interaction-candidates.md` を参照し、JSON自体は変更しない。
+2. `app/src/interactions/english.js` の `englishInteractionOverrides` にIDをキーとして定義を追加する。変形問題は `type`、`initialState`、`goalState`、`steps[].options[]` を指定する。repairは `repairTargets` に対象token位置と操作を定義し、ヒントは `hints` に段階順で書く。conversationは `partnerReply`、`goalState`、意図から語句へ進む `steps`、`conversation_mismatch` / `grammar_invalid` の案内を定義する。英語のword_orderは個別catalog定義がなくても共通prefix feedbackを使う。item別の追加ヒントが必要なら `type: "word_order"` と `moreHint` を定義する。判定・answer整合性確認とcoverage一覧再生成は `node scripts/english-interaction-coverage.mjs --write` で行う。JSON教材自体は変更しない。
 3. 選択肢には `label` と結果分類を置き、状態が変わる選択肢には `result`、誤操作には短い `message`、完成操作には `complete: true` を指定する。複数段階は `nextStep` で遷移する。
 4. 完成時の既存response値は既存answerから作る。choice/inputのmode_switchではdefaultModeのanswer、word_orderでは `answer.value` を利用する。既存JSONのID、prompt、response、answer、explanationは編集しない。
 5. READMEとこの説明、必要なら `docs/engineering-notes.md` を同じ変更セットで更新する。静的サーバーは通常どおり `cd app && python3 -m http.server 4173` で起動し、英語datasetの該当問題で既存回答／操作回答を切り替えて試す。
+
+coverage validatorはリポジトリrootで `node scripts/english-interaction-coverage.mjs` を実行する。入力は上記2つの英語教材JSON、`english.js`、共通response validator、word_order prefix判定で、catalog参照・step遷移・repair token/goal・全word_order token keyを確認し、件数とエラーを標準出力する。`--write` を付けると `docs/english-interaction-coverage.json` と `docs/english-interaction-coverage.md` を上書き生成する。教材JSONとinteraction catalogは変更しない。
 
 入力は既存英語問題のIDとresponse/answer/explanation、出力はカード内の操作UIと完成時の既存回答値である。教材JSONへの書き込みや外部通信はなく、ページ再読み込みをまたぐ操作履歴もない。interaction仕様は試用後に変更する前提の小さなID別定義で、汎用文法判定は行わない。
 
