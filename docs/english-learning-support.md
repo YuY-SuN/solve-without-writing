@@ -13,7 +13,8 @@
 - `choice`, `blank`, `free_text`, `multi_blank` など教科共通の回答形式は共通rendererで描画する。
 - 英語教材では `choice` に選択肢シャッフルとkey表示設定を加え、`mode_switch` と `word_order` を追加する。
 - 既存数学用visualとwork機能はそのまま維持する。英語教材は必要に応じて共通回答形式を使い、数学向け機能は使わない。
-- 回答完了は入力がそろったかだけで判断する。答え合わせは独立操作で行い、完了を自動付与しない。
+- 通常回答モードは入力がそろった後に答え合わせ・完了操作を行う。操作型モードだけはgoal到達時に回答を自動判定し、同じカード内の回答がすべてそろっていれば完了進捗も自動付与する。
+- 実験的な操作型学習モードは `app/src/interactions/english.js` の item.id 対応表に置き、教材JSONを変更せずに一部の英語問題へ追加する。定義がある問題だけ既存回答と切り替えて使える。
 
 ## データ仕様
 
@@ -127,6 +128,30 @@
 | `answer.display` | string | 推奨 | 完成英文。答え表示と転記で優先利用 |
 
 学習者は候補tokenをクリックして回答欄へ移し、回答欄のtokenをクリックして戻せる。「最後の1語を戻す」操作もある。保存値は全文文字列ではなく選択順のkey配列。句読点前の空白を除去して転記する。全tokenを選び終えると入力済みになり、「答え合わせ」で正答key配列と順序込みで比較する。
+
+操作型モードを持つ `word_order` では、各token追加後に既存 `answer.value` との最長一致prefixを調べる。prefix内なら途中でもヒントを出さず、prefixから外れた最初のtokenを軽く強調し、「ここまでよさそう」な範囲を伝える。「もう少しヒント」を押すと定義側の補助ヒントを表示する。誤ったtokenも置いたまま続けられ、1手戻すで修正できる。正答prefixが前回より進んだときだけ成長を進め、誤操作・Undoでは成長を減らさない。
+
+## 実験的な操作型学習モード
+
+### 目的と画面
+
+英文の現在状態を見ながら操作を選び、結果を同じ回答カード内ですぐ確認する短いフィードバックループを試す。既存の回答方法を置き換えず、定義を持つ英語問題だけに「操作して解く」を表示する。問題文、ナビゲーション、カード構造は共通UIを使う。
+
+現時点では19問に対応する。主な変形・修復問題は `eng_p34_2_1`、`eng_p34_2_2`、`eng_p34_2_3`、`eng_p41_b2_1`、`eng_p43_b2_2`、`eng_p55_1_1`、`eng_p55_2_1`、`eng_p55_2_2`、`eng_p55_2_3`、`eng_p56_2_1`、`eng_p56_2_2`、`eng_p56_2_3`、`eng_p65_b2_3`。主語変更と三単現、eat → ate、be動詞と一般動詞の否定・疑問、he/him・she/herの役割変更、意味単位で文を伸ばす操作を扱う。語順の1語ずつ組み立ては `eng_p32_a3_1`、`eng_p33_b1_1`、`eng_p33_b1_2`、`eng_p34_4_1`、`eng_p34_4_2`、`eng_p34_4_3` で試せる。既存の語順モードと逐次操作の両方を利用できる。
+
+操作typeは `transform`、`repair`、`role_change`、`expand`、`word_order`。前四つは共通の段階定義 (`initialState`、`steps`、`options`) で動き、UIロジックへ問題固有の分岐を追加しない。be動詞の否定は `eng_p65_b2_3` の「No, I am not.」で試す。各操作には `progress`、`valid_but_detour`、`invalid` のいずれかを付ける。無効操作は英文を変更せず短い説明を出し、別操作を続けられる。寄り道操作は英文を変えたうえで、今回のゴールとの違いを小さく知らせる。
+
+進捗表現はCSSの小さな芽で、意味のある操作とword_orderの正答prefix進行で少しずつ成長する。invalid、寄り道、誤ったtokenでは進捗を増やさず、Undoでも減らさない。現在のアプリセッション中は表示中カード間で成長段階を共有するが、ページ再読み込みをまたいで保存しない。「1手戻す」はカード内のメモリ上の操作履歴を戻す。goal到達時はその場で既存の回答判定を実行し、該当responseを正答済みとして記録する。複数の小問を含むカードは、カード内の全responseがそろった時点で既存の問題完了進捗へ自動反映する。操作モード中は「答え合わせ」を表示せず、goal到達前後とも追加の採点操作を求めない。通常回答モードへ切り替えると、保存された正答値と判定状態を確認できる。goal到達後のUndoは操作前の回答値・判定を復元し、この操作で新たに付けた完了状態も取り消す。操作前から完了済みだった問題の完了記録は維持する。解説は「どうしてこの形になる？」から任意に表示でき、解説を開かなくても正答・完了扱いは変わらない。ページ再読み込みをまたいで途中の操作状態を保存することはしない。
+
+### 定義の追加・更新手順
+
+1. 英語datasetの実際の `item.id` または `problem.id`、response、answer、explanationを確認する。
+2. `app/src/interactions/english.js` の `englishInteractionOverrides` にIDをキーとして定義を追加する。変形問題は `type`、`initialState`、`goalState`、`steps[].options[]` を指定する。word_orderは `type: "word_order"` と必要に応じた `moreHint` を定義し、正答token列はJSONの `answer.value` をそのまま参照する。
+3. 選択肢には `label` と結果分類を置き、状態が変わる選択肢には `result`、誤操作には短い `message`、完成操作には `complete: true` を指定する。複数段階は `nextStep` で遷移する。
+4. 完成時の既存response値は既存answerから作る。choice/inputのmode_switchではdefaultModeのanswer、word_orderでは `answer.value` を利用する。既存JSONのID、prompt、response、answer、explanationは編集しない。
+5. READMEとこの説明、必要なら `docs/engineering-notes.md` を同じ変更セットで更新する。静的サーバーは通常どおり `cd app && python3 -m http.server 4173` で起動し、英語datasetの該当問題で既存回答／操作回答を切り替えて試す。
+
+入力は既存英語問題のIDとresponse/answer/explanation、出力はカード内の操作UIと完成時の既存回答値である。教材JSONへの書き込みや外部通信はなく、ページ再読み込みをまたぐ操作履歴もない。interaction仕様は試用後に変更する前提の小さなID別定義で、汎用文法判定は行わない。
 
 ### answer.display / answer.accepted
 

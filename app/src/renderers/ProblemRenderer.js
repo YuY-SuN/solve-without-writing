@@ -6,6 +6,24 @@ import {
   renderExplanation,
 } from "./TextRenderer.js?v20261006-1";
 import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
+import { englishInteractionOverrides } from "../interactions/english.js?v20261006-2";
+import { inspectWordOrderPrefix } from "../interactions/word-order-feedback.js?v20261006-1";
+
+let interactionSessionGrowth = 0;
+const interactionGrowthIndicators = new Set();
+
+function advanceInteractionGrowth(amount = 0.5) {
+  interactionSessionGrowth = Math.min(3, interactionSessionGrowth + amount);
+  const stage = String(Math.ceil(interactionSessionGrowth));
+  for (const indicator of interactionGrowthIndicators) {
+    if (!indicator.isConnected) {
+      interactionGrowthIndicators.delete(indicator);
+    } else {
+      indicator.dataset.stage = stage;
+      indicator.style.setProperty("--growth-stem-height", `${11 + interactionSessionGrowth * 4}px`);
+    }
+  }
+}
 
 function getItemResponseKey(problem, item) {
   return item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
@@ -143,6 +161,240 @@ function appendValuePanel(parent, labelText, value) {
   parent.appendChild(panel);
 }
 
+function formatInteractionWordOrder(response, keys) {
+  const textByKey = new Map((response.tokens ?? []).map((token) => [token.key, token.text]));
+  return keys.map((key) => textByKey.get(key)).filter(Boolean).join(" ")
+    .replace(/\s+([.,!?;:])/g, "$1").trim();
+}
+
+function renderInteractionWordOrder(parent, response, keys, mismatchIndex = -1) {
+  const textByKey = new Map((response.tokens ?? []).map((token) => [token.key, token.text]));
+  parent.replaceChildren();
+  keys.forEach((key, index) => {
+    const tokenText = textByKey.get(key) ?? "";
+    if (index > 0 && !/^[.,!?;:]/.test(tokenText)) parent.appendChild(document.createTextNode(" "));
+    if (index === mismatchIndex) {
+      const marked = document.createElement("mark");
+      marked.textContent = tokenText;
+      parent.appendChild(marked);
+    } else {
+      parent.appendChild(document.createTextNode(tokenText));
+    }
+  });
+}
+
+function createInteractionUnit(definition, response, answer, explanationText, onComplete) {
+  const root = document.createElement("section");
+  root.className = "english-interaction";
+  root.setAttribute("aria-label", "操作して解く");
+  const growth = document.createElement("div");
+  growth.className = "interaction-growth";
+  growth.setAttribute("aria-label", "学習の進み具合");
+  growth.innerHTML = '<span class="interaction-growth-stem"></span><span class="interaction-growth-leaf"></span><span class="interaction-growth-bloom"></span>';
+  const current = document.createElement("p");
+  current.className = "interaction-current-state";
+  current.setAttribute("aria-live", "polite");
+  const prompt = document.createElement("p");
+  prompt.className = "interaction-prompt";
+  const options = document.createElement("div");
+  options.className = "interaction-options";
+  const status = document.createElement("p");
+  status.className = "interaction-status";
+  status.setAttribute("aria-live", "polite");
+  const moreHint = document.createElement("button");
+  moreHint.type = "button";
+  moreHint.className = "secondary-button interaction-more-hint";
+  moreHint.textContent = "もう少しヒント";
+  moreHint.hidden = true;
+  const actions = document.createElement("div");
+  actions.className = "interaction-actions";
+  const undo = document.createElement("button");
+  undo.type = "button";
+  undo.className = "secondary-button";
+  undo.textContent = "1手戻す";
+  const explain = document.createElement("button");
+  explain.type = "button";
+  explain.className = "secondary-button";
+  explain.textContent = "どうしてこの形になる？";
+  const explanation = document.createElement("div");
+  explanation.className = "interaction-explanation";
+  explanation.hidden = true;
+  if (answer?.display) {
+    const answerNode = renderAnswer(answer);
+    explanation.appendChild(answerNode);
+  }
+  if (answer?.value !== undefined && !answer?.display) {
+    explanation.appendChild(renderAnswer(answer));
+  }
+  if (explanationText) explanation.appendChild(renderExplanation(explanationText));
+  explain.addEventListener("click", () => {
+    explanation.hidden = !explanation.hidden;
+    explain.textContent = explanation.hidden ? "どうしてこの形になる？" : "説明を閉じる";
+  });
+  actions.append(undo, explain);
+  root.append(growth, current, prompt, options, status, moreHint, actions, explanation);
+
+  let stateIndex = 0;
+  let stateText = definition.initialState ?? "";
+  let completed = false;
+  let currentHighlight = null;
+  let wordKeys = [];
+  let bestPrefix = 0;
+  let showMoreHint = false;
+  const history = [];
+  const wordOrder = definition.type === "word_order";
+  const wordOrderGoal = Array.isArray(answer?.value) ? answer.value : (definition.tokenOrder ?? []);
+  interactionGrowthIndicators.add(growth);
+  const saveHistory = () => history.push({ stateIndex, stateText, completed, currentHighlight, wordKeys: [...wordKeys] });
+  const renderState = () => {
+    const visibleGrowthStage = Math.ceil(interactionSessionGrowth);
+    growth.dataset.stage = String(visibleGrowthStage);
+    growth.style.setProperty("--growth-stem-height", `${11 + interactionSessionGrowth * 4}px`);
+    growth.setAttribute("aria-label", ["開始", "操作を試しました", "もう少し", "完成"][visibleGrowthStage]);
+    const wordOrderInspection = wordOrder
+      ? inspectWordOrderPrefix(wordKeys, wordOrderGoal)
+      : { matchedPrefixLength: 0, mismatchIndex: -1 };
+    const { mismatchIndex } = wordOrderInspection;
+    const displayText = wordOrder ? (formatInteractionWordOrder(response, wordKeys) || "単語を選んで英文を作ります") : stateText;
+    if (wordOrder && wordKeys.length > 0) {
+      renderInteractionWordOrder(current, response, wordKeys, mismatchIndex);
+    } else if (wordOrder) {
+      current.textContent = "単語を選んで英文を作ります";
+    } else {
+      current.replaceChildren();
+    }
+    const activeHighlight = !wordOrder ? currentHighlight : null;
+    const highlightIndex = activeHighlight ? displayText.indexOf(activeHighlight) : -1;
+    if (!wordOrder && highlightIndex >= 0) {
+      current.append(document.createTextNode(displayText.slice(0, highlightIndex)));
+      const marked = document.createElement("mark");
+      marked.textContent = activeHighlight;
+      current.append(marked, document.createTextNode(displayText.slice(highlightIndex + activeHighlight.length)));
+    } else if (!wordOrder) {
+      current.textContent = displayText;
+    }
+    current.classList.toggle("is-complete", completed);
+    prompt.textContent = wordOrder ? "次の単語をタップして、英文を組み立てましょう。" : definition.steps[stateIndex]?.prompt ?? "";
+    options.innerHTML = "";
+    moreHint.hidden = true;
+    if (!completed) {
+      if (wordOrder) {
+        if (mismatchIndex >= 0) {
+          const okayPrefix = mismatchIndex > 0
+            ? formatInteractionWordOrder(response, wordKeys.slice(0, mismatchIndex))
+            : "";
+          status.textContent = okayPrefix
+            ? `${okayPrefix} まではよさそうです。その次から見直してみよう。`
+            : "最初に置いた語から、もう一度見直してみよう。";
+          status.dataset.kind = "hint";
+          moreHint.hidden = false;
+          if (showMoreHint) {
+            const detail = document.createElement("span");
+            detail.className = "interaction-more-hint-text";
+            detail.textContent = definition.moreHint ?? "単語のまとまりと、文の形を見直してみよう。";
+            status.appendChild(detail);
+            moreHint.hidden = true;
+          }
+        } else if (wordKeys.length > 0) {
+          status.textContent = "ここまではよさそうです。続けてみよう。";
+          status.dataset.kind = "prefix";
+        } else {
+          status.textContent = "";
+        }
+        const chosen = new Set(wordKeys);
+        for (const token of response.tokens ?? []) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "interaction-option";
+          button.textContent = token.text;
+          button.disabled = chosen.has(token.key);
+          button.addEventListener("click", () => {
+            saveHistory();
+            wordKeys.push(token.key);
+            showMoreHint = false;
+            const nextPrefix = inspectWordOrderPrefix(wordKeys, wordOrderGoal).matchedPrefixLength;
+            if (nextPrefix > bestPrefix) {
+              const growthPerPrefix = Math.min(0.3, 0.9 / Math.max(1, wordOrderGoal.length));
+              advanceInteractionGrowth(growthPerPrefix * (nextPrefix - bestPrefix));
+              bestPrefix = nextPrefix;
+            }
+            const goal = wordOrderGoal;
+            if (wordKeys.length === goal.length && wordKeys.every((key, index) => key === goal[index])) {
+              completed = true;
+              advanceInteractionGrowth(0.45);
+              onComplete?.();
+            }
+            status.textContent = completed ? "できた" : "";
+            renderState();
+          });
+          options.appendChild(button);
+        }
+      } else {
+        for (const option of definition.steps[stateIndex]?.options ?? []) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "interaction-option";
+          button.textContent = option.label;
+          button.addEventListener("click", () => {
+            if (option.outcome === "invalid") {
+              status.textContent = option.message ?? "この操作は使えません。別の操作を試してみましょう。";
+              status.dataset.kind = "invalid";
+              return;
+            }
+            saveHistory();
+            stateText = option.result ?? stateText;
+            currentHighlight = option.highlight ?? null;
+            if (option.outcome === "progress") advanceInteractionGrowth(option.complete ? 0.9 : 0.6);
+            status.textContent = option.message ?? "";
+            status.dataset.kind = option.outcome ?? "progress";
+            if (option.complete) {
+              completed = true;
+              status.textContent = "できた";
+              onComplete?.();
+            } else if (option.nextStep) {
+              const nextIndex = definition.steps.findIndex((step) => step.id === option.nextStep);
+              if (nextIndex >= 0) stateIndex = nextIndex;
+            }
+            renderState();
+          });
+          options.appendChild(button);
+        }
+      }
+    } else {
+      status.textContent = "できた";
+      status.dataset.kind = "complete";
+    }
+    undo.disabled = history.length === 0;
+  };
+  undo.addEventListener("click", () => {
+    const previous = history.pop();
+    if (!previous) return;
+    if (completed && !previous.completed) onComplete?.(false);
+    ({ stateIndex, stateText, completed, currentHighlight, wordKeys } = previous);
+    status.textContent = "";
+    renderState();
+  });
+  moreHint.addEventListener("click", () => {
+    showMoreHint = true;
+    renderState();
+  });
+  renderState();
+  return root;
+}
+
+function getInteractionCompletionValue(response, answer, currentValue) {
+  if (response?.type === "mode_switch") {
+    const mode = response.defaultMode;
+    const modeValue = answer?.modes?.[mode]?.value;
+    return {
+      ...(currentValue && typeof currentValue === "object" ? currentValue : {}),
+      mode,
+      values: { ...(currentValue?.values ?? {}), [mode]: modeValue },
+    };
+  }
+  return answer?.value;
+}
+
 function renderResponseFeedback(feedbackNode, stateClassNode, status, response, answer, value, explanation, answerVisuals) {
   feedbackNode.innerHTML = "";
   stateClassNode.classList.remove("is-checked-correct", "is-checked-incorrect", "is-compare-open");
@@ -217,25 +469,114 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
     updateCheckButton();
   }
 
-  const responseNode = renderResponse(response, {
+  const createResponseNode = () => renderResponse(response, {
     responseKey,
     value: currentValue,
     onChange: commitValue,
   });
+  const responseNode = createResponseNode();
   if (!responseNode) {
     return null;
   }
 
   const unit = document.createElement("div");
   unit.className = "response-unit";
-  unit.appendChild(responseNode);
+  const interactionDefinition = options.subjectId === "english"
+    ? englishInteractionOverrides[responseKey]
+    : null;
+  let valueBeforeInteractionCompletion;
+  let checkStateBeforeInteractionCompletion = null;
+  let interactionCompletionSnapshot = null;
+  let checkButton = null;
+  let feedbackNode = null;
+  let interactionModeSelected = false;
+  const responsePane = document.createElement("div");
+  responsePane.className = "response-mode-pane";
+  responsePane.appendChild(responseNode);
+  const interactionPane = interactionDefinition
+    ? createInteractionUnit(
+        interactionDefinition,
+        response,
+        answer,
+        explanation,
+        (shouldComplete) => {
+          if (shouldComplete === false) {
+            commitValue(valueBeforeInteractionCompletion);
+            checkState = options.onInteractionComplete?.(
+              responseKey,
+              response,
+              answer,
+              currentValue,
+              false,
+              interactionCompletionSnapshot,
+            ) ?? checkStateBeforeInteractionCompletion;
+            interactionCompletionSnapshot = null;
+            renderFeedback();
+            updateCheckButton();
+            options.onStatusChange?.();
+            return;
+          }
+          valueBeforeInteractionCompletion = currentValue;
+          checkStateBeforeInteractionCompletion = checkState;
+          const completedValue = getInteractionCompletionValue(response, answer, currentValue);
+          commitValue(completedValue);
+          interactionCompletionSnapshot = options.onInteractionComplete?.(
+            responseKey,
+            response,
+            answer,
+            completedValue,
+            true,
+            { checkedStatus: checkStateBeforeInteractionCompletion },
+          ) ?? { checkedStatus: null, status: "correct", wasComplete: false };
+          checkState = interactionCompletionSnapshot.status ?? "correct";
+          renderFeedback();
+          updateCheckButton();
+          options.onStatusChange?.();
+        },
+      )
+    : null;
+  if (interactionDefinition) {
+    const modeControls = document.createElement("div");
+    modeControls.className = "mode-switch-controls interaction-mode-controls";
+    modeControls.setAttribute("role", "group");
+    modeControls.setAttribute("aria-label", "回答方法");
+    const answerMode = document.createElement("button");
+    answerMode.type = "button";
+    answerMode.className = "mode-switch-button";
+    answerMode.textContent = "選んで答える・自力入力";
+    const interactionMode = document.createElement("button");
+    interactionMode.type = "button";
+    interactionMode.className = "mode-switch-button";
+    interactionMode.textContent = "操作して解く";
+    const selectMode = (mode) => {
+      const isInteraction = mode === "interaction";
+      interactionModeSelected = isInteraction;
+      answerMode.setAttribute("aria-pressed", String(!isInteraction));
+      interactionMode.setAttribute("aria-pressed", String(isInteraction));
+      if (!isInteraction) responsePane.replaceChildren(createResponseNode());
+      responsePane.hidden = isInteraction;
+      interactionPane.hidden = !isInteraction;
+      if (checkButton) checkButton.hidden = isInteraction;
+      if (feedbackNode) feedbackNode.hidden = isInteraction;
+    };
+    answerMode.addEventListener("click", () => selectMode("answer"));
+    interactionMode.addEventListener("click", () => selectMode("interaction"));
+    modeControls.append(answerMode, interactionMode);
+    interactionPane.hidden = true;
+    selectMode("answer");
+    unit.append(modeControls, responsePane, interactionPane);
+  } else {
+    unit.appendChild(responseNode);
+  }
 
-  const checkButton = document.createElement("button");
+  checkButton = document.createElement("button");
   checkButton.type = "button";
   checkButton.className = "response-check-button";
-  const feedbackNode = document.createElement("div");
+  feedbackNode = document.createElement("div");
   feedbackNode.className = "response-check-result";
   unit.append(checkButton, feedbackNode);
+  checkButton.hidden = interactionModeSelected;
+  feedbackNode.hidden = interactionModeSelected;
 
   function updateCheckButton() {
     const active = getActiveResponse(response, answer, currentValue);
@@ -479,12 +820,15 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
     ? getItemResponseKey(problem, item)
     : null;
   const responseUnit = responseKey
-    ? createResponseUnit(
+      ? createResponseUnit(
         item.response,
         item.answer,
         item.explanation ?? inheritedExplanation,
         responseKey,
-        options,
+        {
+          ...options,
+          onInteractionComplete: (...args) => options.onInteractionComplete?.(problem, ...args),
+        },
         item.answerVisuals ?? [],
       )
     : null;
@@ -699,7 +1043,11 @@ function renderProblem(problem, options) {
         problem.answer,
         problem.explanation,
         problemResponseKey,
-        { ...options, onStatusChange: updateCompletionAfterResponse },
+        {
+          ...options,
+          onStatusChange: updateCompletionAfterResponse,
+          onInteractionComplete: (...args) => options.onInteractionComplete?.(problem, ...args),
+        },
         problem.answerVisuals ?? [],
       )
     : null;

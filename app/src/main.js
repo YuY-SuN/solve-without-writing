@@ -1,4 +1,4 @@
-import { renderProblems } from "./renderers/ProblemRenderer.js?v20261006-1";
+import { renderProblems } from "./renderers/ProblemRenderer.js?v20261006-3";
 import { renderVisualList } from "./renderers/VisualRenderer.js?v20260617-1";
 import { validateDatasetResponses } from "./response-validation.js?v20261003-1";
 import { evaluateResponseCheck } from "./response-checking.js?v20261004-1";
@@ -921,6 +921,47 @@ function toggleProblemComplete(problem, shouldComplete) {
   renderProgressViews();
 }
 
+function handleInteractionCompletion(
+  problem,
+  responseKey,
+  response,
+  answer,
+  value,
+  shouldComplete,
+  snapshot = null,
+) {
+  if (!shouldComplete) {
+    if (snapshot?.checkedStatus) {
+      state.checkedResponses[responseKey] = snapshot.checkedStatus;
+    } else {
+      delete state.checkedResponses[responseKey];
+    }
+
+    if (snapshot && !snapshot.wasComplete) {
+      toggleProblemComplete(problem, false);
+    } else {
+      renderProgressViews();
+    }
+    return snapshot?.checkedStatus ?? null;
+  }
+
+  const completionStatus = getProblemCompletionStatus(problem);
+  const wasComplete = Boolean(state.completedProblems[completionStatus.completionKey]);
+  const status = checkResponse(responseKey, response, answer, value);
+  const updatedCompletionStatus = getProblemCompletionStatus(problem);
+  if (status === "correct" && updatedCompletionStatus.isCompletable) {
+    toggleProblemComplete(problem, true);
+  } else {
+    renderProgressViews();
+  }
+
+  return {
+    checkedStatus: snapshot?.checkedStatus ?? null,
+    status,
+    wasComplete,
+  };
+}
+
 function buildPageProgressMap() {
   const summaries = {};
 
@@ -1492,11 +1533,13 @@ function render() {
   }
 
   renderProblems(elements.problemList, visibleProblems, {
+    subjectId: findDatasetEntry(state.selectedDatasetId)?.subject,
     responseValues: state.responseValues,
     checkedResponses: state.checkedResponses,
     onResponseChange: handleResponseChange,
     isResponseComplete,
     onCheckResponse: checkResponse,
+    onInteractionComplete: handleInteractionCompletion,
     readingViewMode: state.readingViewMode,
     onReadingViewModeChange: changeReadingViewMode,
     onClearProblem: clearProblemResponses,

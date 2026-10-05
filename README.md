@@ -14,7 +14,7 @@
 - `AGENTS.md`: このリポジトリでのドキュメント運用ルール
 - `docs/engineering-notes.md`: 横断的な設計方針、運用ルール、検証上の注意
 - `docs/answer-checking.md`: 小問単位の答え合わせと見比べ表示
-- `docs/english-learning-support.md`: 英語教材、回答モード切替、語順問題のJSON仕様と運用
+- `docs/english-learning-support.md`: 英語教材、回答モード切替、語順問題、操作型学習モードの仕様と運用
 - `docs/japanese-learning-support.md`: 国語の長文・改行表示、本文へ戻る操作、日本語入力の扱い
 - `docs/reference-text-layout.md`: 本文参照型problemの通常・2カラム・モーダル表示
 - `docs/app-root-layout.md`: 単一アプリ前提のディレクトリ構成と更新手順
@@ -57,9 +57,9 @@ python3 sync_index.py
 
 ## 問題カードの操作
 
-回答UIを持つ問題・小問ごとに、その場で `答え合わせ` または `見比べてみる` を押せます。choice / word_order と mode_switch の選択式は自動判定し、文字入力や自由作文は正誤を断定せず、自分の回答・解答例・解説を並べて表示します。既存の `完了` は問題カード単位で引き続き手動管理します。
+回答UIを持つ問題・小問ごとに、その場で `答え合わせ` または `見比べてみる` を押せます。choice / word_order と mode_switch の選択式は自動判定し、文字入力や自由作文は正誤を断定せず、自分の回答・解答例・解説を並べて表示します。通常モードの `完了` は従来どおり問題カード単位で管理します。操作型モードはgoal到達時に回答を自動判定し、カード内の全回答がそろった場合に完了進捗へ反映します。
 
-英語教材では `choice` の選択肢順シャッフルとキー非表示、選択式／記入式の切替、語句tokenをクリックして英文を組み立てる `word_order` を利用できます。詳細なJSON構造は `docs/english-learning-support.md`、答え合わせの動作は `docs/answer-checking.md` を参照してください。
+英語教材では `choice` の選択肢順シャッフルとキー非表示、選択式／記入式の切替、語句tokenをクリックして英文を組み立てる `word_order` を利用できます。さらに一部の問題では、同じカード内で英文を変化させる実験的な「操作して解く」を選べます。word_order型の操作では、正答の先頭列と照合して最初のずれを示し、求められたときだけ追加ヒントを出します。現在19問に対応し、三単現・過去形・否定文・疑問文・代名詞・文の拡張を試せます。goal到達時は答え合わせを求めず、既存の回答判定・完了進捗へ自動反映します。途中状態は保存しません。対象IDと操作定義は `app/src/interactions/english.js` にあります。追加手順と対象IDは `docs/english-learning-support.md`、通常モードの答え合わせ動作は `docs/answer-checking.md` を参照してください。
 
 国語などの長文教材では、長い `context.text` を「本文・資料」として読みやすく表示し、各小問の `本文を見る` から本文へ戻れます。prompt・本文・小問文の改行を保持し、日本語IMEの変換中は入力値の確定処理を待ちます。国語も `mode_switch` など既存の共通responseで扱います。詳細は `docs/japanese-learning-support.md` を参照してください。
 
