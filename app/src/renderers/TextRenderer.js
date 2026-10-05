@@ -255,6 +255,7 @@ function createWordOrder(response, options) {
       button.type = "button";
       button.className = "word-order-token word-order-token-selected";
       button.textContent = token.text;
+      button.dataset.tokenKey = token.key;
       button.title = "クリックして候補へ戻す";
       button.setAttribute("aria-label", `${token.text} を候補へ戻す`);
       button.addEventListener("click", () => {

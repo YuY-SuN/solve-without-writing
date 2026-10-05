@@ -731,6 +731,11 @@ pre {
   background: #eaf1ff;
 }
 
+.word-order-token-mismatch {
+  border-color: #d4ad62;
+  background: #fff5df;
+}
+
 .word-order-placeholder {
   color: #7b879b;
 }
@@ -739,10 +744,299 @@ pre {
   margin-top: 8px;
 }
 
+.word-order-prefix-feedback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.7rem;
+  margin-top: 0.65rem;
+  color: #56616d;
+  font-size: 0.9rem;
+}
+
+.word-order-prefix-message[data-kind="hint"] {
+  color: #725a30;
+}
+
+.word-order-prefix-detail {
+  flex-basis: 100%;
+  color: #56616d;
+}
+
+.word-order-prefix-hint-button {
+  min-height: 2.5rem;
+}
+
 .mode-switch-button:focus-visible,
 .word-order-token:focus-visible {
   outline: 2px solid #8ab4ff;
   outline-offset: 2px;
+}
+
+.interaction-mode-controls {
+  margin-top: 14px;
+  border-bottom: 1px solid #e3e9f2;
+  padding-bottom: 10px;
+}
+
+.english-interaction {
+  position: relative;
+  margin-top: 10px;
+  padding: 16px;
+  border: 1px solid #d9e4d5;
+  border-radius: 10px;
+  background: #fbfdf9;
+}
+
+.interaction-current-state {
+  min-height: 1.6em;
+  margin: 10px 0 6px;
+  font-size: clamp(1.15rem, 3vw, 1.5rem);
+  font-weight: 650;
+  line-height: 1.5;
+  transition: opacity 160ms ease;
+}
+
+.interaction-partner-reply {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: baseline;
+  margin: 8px 38px 8px 0;
+  padding: 9px 12px;
+  border-left: 3px solid #cbd8c7;
+  border-radius: 0 8px 8px 0;
+  background: #f1f4ef;
+  color: #3e4b40;
+  font-size: 0.98rem;
+}
+
+.interaction-partner-reply[hidden] {
+  display: none;
+}
+
+.interaction-speaker-label {
+  color: #657566;
+  font-size: 0.78em;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.interaction-current-state mark {
+  border-radius: 3px;
+  background: #fff0b8;
+  color: inherit;
+}
+
+.interaction-word {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 2px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-decoration: underline dotted #c8d0c2;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.interaction-word:hover:not(:disabled),
+.interaction-word[aria-pressed="true"] {
+  background: #eef4ea;
+  text-decoration-color: #9aab91;
+}
+
+.interaction-word:focus-visible {
+  outline: 2px solid #8ab4ff;
+  outline-offset: 2px;
+}
+
+.interaction-word:disabled {
+  cursor: default;
+}
+
+.interaction-word.is-changed {
+  animation: interaction-repair-change 260ms ease-out;
+}
+
+@keyframes interaction-repair-change {
+  from { background-color: #f5e6a4; }
+  to { background-color: transparent; }
+}
+
+.interaction-prompt,
+.interaction-status {
+  margin: 6px 0 12px;
+  color: #536174;
+}
+
+.interaction-status[data-kind="valid_but_detour"] {
+  color: #705b29;
+  font-size: 0.94rem;
+}
+
+.interaction-status[data-kind="invalid"] {
+  color: #536174;
+  font-size: 0.94rem;
+}
+
+.interaction-status[data-kind="grammar_invalid"] {
+  color: #536174;
+  font-size: 0.94rem;
+}
+
+.interaction-status[data-kind="conversation_mismatch"] {
+  color: #705b29;
+  font-size: 0.94rem;
+}
+
+.interaction-status[data-kind="hint"] {
+  color: #705b29;
+  font-size: 0.94rem;
+}
+
+.interaction-status[data-kind="prefix"] {
+  color: #536b57;
+  font-size: 0.94rem;
+}
+
+.interaction-more-hint {
+  min-height: 42px;
+  margin: -4px 0 8px;
+}
+
+.interaction-more-hint-text {
+  display: block;
+  margin-top: 6px;
+  color: #705b29;
+}
+
+.interaction-status[data-kind="complete"] {
+  color: #3e684b;
+  font-weight: 700;
+}
+
+.interaction-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.interaction-option {
+  min-height: 46px;
+  padding: 9px 14px;
+  border: 1px solid #c7d2e3;
+  border-radius: 8px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+  cursor: pointer;
+}
+
+.interaction-option:hover:not(:disabled) {
+  border-color: #84a78a;
+  background: #f1f7ef;
+}
+
+.interaction-option:disabled {
+  opacity: 0.48;
+  cursor: default;
+}
+
+.interaction-option:focus-visible,
+.interaction-actions button:focus-visible {
+  outline: 2px solid #8ab4ff;
+  outline-offset: 2px;
+}
+
+.interaction-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.interaction-growth {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 32px;
+  height: 34px;
+}
+
+.interaction-growth-stem {
+  position: absolute;
+  left: 15px;
+  bottom: 1px;
+  width: 2px;
+  height: var(--growth-stem-height, 11px);
+  border-radius: 2px;
+  background: #789a73;
+  transition: height 200ms ease;
+}
+
+.interaction-growth-leaf,
+.interaction-growth-bloom {
+  position: absolute;
+  display: none;
+  width: 11px;
+  height: 7px;
+  border-radius: 9px 2px 9px 2px;
+  background: #96b68a;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.interaction-growth-leaf {
+  left: 5px;
+  bottom: 12px;
+  transform: rotate(25deg);
+}
+
+.interaction-growth-bloom {
+  right: 3px;
+  bottom: 18px;
+  background: #c1d8aa;
+  transform: rotate(-25deg);
+}
+
+.interaction-growth[data-stage="1"] .interaction-growth-stem,
+.interaction-growth[data-stage="2"] .interaction-growth-stem,
+.interaction-growth[data-stage="3"] .interaction-growth-stem {
+  height: var(--growth-stem-height, 14px);
+}
+
+.interaction-growth[data-stage="1"] .interaction-growth-leaf,
+.interaction-growth[data-stage="2"] .interaction-growth-leaf,
+.interaction-growth[data-stage="3"] .interaction-growth-leaf,
+.interaction-growth[data-stage="2"] .interaction-growth-bloom,
+.interaction-growth[data-stage="3"] .interaction-growth-bloom {
+  display: block;
+}
+
+.interaction-explanation {
+  margin-top: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interaction-current-state,
+  .interaction-partner-reply,
+  .interaction-word,
+  .interaction-growth-stem,
+  .interaction-growth-leaf,
+  .interaction-growth-bloom {
+    transition: none;
+  }
+
+  .interaction-word.is-changed {
+    animation: none;
+  }
 }
 
 .draw-graph-hint,
