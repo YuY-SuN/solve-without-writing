@@ -775,6 +775,49 @@ pre {
   color: inherit;
 }
 
+.interaction-word {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 2px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-decoration: underline dotted #c8d0c2;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.interaction-word:hover:not(:disabled),
+.interaction-word[aria-pressed="true"] {
+  background: #eef4ea;
+  text-decoration-color: #9aab91;
+}
+
+.interaction-word:focus-visible {
+  outline: 2px solid #8ab4ff;
+  outline-offset: 2px;
+}
+
+.interaction-word:disabled {
+  cursor: default;
+}
+
+.interaction-word.is-changed {
+  animation: interaction-repair-change 260ms ease-out;
+}
+
+@keyframes interaction-repair-change {
+  from { background-color: #f5e6a4; }
+  to { background-color: transparent; }
+}
+
 .interaction-prompt,
 .interaction-status {
   margin: 6px 0 12px;
@@ -920,10 +963,15 @@ pre {
 
 @media (prefers-reduced-motion: reduce) {
   .interaction-current-state,
+  .interaction-word,
   .interaction-growth-stem,
   .interaction-growth-leaf,
   .interaction-growth-bloom {
     transition: none;
+  }
+
+  .interaction-word.is-changed {
+    animation: none;
   }
 }
 

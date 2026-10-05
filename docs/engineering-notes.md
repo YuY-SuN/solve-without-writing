@@ -151,6 +151,7 @@
 - 実験的な英語操作型定義は `app/src/interactions/english.js` にitem/problem IDをキーとして置く。JSONを改変せず、subjectが `english` のときだけ表示し、定義のない問題には操作モードを出さない
 - 操作型の途中状態とUndo履歴はrendererのメモリ上だけに置く。goal到達時は既存responseのanswer値を保存し、通常回答の判定関数で正答を確定して既存の完了進捗へ自動反映する。操作モードでは答え合わせUIを隠し、任意の解説だけを表示する。goal後のUndoでは直前の回答・判定を復元し、この操作が追加した完了状態だけを取り消す。interaction定義や履歴はstorage exportへ追加しない
 - 操作型word_orderは `answer.value` のtoken key配列を直接正答列として使い、`interactions/word-order-feedback.js` の最長共通prefix判定で先頭の妥当範囲を示す。prefix進行時のみセッション植物を進め、誤操作とUndoでは戻さない
+- 操作型repairは `english.js` の `repairTargets` にtoken位置・対象語・操作を定義する。単語は軽いテキストボタンとして描画し、対象外タップには案内だけを返す。操作結果は状態文字列を直接置き換え、goal一致で既存の正答処理へ渡す。ヒントと修理履歴はinteraction単位のメモリ状態である
 - 操作型の問題type (`transform`, `repair`, `role_change`, `expand`, `word_order`) はID別データ定義で指定する。追加時に問題固有renderer分岐を増やさず、既存JSONのanswer/explanationへ接続する
 - 操作型UIは `ProblemRenderer.js`、prefix判定は `interactions/word-order-feedback.js`、見た目と reduced-motion 対応は `page.css`。仕様とID別定義の更新方法は `docs/english-learning-support.md` を参照し、プロトタイプ仕様変更時に合わせて更新する
 - 答え合わせはresponseを持つ最小problem/item単位に置く。choice / word_order と mode_switch.choice は自動判定し、文字入力系は正誤色を付けずに回答・解答例・解説を並べて表示する

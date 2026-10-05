@@ -6,7 +6,7 @@ import {
   renderExplanation,
 } from "./TextRenderer.js?v20261006-1";
 import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
-import { englishInteractionOverrides } from "../interactions/english.js?v20261006-2";
+import { englishInteractionOverrides } from "../interactions/english.js?v20261006-3";
 import { inspectWordOrderPrefix } from "../interactions/word-order-feedback.js?v20261006-1";
 
 let interactionSessionGrowth = 0;
@@ -183,6 +183,58 @@ function renderInteractionWordOrder(parent, response, keys, mismatchIndex = -1) 
   });
 }
 
+function normalizeInteractionToken(token) {
+  return token.replace(/^[“"'([{]+|[.,!?;:’"')\]}]+$/g, "").toLowerCase();
+}
+
+function replaceRepairToken(text, tokenIndex, replacement) {
+  const parts = text.split(/(\s+)/);
+  let currentIndex = 0;
+  const partIndex = parts.findIndex((part) => {
+    if (!part || /^\s+$/.test(part)) return false;
+    return currentIndex++ === tokenIndex;
+  });
+  if (partIndex < 0) return text;
+  const punctuation = parts[partIndex].match(/[.,!?;:]+$/)?.[0] ?? "";
+  parts[partIndex] = `${replacement}${punctuation}`;
+  return parts.join("");
+}
+
+function renderRepairSentence(parent, text, definition, repairedTargetIds, selectedTargetId, onSelectTarget, highlight, completed) {
+  parent.replaceChildren();
+  const targetByIndex = new Map((definition.repairTargets ?? [])
+    .filter((target) => !repairedTargetIds.has(target.id))
+    .map((target) => [target.tokenIndex, target]));
+  let tokenIndex = 0;
+
+  for (const part of text.split(/(\s+)/)) {
+    if (!part) continue;
+    if (/^\s+$/.test(part)) {
+      parent.appendChild(document.createTextNode(part));
+      continue;
+    }
+
+    const target = targetByIndex.get(tokenIndex);
+    const matchingTarget = target
+      && normalizeInteractionToken(part) === normalizeInteractionToken(target.token)
+      ? target
+      : null;
+    const word = document.createElement("button");
+    word.type = "button";
+    word.className = "interaction-word";
+    word.textContent = part;
+    word.disabled = completed;
+    word.setAttribute("aria-label", `語を選ぶ: ${part}`);
+    word.setAttribute("aria-pressed", String(matchingTarget?.id === selectedTargetId));
+    if (highlight && normalizeInteractionToken(part) === normalizeInteractionToken(highlight)) {
+      word.classList.add("is-changed");
+    }
+    word.addEventListener("click", () => onSelectTarget(matchingTarget, part));
+    parent.appendChild(word);
+    tokenIndex += 1;
+  }
+}
+
 function createInteractionUnit(definition, response, answer, explanationText, onComplete) {
   const root = document.createElement("section");
   root.className = "english-interaction";
@@ -241,11 +293,24 @@ function createInteractionUnit(definition, response, answer, explanationText, on
   let wordKeys = [];
   let bestPrefix = 0;
   let showMoreHint = false;
+  let hintLevel = 0;
+  let selectedRepairTargetId = null;
+  const repairedTargetIds = new Set();
   const history = [];
   const wordOrder = definition.type === "word_order";
+  const targetRepair = definition.type === "repair" && Array.isArray(definition.repairTargets);
   const wordOrderGoal = Array.isArray(answer?.value) ? answer.value : (definition.tokenOrder ?? []);
   interactionGrowthIndicators.add(growth);
-  const saveHistory = () => history.push({ stateIndex, stateText, completed, currentHighlight, wordKeys: [...wordKeys] });
+  const saveHistory = () => history.push({
+    stateIndex,
+    stateText,
+    completed,
+    currentHighlight,
+    wordKeys: [...wordKeys],
+    hintLevel,
+    selectedRepairTargetId,
+    repairedTargetIds: [...repairedTargetIds],
+  });
   const renderState = () => {
     const visibleGrowthStage = Math.ceil(interactionSessionGrowth);
     growth.dataset.stage = String(visibleGrowthStage);
@@ -256,16 +321,38 @@ function createInteractionUnit(definition, response, answer, explanationText, on
       : { matchedPrefixLength: 0, mismatchIndex: -1 };
     const { mismatchIndex } = wordOrderInspection;
     const displayText = wordOrder ? (formatInteractionWordOrder(response, wordKeys) || "単語を選んで英文を作ります") : stateText;
-    if (wordOrder && wordKeys.length > 0) {
+    if (targetRepair) {
+      renderRepairSentence(
+        current,
+        stateText,
+        definition,
+        repairedTargetIds,
+        selectedRepairTargetId,
+        (target, tokenText) => {
+          selectedRepairTargetId = target?.id ?? null;
+          hintLevel = 0;
+          currentHighlight = null;
+          status.textContent = target
+            ? ""
+            : `${tokenText} は今のままでもよさそうです。別のところも見てみましょう。`;
+          status.dataset.kind = target ? "" : "hint";
+          renderState();
+        },
+        currentHighlight,
+        completed,
+      );
+    } else if (wordOrder && wordKeys.length > 0) {
       renderInteractionWordOrder(current, response, wordKeys, mismatchIndex);
     } else if (wordOrder) {
       current.textContent = "単語を選んで英文を作ります";
     } else {
       current.replaceChildren();
     }
-    const activeHighlight = !wordOrder ? currentHighlight : null;
+    const activeHighlight = !wordOrder && !targetRepair ? currentHighlight : null;
     const highlightIndex = activeHighlight ? displayText.indexOf(activeHighlight) : -1;
-    if (!wordOrder && highlightIndex >= 0) {
+    if (targetRepair) {
+      // The repair sentence is already rendered as tappable words above.
+    } else if (!wordOrder && highlightIndex >= 0) {
       current.append(document.createTextNode(displayText.slice(0, highlightIndex)));
       const marked = document.createElement("mark");
       marked.textContent = activeHighlight;
@@ -274,11 +361,70 @@ function createInteractionUnit(definition, response, answer, explanationText, on
       current.textContent = displayText;
     }
     current.classList.toggle("is-complete", completed);
-    prompt.textContent = wordOrder ? "次の単語をタップして、英文を組み立てましょう。" : definition.steps[stateIndex]?.prompt ?? "";
+    const selectedRepairTarget = definition.repairTargets?.find((target) => target.id === selectedRepairTargetId);
+    prompt.textContent = wordOrder
+      ? "次の単語をタップして、英文を組み立てましょう。"
+      : targetRepair
+        ? selectedRepairTarget
+          ? definition.repairSelectionPrompt ?? "この語にできる修理を選びましょう。"
+          : definition.repairPrompt ?? "直したい語を英文の中からタップしてみましょう。"
+        : definition.steps[stateIndex]?.prompt ?? "";
     options.innerHTML = "";
-    moreHint.hidden = true;
+    if (targetRepair) {
+      const hints = definition.hints ?? [];
+      moreHint.hidden = completed || hints.length === 0 || hintLevel >= hints.length;
+      moreHint.textContent = hintLevel === 0 ? "ヒント" : "もう少しヒント";
+      if (hintLevel > 0 && !completed) {
+        status.textContent = hints[hintLevel - 1];
+        status.dataset.kind = "hint";
+      }
+      if (selectedRepairTarget && !completed) {
+        for (const operation of selectedRepairTarget.operations ?? []) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "interaction-option";
+          button.textContent = operation.label;
+          button.addEventListener("click", () => {
+            if (operation.outcome === "invalid") {
+              status.textContent = operation.message ?? "その修理方法は合わないようです。別の操作を試してみましょう。";
+              status.dataset.kind = "hint";
+              return;
+            }
+            saveHistory();
+            stateText = operation.result ?? replaceRepairToken(
+              stateText,
+              selectedRepairTarget.tokenIndex,
+              operation.replacement,
+            );
+            currentHighlight = operation.highlight ?? null;
+            if (operation.outcome === "progress") advanceInteractionGrowth(0.6);
+            repairedTargetIds.add(selectedRepairTarget.id);
+            selectedRepairTargetId = null;
+            hintLevel = 0;
+            const reachedGoal = definition.goalState
+              && stateText.trim().replace(/\s+/g, " ") === definition.goalState.trim().replace(/\s+/g, " ");
+            if (operation.complete || reachedGoal) {
+              completed = true;
+              if (operation.outcome !== "progress") advanceInteractionGrowth(0.6);
+              status.textContent = "できた";
+              status.dataset.kind = "complete";
+              onComplete?.();
+            } else {
+              status.textContent = operation.message ?? "ここが整いました。ほかに直すところがあるか見てみましょう。";
+              status.dataset.kind = "progress";
+            }
+            renderState();
+          });
+          options.appendChild(button);
+        }
+      }
+    } else {
+      moreHint.hidden = true;
+    }
     if (!completed) {
-      if (wordOrder) {
+      if (targetRepair) {
+        // Repair choices are shown only after a tappable word is selected.
+      } else if (wordOrder) {
         if (mismatchIndex >= 0) {
           const okayPrefix = mismatchIndex > 0
             ? formatInteractionWordOrder(response, wordKeys.slice(0, mismatchIndex))
@@ -370,12 +516,18 @@ function createInteractionUnit(definition, response, answer, explanationText, on
     const previous = history.pop();
     if (!previous) return;
     if (completed && !previous.completed) onComplete?.(false);
-    ({ stateIndex, stateText, completed, currentHighlight, wordKeys } = previous);
+    ({ stateIndex, stateText, completed, currentHighlight, wordKeys, hintLevel, selectedRepairTargetId } = previous);
+    repairedTargetIds.clear();
+    for (const targetId of previous.repairedTargetIds ?? []) repairedTargetIds.add(targetId);
     status.textContent = "";
     renderState();
   });
   moreHint.addEventListener("click", () => {
-    showMoreHint = true;
+    if (targetRepair) {
+      hintLevel = Math.min(hintLevel + 1, definition.hints?.length ?? 0);
+    } else {
+      showMoreHint = true;
+    }
     renderState();
   });
   renderState();
