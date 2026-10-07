@@ -242,6 +242,7 @@
 - 教科表示名は `main.js` の `SUBJECT_LABELS` で管理し、問題処理を教科ごとに分岐しない。datasetの教科IDは `data/<subject>/` の親フォルダ名から `sync_index.py` が取得するため、新しい教科では教材を所定フォルダへ置き、同期後に `index.json` とJSONファイルを同じ変更セットに含める
 - `meta.subject` は教科分類の正本ではない。配置フォルダが分類を決めるため、JSON内にsubjectが含まれていても同期結果は親フォルダ名を使う
 - 教科固有でない教材メタデータ（例: `adaptedFrom`, `notes`）は現行表示で利用しない場合も、データファイルから削除せず保つ
+- 画像visualの `src` はdataset JSONファイルからの相対パスとする。`main.js` からdataset URLをrendererへ渡し、`new URL(src, datasetUrl)` で解決することでGitHub Pagesのrepository subpathを保つ。`/src/...` のroot相対URLにしない
 - 問題データの修正では、`prompt` / `items[].text` と `answer` と `explanation` を同時に照合する
 - `choice` 問題で `key` を持たせた場合は、画面にもその `key` が見えるようにする。ア・イ・ウの表記を本文だけに埋め込まず、選択肢ラベルとして扱う
 - 行見出しつきの `table` は、列見出し側にも空の先頭セルを置いて、1行目だけ左へずれるデータを作らない

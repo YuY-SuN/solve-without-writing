@@ -606,7 +606,15 @@
           ],
           "context": {
             "text": "実験結果\n角A: 0°, 10°, 20°, 30°, 40°\n角B: 0°, 10°, 20°, 30°, 40°"
-          }
+          },
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p92_exp_setup.png",
+              "alt": "光源装置から光を出し、鏡に当てて反射させる実験装置と、角A・角Bの結果表",
+              "caption": "鏡で光を反射させる実験"
+            }
+          ]
         },
         {
           "id": "sci_p092_see",
@@ -824,6 +832,13 @@
               },
               "explanation": "光源から来た光が物体の表面で反射し、その一部が目に届くため、物体を見ることができます。",
               "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p92_visible_object.png",
+              "alt": "光源、物体A、鏡、目の位置と光の進み方を示す図"
             }
           ]
         }
@@ -1106,8 +1121,15 @@
             }
           ],
           "context": {
-            "text": "原図では、鏡に垂直な法線を中心に、a〜dの角が示されている。"
-          }
+            "text": "図では、鏡に垂直な法線を中心に、a〜dの角が示されている。"
+          },
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p93_angles_abcd.png",
+              "alt": "鏡、法線、入射光、反射光と角a〜dを示す図"
+            }
+          ]
         },
         {
           "id": "sci_p093_draw",
@@ -1117,7 +1139,7 @@
             "category": "光の反射"
           },
           "prompt": {
-            "text": "原問の作図で使う考え方を答えよう。"
+            "text": "図を見て、反射光の進み方を考えよう。"
           },
           "response": {
             "type": "none"
@@ -1126,7 +1148,7 @@
             {
               "id": "sci_p093_draw_01",
               "no": 1,
-              "text": "原問(1)のように光が鏡へ入射したとき、反射光はどのように進みますか。",
+              "text": "図(1)のように光が鏡へ入射したとき、反射光はどのように進みますか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1179,7 +1201,7 @@
             {
               "id": "sci_p093_draw_02",
               "no": 2,
-              "text": "原問(2)のように光が鏡へ入射したとき、反射光はどのように進みますか。",
+              "text": "図(2)のように光が鏡へ入射したとき、反射光はどのように進みますか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1232,7 +1254,7 @@
             {
               "id": "sci_p093_draw_03",
               "no": 3,
-              "text": "原問(3)のように光が鏡へ入射したとき、反射光はどのように進みますか。",
+              "text": "図(3)のように光が鏡へ入射したとき、反射光はどのように進みますか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1281,6 +1303,13 @@
               "uncertain": false,
               "notes": "原問は方眼上に反射光を作図する問題。作図操作を、反射の法則を説明・選択する問題に置換。",
               "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p93_reflection_examples.png",
+              "alt": "鏡に入射する光の向きが異なる3つの反射の図"
             }
           ]
         },
@@ -1457,7 +1486,7 @@
             {
               "id": "sci_p093_image_04",
               "no": 4,
-              "text": "原図で物体をB〜Eに置いたとき、像が見えない位置はどれですか。",
+              "text": "図で物体をB〜Eに置いたとき、像が見えない位置はどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1555,6 +1584,13 @@
               "explanation": "多くの物体の表面では、光源から来た光がさまざまな方向へ乱反射します。そのうち目の方向へ進んだ光が届くので、さまざまな位置から物体を見ることができます。",
               "uncertain": false
             }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p93_mirror_object_positions.png",
+              "alt": "鏡と目の位置、物体A〜Eの位置を示す方眼図"
+            }
           ]
         }
       ]
@@ -1579,7 +1615,7 @@
             {
               "id": "sci_p094_reflect_01",
               "no": 1,
-              "text": "原問「反射の法則」(1)で反射光を作図するとき、正しい決め方はどれですか。",
+              "text": "図(1)で反射光を作図するとき、正しい決め方はどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1632,7 +1668,7 @@
             {
               "id": "sci_p094_reflect_02",
               "no": 2,
-              "text": "原問「反射の法則」(2)で反射光を作図するとき、正しい決め方はどれですか。",
+              "text": "図(2)で反射光を作図するとき、正しい決め方はどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1685,7 +1721,7 @@
             {
               "id": "sci_p094_reflect_03",
               "no": 3,
-              "text": "原問「反射の法則」(3)で反射光を作図するとき、正しい決め方はどれですか。",
+              "text": "図(3)で反射光を作図するとき、正しい決め方はどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1735,6 +1771,13 @@
               "notes": "原問は3種類の鏡配置での作図。現行UIでは原理選択・説明に置換。",
               "adaptedFrom": "drawing"
             }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p94_reflection_drill.png",
+              "alt": "鏡の向きや入射光が異なる反射の3つの図"
+            }
           ]
         },
         {
@@ -1754,7 +1797,7 @@
             {
               "id": "sci_p094_image_01",
               "no": 1,
-              "text": "原問「鏡に映って見える物体」(1)で、像と反射光を作図するときの手順として正しいものはどれですか。",
+              "text": "図(1)で像と反射光を作図するときの手順として正しいものはどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1807,7 +1850,7 @@
             {
               "id": "sci_p094_image_02",
               "no": 2,
-              "text": "原問「鏡に映って見える物体」(2)で、像と反射光を作図するときの手順として正しいものはどれですか。",
+              "text": "図(2)で像と反射光を作図するときの手順として正しいものはどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1860,7 +1903,7 @@
             {
               "id": "sci_p094_image_03",
               "no": 3,
-              "text": "原問「鏡に映って見える物体」(3)で、像と反射光を作図するときの手順として正しいものはどれですか。",
+              "text": "図(3)で像と反射光を作図するときの手順として正しいものはどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1913,7 +1956,7 @@
             {
               "id": "sci_p094_image_04",
               "no": 4,
-              "text": "原問「鏡に映って見える物体」(4)で、像と反射光を作図するときの手順として正しいものはどれですか。",
+              "text": "図(4)で像と反射光を作図するときの手順として正しいものはどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -1966,7 +2009,7 @@
             {
               "id": "sci_p094_image_05",
               "no": 5,
-              "text": "原問「鏡に映って見える物体」(5)で、像と反射光を作図するときの手順として正しいものはどれですか。",
+              "text": "図(5)で像と反射光を作図するときの手順として正しいものはどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -2019,7 +2062,7 @@
             {
               "id": "sci_p094_image_06",
               "no": 6,
-              "text": "原問「鏡に映って見える物体」(6)で、像と反射光を作図するときの手順として正しいものはどれですか。",
+              "text": "図(6)で像と反射光を作図するときの手順として正しいものはどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -2068,6 +2111,13 @@
               "uncertain": false,
               "notes": "原問は6種類の方眼図で像と光路を作図する問題。同じ作図手順を問うデジタル問題に置換。",
               "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p94_mirror_image_drill.png",
+              "alt": "鏡と物体、目の位置を示す6つの方眼図"
             }
           ]
         }
@@ -2191,7 +2241,14 @@
               "uncertain": false
             }
           ],
-          "notes": "原本p.95は重複スキャンが含まれていたため、このJSONでは1回分に統合。"
+          "notes": "原本p.95は重複スキャンが含まれていたため、このJSONでは1回分に統合。",
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p95_visible_range.png",
+              "alt": "鏡と観察者P、物体A〜Dの位置を示す方眼図"
+            }
+          ]
         },
         {
           "id": "sci_p095_mirror",
@@ -2423,6 +2480,20 @@
               },
               "explanation": "必要な鏡の長さは身長の1/2なので、140÷2＝70cmです。",
               "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p95_required_mirror_A.png",
+              "alt": "身長160cmのAさんと鏡、物体と像の位置を示す図",
+              "caption": "PART 1"
+            },
+            {
+              "type": "image",
+              "src": "assets/p95_required_mirror_B.png",
+              "alt": "身長140cmのBさんと鏡の位置を示す図",
+              "caption": "PART 2"
             }
           ]
         }
@@ -3125,7 +3196,27 @@
           ],
           "context": {
             "text": "結果① 空気→水\n角A: 0°, 20°, 30°, 40°, 50°, 60°\n角B: 0°, 15°, 22°, 32°, 35°, 41°\n\n結果② 水→空気\n角C: 0°, 20°, 30°, 40°, 50°, 60°\n角D: 0°, 27°, 42°, 59°, 50°以降は境界面ですべて反射"
-          }
+          },
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p96_air_water_left.png",
+              "alt": "空気中から水面へ進む光と分度器を示す実験図",
+              "caption": "結果① 空気から水へ"
+            },
+            {
+              "type": "image",
+              "src": "assets/p96_air_water_right.png",
+              "alt": "水中から空気中へ進む光と分度器を示す実験図",
+              "caption": "結果② 水から空気へ"
+            },
+            {
+              "type": "image",
+              "src": "assets/p96_results_tables.png",
+              "alt": "空気と水の間での入射角と屈折角の実験結果表",
+              "caption": "実験結果"
+            }
+          ]
         }
       ]
     },
@@ -3249,6 +3340,13 @@
               },
               "explanation": "目は届いた光を直線的に逆延長した位置に物体があると判断します。水面で屈折した光を逆延長すると、実物より浅い位置から来たように見えるためです。",
               "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p97_coin.png",
+              "alt": "水中のコイン、目の位置、水槽内の光の道すじを示す図"
             }
           ]
         },
@@ -3516,6 +3614,13 @@
               "explanation": "光の道すじには可逆性があります。X→O→Yと進む光の道すじを逆にたどれば、Y→O→Xとなります。",
               "uncertain": false
             }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p97_semicircle_lens.png",
+              "alt": "半円形レンズ、点X・Y・Z、角a・b・cを示す図"
+            }
           ]
         },
         {
@@ -3683,6 +3788,13 @@
               "explanation": "光ファイバーでは、内部の境界で全反射を繰り返すように設計されており、光が外へ逃げにくくなっています。",
               "uncertain": false
             }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p97_water_to_air.png",
+              "alt": "水中から空気中へ進む光と点A・B・Cの位置を示す図"
+            }
           ]
         }
       ]
@@ -3707,7 +3819,7 @@
             {
               "id": "sci_p098_normal_01",
               "no": 1,
-              "text": "原問(1)のように空気から水へ境界面に垂直に光を入射すると、光はどう進みますか。",
+              "text": "図(1)のように空気から水へ境界面に垂直に光を入射すると、光はどう進みますか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -3759,7 +3871,7 @@
             {
               "id": "sci_p098_normal_02",
               "no": 2,
-              "text": "原問(2)のように空気からガラスへ境界面に垂直に光を入射すると、光はどう進みますか。",
+              "text": "図(2)のように空気からガラスへ境界面に垂直に光を入射すると、光はどう進みますか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -3811,7 +3923,7 @@
             {
               "id": "sci_p098_normal_03",
               "no": 3,
-              "text": "原問(3)のように水から空気へ境界面に垂直に光を入射すると、光はどう進みますか。",
+              "text": "図(3)のように水から空気へ境界面に垂直に光を入射すると、光はどう進みますか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -3860,6 +3972,13 @@
               "uncertain": false,
               "adaptedFrom": "drawing"
             }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p98_perpendicular_incidence.png",
+              "alt": "異なる物質の境界へ垂直に入射する光を示す3つの図"
+            }
           ]
         },
         {
@@ -3879,7 +3998,7 @@
             {
               "id": "sci_p098_refract_01",
               "no": 1,
-              "text": "原問「光の屈折①」(1)：空気から水へ斜めに入る光の進み方として適切な説明はどれですか。",
+              "text": "図(1)で、空気から水へ斜めに入る光の進み方として適切な説明はどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -3932,7 +4051,7 @@
             {
               "id": "sci_p098_refract_02",
               "no": 2,
-              "text": "原問「光の屈折①」(2)：水から空気へ斜めに出る光の進み方として適切な説明はどれですか。",
+              "text": "図(2)で、水から空気へ斜めに出る光の進み方として適切な説明はどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -3985,7 +4104,7 @@
             {
               "id": "sci_p098_refract_03",
               "no": 3,
-              "text": "原問「光の屈折①」(3)：ガラスから空気へ斜めに出る光の進み方として適切な説明はどれですか。",
+              "text": "図(3)で、ガラスから空気へ斜めに出る光の進み方として適切な説明はどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -4038,7 +4157,7 @@
             {
               "id": "sci_p098_refract_04",
               "no": 4,
-              "text": "原問「光の屈折①」(4)：空気から平行な面をもつガラス板へ斜めに入る光の進み方として適切な説明はどれですか。",
+              "text": "図(4)で、空気から平行な面をもつガラス板へ斜めに入る光の進み方として適切な説明はどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -4091,7 +4210,7 @@
             {
               "id": "sci_p098_refract_05",
               "no": 5,
-              "text": "原問「光の屈折①」(5)：空気からガラス板へ斜めに入って反対側から出る光の進み方として適切な説明はどれですか。",
+              "text": "図(5)で、空気からガラス板へ斜めに入って反対側から出る光の進み方として適切な説明はどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -4144,7 +4263,7 @@
             {
               "id": "sci_p098_refract_06",
               "no": 6,
-              "text": "原問「光の屈折①」(6)：空気から三角プリズムへ入って再び空気へ出る光の進み方として適切な説明はどれですか。",
+              "text": "図(6)で、空気から三角プリズムへ入って再び空気へ出る光の進み方として適切な説明はどれですか。",
               "response": {
                 "type": "mode_switch",
                 "defaultMode": "choice",
@@ -4193,6 +4312,13 @@
               "uncertain": false,
               "notes": "原問は複数の破線候補から正しい光路をなぞる問題。光路の向きを言葉で判断する形式に置換。",
               "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p98_refraction1_six.png",
+              "alt": "空気・水・ガラスの境界で光が進む6つの図"
             }
           ]
         }
@@ -4371,6 +4497,13 @@
               "uncertain": false,
               "adaptedFrom": "drawing"
             }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p99_refraction2_three.png",
+              "alt": "ガラスを通る光の道すじを示す3つの図"
+            }
           ]
         },
         {
@@ -4543,6 +4676,13 @@
               "uncertain": false,
               "adaptedFrom": "drawing"
             }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p99_refraction3_three.png",
+              "alt": "水中の物体の見え方や棒の屈折を示す3つの図"
+            }
           ]
         },
         {
@@ -4662,6 +4802,13 @@
               "explanation": "水中から水面へ向かう光の入射角が十分大きい場所では水面が鏡のように働き、全反射した光が目へ届くため像が見えます。",
               "uncertain": false,
               "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p99_total_reflection.png",
+              "alt": "水面で全反射する光と水槽内の金魚を示す図"
             }
           ]
         }

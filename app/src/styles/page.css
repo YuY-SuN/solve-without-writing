@@ -411,6 +411,50 @@ button:disabled {
   margin: 0 auto;
 }
 
+.reference-material-content {
+  min-width: 0;
+}
+
+.reference-material-label {
+  margin: 0 0 12px;
+  color: #40516d;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.reference-material-visuals {
+  margin-top: 14px;
+}
+
+.visual-image-figure {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+}
+
+.visual-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
+.visual-image-figure figcaption {
+  max-width: 100%;
+  color: #55627a;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.visual-image-error {
+  margin: 0;
+  color: #7c2d12;
+  overflow-wrap: anywhere;
+}
+
 .problem-visuals,
 .problem-items {
   display: grid;
