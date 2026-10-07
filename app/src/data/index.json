@@ -120,6 +120,12 @@
       "label": "正の数・負の数 3数以上の加法、減法",
       "subject": "math",
       "path": "math/workbook_p_16_p_17.json"
+    },
+    {
+      "id": "science-jhs1-light-reflection-refraction",
+      "label": "中学1年 理科 光の反射・屈折（原本 p.92〜99）",
+      "subject": "science",
+      "path": "science/science_jhs1_light_reflection_refraction.json"
     }
   ]
 }
