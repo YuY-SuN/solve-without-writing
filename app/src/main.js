@@ -2,6 +2,7 @@ import { renderProblems } from "./renderers/ProblemRenderer.js?v20261007-1";
 import { renderVisualList } from "./renderers/VisualRenderer.js?v20261007-1";
 import { validateDatasetResponses } from "./response-validation.js?v20261003-1";
 import { evaluateResponseCheck } from "./response-checking.js?v20261004-1";
+import { createAnswerFromSolution } from "./solved-answer.js?v20261008-1";
 
 const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
 const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
@@ -11,6 +12,12 @@ const READING_VIEW_MODE_STORAGE_KEY = "benkyo-tool-prompt01:reading-view-mode:v1
 const STORAGE_EXPORT_SCHEMA = "benkyo-tool-prompt01-storage-export";
 const STORAGE_EXPORT_VERSION = 1;
 const MAX_HISTORY_ENTRIES = 10;
+const MANAGEMENT_PASSWORD = "hogepiyo123";
+let managementMode = false;
+let managementSnapshot = null;
+let managementSessionId = 0;
+let manageKeyBuffer = "";
+let manageLastKeyAt = 0;
 
 const state = {
   selectedPageKey: "all",
@@ -49,7 +56,111 @@ const elements = {
   pageProgressPanel: document.querySelector(".page-progress-panel"),
   pageProgress: document.querySelector("#page-progress"),
   problemList: document.querySelector("#problem-list"),
+  managementExit: document.querySelector("#management-exit"),
+  managementDialog: document.querySelector("#management-dialog"),
+  managementForm: document.querySelector("#management-form"),
+  managementPassword: document.querySelector("#management-password"),
+  managementCancel: document.querySelector("#management-cancel"),
+  managementMessage: document.querySelector("#management-message"),
 };
+
+function isDesktopManagementEnvironment() {
+  if (!window.matchMedia || window.innerWidth < 900) return false;
+  return window.matchMedia("(pointer: fine)").matches
+    && window.matchMedia("(hover: hover)").matches;
+}
+
+function hasOpenModal() {
+  return [...document.querySelectorAll("dialog[open], [role=\"dialog\"]")]
+    .some((dialog) => !dialog.closest("[hidden]"));
+}
+
+function isTextEditingTarget(target) {
+  if (!(target instanceof Element)) return false;
+  return Boolean(target.closest(
+    'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="searchbox"]',
+  ));
+}
+
+function openManagementDialog() {
+  if (!isDesktopManagementEnvironment() || managementMode || state.transferMode) return;
+  if (!elements.managementDialog) return;
+  elements.managementMessage.textContent = "";
+  elements.managementPassword.value = "";
+  elements.managementDialog.hidden = false;
+  elements.managementPassword.focus();
+}
+
+function captureManagementSnapshot() {
+  return {
+    responseValues: cloneSerializable(state.responseValues) ?? {},
+    checkedResponses: cloneSerializable(state.checkedResponses) ?? {},
+    completedProblems: cloneSerializable(state.completedProblems) ?? {},
+    undoStack: cloneSerializable(state.undoStack) ?? [],
+    redoStack: cloneSerializable(state.redoStack) ?? [],
+    readingViewMode: state.readingViewMode,
+    selectedDatasetId: state.selectedDatasetId,
+    selectedPageKey: state.selectedPageKey,
+    transferMode: state.transferMode,
+    transferContentMode: state.transferContentMode,
+  };
+}
+
+function setManagementMode(enabled) {
+  if (enabled === managementMode) return;
+  if (enabled) {
+    managementSnapshot = captureManagementSnapshot();
+    managementMode = true;
+  } else {
+    managementMode = false;
+    if (managementSnapshot) {
+      state.responseValues = managementSnapshot.responseValues;
+      state.checkedResponses = managementSnapshot.checkedResponses;
+      state.completedProblems = managementSnapshot.completedProblems;
+      state.undoStack = managementSnapshot.undoStack;
+      state.redoStack = managementSnapshot.redoStack;
+      state.readingViewMode = managementSnapshot.readingViewMode;
+      state.selectedDatasetId = managementSnapshot.selectedDatasetId;
+      state.selectedPageKey = managementSnapshot.selectedPageKey;
+      state.dataset = state.datasetsById[state.selectedDatasetId] ?? null;
+      state.transferMode = managementSnapshot.transferMode;
+      state.transferContentMode = managementSnapshot.transferContentMode;
+
+      const selectedEntry = findDatasetEntry(state.selectedDatasetId);
+      if (selectedEntry) {
+        elements.subjectSelect.value = selectedEntry.subject;
+        populateDatasetSelect({ datasets: state.datasetCatalog }, selectedEntry.subject);
+        elements.datasetSelect.value = state.selectedDatasetId;
+        populatePageFilter(state.pageCatalog, buildPageProgressMap(), state.selectedDatasetId);
+        elements.pageFilter.value = state.selectedPageKey;
+        updateHeader();
+      }
+    }
+    managementSnapshot = null;
+  }
+  managementSessionId += 1;
+  render();
+}
+
+function handleManagementKeydown(event) {
+  if (!isDesktopManagementEnvironment() || managementMode || state.transferMode
+    || !elements.managementDialog.hidden || hasOpenModal() || event.isComposing || event.ctrlKey || event.metaKey || event.altKey
+    || isTextEditingTarget(event.target) || event.key.length !== 1) {
+    manageKeyBuffer = "";
+    return;
+  }
+
+  const now = Date.now();
+  if (now - manageLastKeyAt > 1500) manageKeyBuffer = "";
+  manageLastKeyAt = now;
+  manageKeyBuffer = `${manageKeyBuffer}${event.key.toLowerCase()}`.slice(-"manage".length);
+  if (manageKeyBuffer === "manage") {
+    manageKeyBuffer = "";
+    openManagementDialog();
+  } else if (!"manage".startsWith(manageKeyBuffer)) {
+    manageKeyBuffer = event.key.toLowerCase() === "m" ? "m" : "";
+  }
+}
 
 async function loadDatasetCatalog() {
   const res = await fetch("./src/data/index.json", { cache: "no-store" });
@@ -331,6 +442,7 @@ function downloadTextFile(filename, text, mimeType) {
 }
 
 function exportPersistedState() {
+  if (managementMode) return;
   const payload = buildStorageExportPayload();
   const stamp = payload.exportedAt.slice(0, 19).replace(/[:T]/g, "-");
   downloadTextFile(
@@ -428,7 +540,9 @@ async function applyImportedState(importedState) {
 }
 
 async function importPersistedState(file) {
+  const sessionId = managementSessionId;
   const rawText = await file.text();
+  if (managementMode || sessionId !== managementSessionId) return;
   const parsed = parseImportedObject(rawText);
   const importedState = sanitizeImportedState(parsed);
   await applyImportedState(importedState);
@@ -532,8 +646,11 @@ function updateToolbar() {
   const transferProblems = state.dataset ? getTransferProblems() : [];
   elements.clearVisible.textContent = state.selectedPageKey === "all" ? "表示中をクリア" : "このページをクリア";
   elements.clearVisible.disabled = state.transferMode || getVisibleResponseKeys().length === 0;
-  elements.undoClear.disabled = state.transferMode || state.undoStack.length === 0;
-  elements.redoClear.disabled = state.transferMode || state.redoStack.length === 0;
+  elements.undoClear.disabled = managementMode || state.transferMode || state.undoStack.length === 0;
+  elements.redoClear.disabled = managementMode || state.transferMode || state.redoStack.length === 0;
+  elements.managementExit.hidden = !managementMode;
+  elements.exportStorage.disabled = managementMode;
+  elements.importStorage.disabled = managementMode;
   elements.toggleTransferMode.textContent = state.transferMode ? "通常表示に戻る" : "転記モード";
   elements.toggleTransferContent.disabled = !state.transferMode;
   elements.toggleTransferContent.textContent = state.transferContentMode === "answer"
@@ -586,6 +703,9 @@ function loadPersistedJson(storageKey) {
 }
 
 function persistJson(storageKey, value) {
+  if (managementMode) {
+    return;
+  }
   if (typeof window === "undefined" || !window.localStorage) {
     return;
   }
@@ -770,9 +890,11 @@ function commitResponseValues(nextResponseValues) {
 
   invalidateChangedCheckedResponses(previous, next);
 
-  state.undoStack.push(previous);
-  trimHistory(state.undoStack);
-  state.redoStack = [];
+  if (!managementMode) {
+    state.undoStack.push(previous);
+    trimHistory(state.undoStack);
+    state.redoStack = [];
+  }
   state.responseValues = next;
   persistResponseValues();
   persistHistoryState();
@@ -828,6 +950,10 @@ function isResponseComplete(response, value, answer) {
       return Array.isArray(value) && value.length === answer.value.length;
     }
 
+    if (Array.isArray(answer?.value?.points)) {
+      return Array.isArray(value) && value.length === answer.value.points.length;
+    }
+
     if (Array.isArray(answer?.value?.bins)) {
       return Array.isArray(value?.bins) && value.bins.length === answer.value.bins.length;
     }
@@ -867,7 +993,7 @@ function getProblemCompletionStatus(problem, datasetId = state.selectedDatasetId
   const incompleteCount = descriptors.filter(
     (entry) => !isResponseComplete(entry.response, state.responseValues[entry.key], entry.answer),
   ).length;
-  const isCompletable = incompleteCount === 0;
+  const isCompletable = managementMode || incompleteCount === 0;
   const completionKey = makeProblemCompletionKey(datasetId, problem.page, problem.id);
   const isComplete = isCompletable && Boolean(state.completedProblems[completionKey]);
 
@@ -919,6 +1045,19 @@ function toggleProblemComplete(problem, shouldComplete) {
   const nextCompletedProblems = { ...state.completedProblems };
 
   if (shouldComplete && status.isCompletable) {
+    if (managementMode) {
+      const nextResponseValues = { ...state.responseValues };
+      for (const descriptor of getProblemResponseDescriptors(problem)) {
+        const solvedValue = createAnswerFromSolution(descriptor.response, descriptor.answer);
+        if (solvedValue !== undefined) {
+          nextResponseValues[descriptor.key] = solvedValue;
+        }
+      }
+      const previous = state.responseValues;
+      invalidateChangedCheckedResponses(previous, nextResponseValues);
+      state.responseValues = nextResponseValues;
+      persistResponseValues();
+    }
     nextCompletedProblems[status.completionKey] = true;
   } else {
     delete nextCompletedProblems[status.completionKey];
@@ -929,7 +1068,11 @@ function toggleProblemComplete(problem, shouldComplete) {
     persistCompletedProblems();
   }
 
-  renderProgressViews();
+  if (managementMode) {
+    render();
+  } else {
+    renderProgressViews();
+  }
 }
 
 function handleInteractionCompletion(
@@ -1476,6 +1619,7 @@ function handleResponseChange(responseKey, valueOrUpdater) {
   if (commitResponseValues(nextResponseValues)) {
     sanitizeCompletedProblems();
     renderProgressViews();
+    updateToolbar();
   }
 }
 
@@ -1501,7 +1645,7 @@ function clearVisibleResponses() {
 }
 
 function undoHistory() {
-  if (state.undoStack.length === 0) {
+  if (managementMode || state.undoStack.length === 0) {
     return;
   }
 
@@ -1518,7 +1662,7 @@ function undoHistory() {
 }
 
 function redoHistory() {
-  if (state.redoStack.length === 0) {
+  if (managementMode || state.redoStack.length === 0) {
     return;
   }
 
@@ -1767,6 +1911,23 @@ async function bootstrap() {
     window.print();
   });
 
+  document.addEventListener("keydown", handleManagementKeydown);
+  elements.managementExit.addEventListener("click", () => setManagementMode(false));
+  elements.managementCancel.addEventListener("click", () => {
+    elements.managementDialog.hidden = true;
+    manageKeyBuffer = "";
+  });
+  elements.managementForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (elements.managementPassword.value !== MANAGEMENT_PASSWORD) {
+      elements.managementMessage.textContent = "パスワードが違います。";
+      elements.managementPassword.select();
+      return;
+    }
+    elements.managementDialog.hidden = true;
+    setManagementMode(true);
+  });
+
   elements.exportStorage.addEventListener("click", () => {
     exportPersistedState();
   });
@@ -1778,7 +1939,7 @@ async function bootstrap() {
   elements.importStorageFile.addEventListener("change", async (event) => {
     const [file] = event.target.files ?? [];
     event.target.value = "";
-    if (!file) {
+    if (!file || managementMode) {
       return;
     }
 

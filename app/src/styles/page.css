@@ -104,6 +104,58 @@ button:disabled {
   color: #b42318;
 }
 
+.management-dialog-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(15 23 42 / 55%);
+}
+
+.management-dialog-backdrop[hidden] {
+  display: none;
+}
+
+.management-dialog {
+  width: min(100%, 420px);
+  padding: 24px;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 20px 60px rgb(15 23 42 / 25%);
+}
+
+.management-dialog h2 {
+  margin-bottom: 16px;
+}
+
+.management-dialog form {
+  display: grid;
+  gap: 10px;
+}
+
+.management-dialog input {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid #aebbd0;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.management-message {
+  min-height: 1.5em;
+  margin: 0;
+  color: #b42318;
+}
+
+.management-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .problem-list {
   display: grid;
   gap: 20px;
