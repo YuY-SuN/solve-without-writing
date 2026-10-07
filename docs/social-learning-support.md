@@ -21,19 +21,28 @@
 
 `sync_index.py` は `data/<subject>/` を再帰走査する汎用実装なので、社会専用の同期コードは不要。GitHub Pages workflowは `app/` 全体を公開するため、`app/src/data/social/assets/` も通常の公開artifactへ含まれる。画像パスに `/src/...` のroot相対URLを使わず、dataset相対パスを維持する。
 
-## 今回の教材
+## 現行教材と再生成版の更新
 
-基準JSONは `_inputs/social_jhs1_ancient_europe_africa.json` から `app/src/data/social/social_jhs1_ancient_europe_africa.json` へ配置した。14ページ・20 problemがあり、19 problemの `visuals` から34枚の異なるPNGを参照する。`soc_p004_human` の10小問は当初「空欄Nに入る語」とだけ書かれ、空欄を含む文章が欠けていたため、answerとexplanationに整合する穴埋め文を各itemの `text` に補った。提供ZIPからJSONが参照する34枚を `assets/` に展開した。ZIP内の `ancient_mesopotamia_egypt_china.png` と `ancient_writing_and_regions.png` はJSONから参照されていないため、本番assetsには含めていない。`README.md`、`manifest.json`、`contact_sheet.png` も確認用のため含めない。
+現行の `app/src/data/social/social_jhs1_ancient_europe_africa.json` は `_inputs/social2610_regenerated_bundle.zip` 内のJSONをそのまま配置する。清書版PDFを基準に再生成された教材をsource of truthとし、Codex側で問題文・正答・解説を補正しない。更新時はZIP内JSONとのバイト一致を確認する。
 
-全34画像URLがHTTP 200で取得できること、複数資料を使うproblemで全画像が通常・2カラム・モーダルに表示されること、画像がブラウザでdecodeできることを確認した。幅390pxではsplit設定を保持したまま1カラムへフォールバックする。モーダルを閉じた後のfocusとscroll位置、choiceの自動答え合わせ、inputの見比べ表示もブラウザで確認した。
+この版は14ページ、14個の親problem、208個の小問を含む。JSONの `visuals[].src` から42枚の異なるPNGを参照し、ZIPの `assets/` は合計46枚で構成される。JSONの `uncertain: true` は監査上の注意として保持し、教材内容や回答表示へ影響させない。`answer_audit.csv`、`manifest.json`、`contact_sheet.png`、生成物READMEは監査・確認用であり、本番アプリの読込対象に含めない。ZIP自体は `_inputs/` に保持する。
+
+再生成版へ更新する際は、既存の `app/src/data/social/assets/` が今回ZIP以外の利用者作成ファイルを含まないことを確認したうえで、フォルダ内容をZIP内 `assets/` と完全一致させる。JSONから未参照の次の4画像も、指定されたZIP assets一式の一部として配置する。
+
+- `p48_brexit_photo.png`
+- `p4_great_wall.png`
+- `p4_pyramid_sphinx.png`
+- `p6_st_peter_basilica.png`
+
+更新後はJSON内の全画像参照が存在すること、`assets/` のファイル集合がZIP内と一致すること、ID重複やresponse形式エラーがないことを確認する。`python3 app/src/data/sync_index.py` を実行し、`index.json` に同じdataset pathが1件だけ登録されていることも確認する。画像表示はHTTP経由で全42参照が成功し、複数資料を含むproblemで全画像がJSON順に通常・2カラム・モーダルへ表示されることを確認する。幅390pxではsplit設定を保持したまま1カラムへフォールバックし、モーダルを閉じた後もfocusとscroll位置を保つ。
 
 ## 実装対象ファイル
 
 - `app/src/main.js`: subject表示名「社会」
 - `app/index.html`: main.jsのキャッシュバージョン
-- `app/src/data/social/social_jhs1_ancient_europe_africa.json`: 社会教材データ
+- `app/src/data/social/social_jhs1_ancient_europe_africa.json`: 清書版再生成の社会教材データ（14ページ・208小問）
 - `app/src/data/index.json`: 同期で生成されるsubjectとpath
-- `app/src/data/social/assets/`: JSONから参照する34枚の資料画像
-- `README.md` と本書: 利用・運用手順
+- `app/src/data/social/assets/`: ZIPと一致する46枚の画像（JSON参照は42枚）
+- `README.md` と本書: 利用・更新手順と教材版の記録
 
 画像表示と参照資料レイアウトの実装は、理科対応で追加した共通 `VisualRenderer` / `ProblemRenderer` を再利用する。

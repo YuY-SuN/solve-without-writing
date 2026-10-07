@@ -68,7 +68,7 @@ python3 sync_index.py
 
 理科教材も `science/` 配下へ配置し、既存の `mode_switch`・`choice`・入力UIと本文参照モードで扱います。教科表示は「理科」で、問題描画は教科専用rendererを追加せず既存 `response.type` に委譲します。教材例と更新手順は `docs/science-learning-support.md` を参照してください。
 
-社会教材は `social/` 配下へ配置し、既存の `mode_switch`・`choice`・入力UIと参照資料モードで扱います。地図・写真・グラフ等は `visuals[].type: "image"` でdataset JSONから相対参照します。詳しくは `docs/social-learning-support.md` を参照してください。
+社会教材は `social/` 配下へ配置し、既存の `mode_switch`・`choice`・入力UIと参照資料モードで扱います。地図・写真・グラフ等は `visuals[].type: "image"` でdataset JSONから相対参照します。現行の社会2610教材は清書版再生成バンドルを反映しています。詳しくは `docs/social-learning-support.md` を参照してください。
 
 長い本文・資料または共有画像に複数設問が付く問題では、参照資料を `通常`・`2カラム`・`モーダル`で表示できます。画像はproblemの `visuals` に `type: "image"` とdataset相対の `src` を指定します。設定は教科共通で保存し、画面幅が狭い場合の2カラムは一時的に縦並びになります。詳細は `docs/reference-text-layout.md` を参照してください。
 
