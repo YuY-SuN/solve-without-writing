@@ -1,6 +1,6 @@
 # 現在の問題JSON仕様（実装調査結果）
 
-このアプリは問題JSONを表示し、回答を保存し、入力がそろった問題に利用者が「完了」を付ける構成です。回答と `answer` を比較する正誤判定や点数計算は実装されていません。`answer.accepted` などがデータにあっても、採点には使われません。
+このアプリは問題JSONを表示し、回答を保存し、対応形式では小問ごとの答え合わせを行います。利用者が「完了」を付ける機能もあります。choiceとword_orderはanswer.valueと回答を比較して正誤を表示し、free_textや文字入力形式は正誤を断定せず回答と解答例を並べます。点数計算や部分点はありません。`answer.accepted` は文字入力の自動採点には使われません。
 
 以下は現在のコードと収録データの仕様です。問題JSONの実例は `app/src/data/math/problems.json`、各形式の実例は `app/src/data/math/problems003-2.json`、`app/src/data/math/problems002.json`、`app/src/data/math/math_workbook_pages_30_31.json` にあります。
 
@@ -67,7 +67,7 @@ JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/
 | `prompt.text` | 任意。問題文として表示 |
 | `context.text` | 任意。補足文・会話・本文・資料。長文は本文パネルで表示 |
 | `items` | 任意。小問の配列。小問の中にも `items` を置ける再帰構造 |
-| `visuals` | 任意。問題・小問に表示する図表の配列 |
+| `visuals` | 任意。問題・小問に表示する図表の配列。`image` はdataset JSON相対パスで画像を参照 |
 | `work` | 任意。最終回答と別の途中式欄 |
 | `response` | 任意。回答UIの形式。ない場合は回答欄なし |
 | `answer` | 任意。答え表示と一部の図入力・完了判定に使用。親問題の `{}` も実例あり |
@@ -75,9 +75,9 @@ JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/
 | `explanation` | 任意。文字列の解説 |
 | `notes`, `uncertain` | 生成データにある補足メモ・不確実性フラグ。現在の問題UIや判定では参照しない |
 
-小問では `id`, `no`, `label`, `text`, `context`, `visuals`, `work`, `response`, `answer`, `answerVisuals`, `explanation`, `items` を使えます。`no` と `label` は小問見出し、`text` は小問本文です。`section` と `prompt.text` は親問題側の構造です。prompt / context / item textの改行は表示上も保持します。長文contextと複数response nodeがあるproblemは、教科に依存せず「本文・資料」の通常・2カラム・モーダル表示を選べます。問題UIの組み立ては `app/src/renderers/ProblemRenderer.js`、文章・回答欄・答えの表示は `app/src/renderers/TextRenderer.js` にあります。詳細は [reference-text-layout.md](reference-text-layout.md) を参照してください。
+小問では `id`, `no`, `label`, `text`, `context`, `visuals`, `work`, `response`, `answer`, `answerVisuals`, `explanation`, `items` を使えます。`no` と `label` は小問見出し、`text` は小問本文です。`section` と `prompt.text` は親問題側の構造です。prompt / context / item textの改行は表示上も保持します。長文contextまたは画像visualと複数response nodeがあるproblemは、教科に依存せず参照資料の通常・2カラム・モーダル表示を選べます。問題UIの組み立ては `app/src/renderers/ProblemRenderer.js`、文章・回答欄・答えの表示は `app/src/renderers/TextRenderer.js` にあります。詳細は [reference-text-layout.md](reference-text-layout.md) を参照してください。
 
-`answer` は固定の型ではありません。既存データには `value`（数値・文字列・配列・キー付きオブジェクト）、`display`、`formula`、`unit`、`accepted`、`relation` があります。通常画面の「答え」は**`answer` オブジェクト全体をJSONとして表示**します。転記モードでは `display` が文字列または配列ならそれを優先し、なければ `value` を形式別に整形します。`formula`・`unit`・`accepted` は通常画面には表示されますが、採点規則ではありません。
+`answer` は固定の型ではありません。既存データには `value`（数値・文字列・配列・キー付きオブジェクト）、`display`、`formula`、`unit`、`accepted`、`relation` があります。答え合わせ後の答え表示では、`answer.display` が文字列または配列ならそれを優先し、なければanswerの既存表示へフォールバックします。転記モードでも `display` を優先し、なければ `value` を形式別に整形します。`formula`・`unit`・`accepted` は自動採点規則ではありません。
 
 ## 3. 現在の回答形式
 
@@ -105,7 +105,7 @@ JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/
 
 ## 4. 図表形式と暗黙の依存関係
 
-`visuals[]` と `answerVisuals[]` の `type` で対応する値は次の8種類です。図表の振り分けは `app/src/renderers/VisualRenderer.js` にあります。
+`visuals[]` と `answerVisuals[]` の `type` で対応する値は次の9種類です。図表の振り分けは `app/src/renderers/VisualRenderer.js` にあります。
 
 | `visual.type` | 主なフィールド・制約 |
 |---|---|
@@ -117,6 +117,9 @@ JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/
 | `histogram` | `xAxis:{label,bins:[{from,to}]}`、`yAxis:{label,min,max,tick}`、`values`。配列の添字で階級と棒の高さが対応 |
 | `net` | `faces:[{x,y,label}, ...]` は実質必須。`cellSize` は任意。収録データの `solid`, `question`, `answer` は描画側では参照されない |
 | `factorization_ladder` | `steps:[{divisor,dividend,quotient,note?}]`、任意の `finalExpression:{left,right}`。各値に `{blank:true,key}` を置ける。収録データの `method`, `target`, `layout`, `step` 番号は現在の描画では参照されない |
+| `image` | `src` 必須。現在読み込んだdataset JSONのURLを基準に解決する相対パス。`alt`, `caption` は任意。先頭 `/` の絶対パスは使わない。画像が読めない場合は代替文を表示 |
+
+例: `{"type":"image","src":"assets/figure.png","alt":"鏡と光の進み方を示す図","caption":"実験図"}`。`img` は横幅に合わせて縮小され、高さは元画像の比率を維持します。問題・小問どちらの `visuals` にも置けます。
 
 図表の `width`・`height` には種類ごとの既定値があります。表と階段図の空欄は、`response.targets` に対応するキーがあって初めて入力できます。**単に `targets` だけを書いても欄は生まれません。** `table_fill` の `row`・`col` は表の `rows` 配列内の位置です。階段図の `targets[].role`・`.step` は収録データにありますが、現在の入力欄との結合は `key` で行います。
 
@@ -132,7 +135,8 @@ IDに厳密な命名検証はありません。収録データには `p006_q08`�
 
 ## 6. 現仕様で表現しにくいこと
 
-- **自動採点・点数・部分点・許容誤差・別解判定**を指定する仕組みはありません。`answer.accepted` の実例はあっても判定処理はありません。
+- choiceの単一・複数選択とword_orderは自動答え合わせできます。複数選択は選択順を無視し、word_orderはtoken keyの順序を含めて完全一致で判定します。mode_switchは選択中modeへ委譲します。
+- `blank`、`multi_blank`、`free_text` など文字入力形式は文字列一致で正誤判定しません。「見比べてみる」で自分の回答、正答例、解説を表示します。`answer.accepted` による入力答案の判定、点数・部分点・許容誤差・別解判定もありません。
 - 自由記述や数式について、数式としての同値性を評価しません。回答は基本的に文字列として保存します。
 - `draw_graph` の `{points:[...]}` は実データにありますが、現在の完了判定に合いません。
 - 幾何図形や展開図は用意された形のCanvas描画です。任意の画像・任意の図形構成・図上での幾何操作をJSONだけで指定する一般的な仕組みはありません。

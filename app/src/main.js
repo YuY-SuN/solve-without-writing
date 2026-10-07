@@ -1,5 +1,5 @@
-import { renderProblems } from "./renderers/ProblemRenderer.js?v20261006-6";
-import { renderVisualList } from "./renderers/VisualRenderer.js?v20260617-1";
+import { renderProblems } from "./renderers/ProblemRenderer.js?v20261007-1";
+import { renderVisualList } from "./renderers/VisualRenderer.js?v20261007-1";
 import { validateDatasetResponses } from "./response-validation.js?v20261003-1";
 import { evaluateResponseCheck } from "./response-checking.js?v20261004-1";
 
@@ -65,6 +65,15 @@ async function loadDataset(datasetPath) {
     throw new Error(`Failed to load dataset ${datasetPath}: ${res.status}`);
   }
   return res.json();
+}
+
+function getDatasetUrl(datasetPath) {
+  return new URL(`./src/data/${datasetPath}`, document.baseURI).href;
+}
+
+function getActiveDatasetUrl() {
+  const entry = findDatasetEntry(state.selectedDatasetId);
+  return entry?.path ? getDatasetUrl(entry.path) : null;
 }
 
 function getDatasetSubjectFromPath(datasetPath) {
@@ -454,6 +463,7 @@ const SUBJECT_LABELS = {
   math: "数学",
   english: "英語",
   japanese: "国語",
+  science: "理科",
 };
 
 function getSubjectLabel(subject) {
@@ -1418,7 +1428,7 @@ function renderTransferMode() {
       if (row.visuals?.length) {
         const visualBlock = document.createElement("div");
         visualBlock.className = "transfer-visuals-block";
-        renderVisualList(row.visuals, visualBlock, {});
+        renderVisualList(row.visuals, visualBlock, { datasetUrl: getActiveDatasetUrl() });
         item.appendChild(visualBlock);
       }
 
@@ -1534,6 +1544,7 @@ function render() {
 
   renderProblems(elements.problemList, visibleProblems, {
     subjectId: findDatasetEntry(state.selectedDatasetId)?.subject,
+    datasetUrl: getActiveDatasetUrl(),
     responseValues: state.responseValues,
     checkedResponses: state.checkedResponses,
     onResponseChange: handleResponseChange,

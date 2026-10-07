@@ -1,0 +1,4818 @@
+{
+  "meta": {
+    "title": "中学1年 理科 光の反射・屈折（原本 p.92〜99）",
+    "source": "理科2610_文字清書(1).pdf",
+    "version": "1",
+    "language": "ja",
+    "grade": "junior-high-1",
+    "subject": "science",
+    "source_pages": "92-99",
+    "conversion_policy": [
+      "知識・計算・文章説明問題は mode_switch(choice/input) とし、choice は自動答え合わせ、input は自力入力後の見比べを想定。",
+      "原問が作図・線を引く・範囲を塗る形式で、現行UIに自由作図機能がないものは、同じ物理法則・作図原理を問う選択式/入力式へ置換。",
+      "重複スキャンされた原本p.95は1ページ分に統合。",
+      "正答は原資料の記述・図と中学理科の当該法則から確定できる範囲で作成。"
+    ]
+  },
+  "pages": [
+    {
+      "page": 92,
+      "problems": [
+        {
+          "id": "sci_p092_summary",
+          "section": {
+            "no": 1,
+            "title": "光の進み方：要点",
+            "category": "光の反射"
+          },
+          "prompt": {
+            "text": "光の反射に関する基本用語を確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p092_summary_01",
+              "no": 1,
+              "text": "要点の空欄[1]に入る語を答えよう。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "光源"
+                      },
+                      {
+                        "key": "b",
+                        "text": "像"
+                      },
+                      {
+                        "key": "c",
+                        "text": "反射光"
+                      },
+                      {
+                        "key": "d",
+                        "text": "屈折光"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "光源",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "光源"
+                  }
+                }
+              },
+              "explanation": "太陽や照明器具のように、自ら光を出すものを光源といいます。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_summary_02",
+              "no": 2,
+              "text": "要点の空欄[2]に入る語を答えよう。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射"
+                      },
+                      {
+                        "key": "b",
+                        "text": "屈折"
+                      },
+                      {
+                        "key": "c",
+                        "text": "全反射"
+                      },
+                      {
+                        "key": "d",
+                        "text": "直進"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射"
+                  }
+                }
+              },
+              "explanation": "光が物体に当たってはね返る現象を反射といいます。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_summary_03",
+              "no": 3,
+              "text": "要点の空欄[3]に入る語を答えよう。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "入射光"
+                      },
+                      {
+                        "key": "b",
+                        "text": "反射光"
+                      },
+                      {
+                        "key": "c",
+                        "text": "屈折光"
+                      },
+                      {
+                        "key": "d",
+                        "text": "光源"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "入射光",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "入射光"
+                  }
+                }
+              },
+              "explanation": "鏡などの面へ入っていく光が入射光です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_summary_04",
+              "no": 4,
+              "text": "要点の空欄[4]に入る語を答えよう。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射光"
+                      },
+                      {
+                        "key": "b",
+                        "text": "入射光"
+                      },
+                      {
+                        "key": "c",
+                        "text": "屈折光"
+                      },
+                      {
+                        "key": "d",
+                        "text": "散乱光"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射光",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射光"
+                  }
+                }
+              },
+              "explanation": "鏡などの面ではね返って進む光が反射光です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_summary_05",
+              "no": 5,
+              "text": "要点の空欄[5]に入る語を答えよう。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射の法則"
+                      },
+                      {
+                        "key": "b",
+                        "text": "屈折の法則"
+                      },
+                      {
+                        "key": "c",
+                        "text": "光の直進"
+                      },
+                      {
+                        "key": "d",
+                        "text": "全反射"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射の法則",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射の法則"
+                  }
+                }
+              },
+              "explanation": "反射では、法線を基準に測った入射角と反射角が等しくなります。これを反射の法則といいます。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_summary_06",
+              "no": 6,
+              "text": "要点の空欄[6]に入る語を答えよう。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "像"
+                      },
+                      {
+                        "key": "b",
+                        "text": "光源"
+                      },
+                      {
+                        "key": "c",
+                        "text": "焦点"
+                      },
+                      {
+                        "key": "d",
+                        "text": "影"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "像",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "像"
+                  }
+                }
+              },
+              "explanation": "鏡などに物体が映って見えるものを、その物体の像といいます。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_summary_07",
+              "no": 7,
+              "text": "要点の空欄[7]に入る語を答えよう。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "乱反射"
+                      },
+                      {
+                        "key": "b",
+                        "text": "全反射"
+                      },
+                      {
+                        "key": "c",
+                        "text": "屈折"
+                      },
+                      {
+                        "key": "d",
+                        "text": "直進"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "乱反射",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "乱反射"
+                  }
+                }
+              },
+              "explanation": "物体の表面で光がさまざまな方向に反射することを乱反射といいます。",
+              "uncertain": false
+            }
+          ]
+        },
+        {
+          "id": "sci_p092_exp",
+          "section": {
+            "no": 2,
+            "title": "鏡ではね返る光",
+            "category": "光の反射"
+          },
+          "prompt": {
+            "text": "実験結果を使って反射の規則を考えよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p092_exp_01",
+              "no": 1,
+              "text": "実験図の角Aは何という角ですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "入射角"
+                      },
+                      {
+                        "key": "b",
+                        "text": "反射角"
+                      },
+                      {
+                        "key": "c",
+                        "text": "屈折角"
+                      },
+                      {
+                        "key": "d",
+                        "text": "臨界角"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "入射角",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "入射角"
+                  }
+                }
+              },
+              "explanation": "入射角は、入射光と鏡の面に垂直な法線との間の角度です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_exp_02",
+              "no": 2,
+              "text": "実験図の角Bは何という角ですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射角"
+                      },
+                      {
+                        "key": "b",
+                        "text": "入射角"
+                      },
+                      {
+                        "key": "c",
+                        "text": "屈折角"
+                      },
+                      {
+                        "key": "d",
+                        "text": "臨界角"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射角",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射角"
+                  }
+                }
+              },
+              "explanation": "反射角は、反射光と法線との間の角度です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_exp_03",
+              "no": 3,
+              "text": "表の結果から、角Aと角Bの関係を式で表そう。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "角A＝角B"
+                      },
+                      {
+                        "key": "b",
+                        "text": "角A＞角B"
+                      },
+                      {
+                        "key": "c",
+                        "text": "角A＜角B"
+                      },
+                      {
+                        "key": "d",
+                        "text": "角A＋角B＝90°"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "角A＝角B",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "角A＝角B",
+                    "accepted": [
+                      "A＝B",
+                      "A=B",
+                      "角A=角B"
+                    ]
+                  }
+                }
+              },
+              "explanation": "表では0°、10°、20°、30°、40°のすべてでAとBが同じです。反射の法則により入射角＝反射角です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_exp_04",
+              "no": 4,
+              "text": "鏡に当てた光の角Aと、はね返った光の角Bはいつもどうなりますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "等しい"
+                      },
+                      {
+                        "key": "b",
+                        "text": "角Aの方が大きい"
+                      },
+                      {
+                        "key": "c",
+                        "text": "角Bの方が大きい"
+                      },
+                      {
+                        "key": "d",
+                        "text": "合計が180°になる"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "等しい",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "等しい"
+                  }
+                }
+              },
+              "explanation": "反射の法則により、法線を基準に測った入射角と反射角は常に等しくなります。",
+              "uncertain": false
+            }
+          ],
+          "context": {
+            "text": "実験結果\n角A: 0°, 10°, 20°, 30°, 40°\n角B: 0°, 10°, 20°, 30°, 40°"
+          },
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p92_exp_setup.png",
+              "alt": "光源装置から光を出し、鏡に当てて反射させる実験装置と、角A・角Bの結果表",
+              "caption": "鏡で光を反射させる実験"
+            }
+          ]
+        },
+        {
+          "id": "sci_p092_see",
+          "section": {
+            "no": 3,
+            "title": "ものが見えるわけ",
+            "category": "光の反射"
+          },
+          "prompt": {
+            "text": "物体や鏡の像が見える仕組みを確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p092_see_01",
+              "no": 1,
+              "text": "光源から出た光がまっすぐ進むことを何といいますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "光の直進"
+                      },
+                      {
+                        "key": "b",
+                        "text": "光の反射"
+                      },
+                      {
+                        "key": "c",
+                        "text": "光の屈折"
+                      },
+                      {
+                        "key": "d",
+                        "text": "乱反射"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "光の直進",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "光の直進"
+                  }
+                }
+              },
+              "explanation": "同じ物質中では、光は基本的にまっすぐ進みます。これを光の直進といいます。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_see_02",
+              "no": 2,
+              "text": "鏡に映る像の位置は、物体の位置とどのような関係になりますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "鏡の面に対して線対称の位置"
+                      },
+                      {
+                        "key": "b",
+                        "text": "鏡の表面そのもの"
+                      },
+                      {
+                        "key": "c",
+                        "text": "物体と同じ側で2倍遠い位置"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず目の位置と同じ場所"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "鏡の面に対して線対称の位置",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "鏡の面に対して線対称の位置"
+                  }
+                }
+              },
+              "explanation": "平面鏡の像は、鏡の面をはさんで物体と反対側に、鏡から同じ距離だけ離れた位置にあるように見えます。",
+              "uncertain": false,
+              "notes": "原問は図上に像の位置を作図する問題。現行UIで直接作図できないため、像の位置関係を答える形式に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p092_see_03",
+              "no": 3,
+              "text": "鏡に映って見えるものを、物体の何といいますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "像"
+                      },
+                      {
+                        "key": "b",
+                        "text": "影"
+                      },
+                      {
+                        "key": "c",
+                        "text": "光源"
+                      },
+                      {
+                        "key": "d",
+                        "text": "焦点"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "像",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "像"
+                  }
+                }
+              },
+              "explanation": "鏡などに映って見えるものを像といいます。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p092_see_04",
+              "no": 4,
+              "text": "光を出していない物体を見ることができるのは、光源からの光が物体でどうなって目に届くからですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射する"
+                      },
+                      {
+                        "key": "b",
+                        "text": "吸収される"
+                      },
+                      {
+                        "key": "c",
+                        "text": "消える"
+                      },
+                      {
+                        "key": "d",
+                        "text": "全反射する"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射する",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射する"
+                  }
+                }
+              },
+              "explanation": "光源から来た光が物体の表面で反射し、その一部が目に届くため、物体を見ることができます。",
+              "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p92_visible_object.png",
+              "alt": "光源、物体A、鏡、目の位置と光の進み方を示す図"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 93,
+      "problems": [
+        {
+          "id": "sci_p093_angle",
+          "section": {
+            "no": 1,
+            "title": "光の進み方",
+            "category": "光の反射"
+          },
+          "prompt": {
+            "text": "入射角・反射角と反射の法則を確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p093_angle_01",
+              "no": 1,
+              "text": "図のa〜dのうち入射角はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "b"
+                      },
+                      {
+                        "key": "b",
+                        "text": "a"
+                      },
+                      {
+                        "key": "c",
+                        "text": "c"
+                      },
+                      {
+                        "key": "d",
+                        "text": "d"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "b",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "b"
+                  }
+                }
+              },
+              "explanation": "入射角は入射光と法線の間の角です。図ではbがその角に当たります。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p093_angle_02",
+              "no": 2,
+              "text": "図のa〜dのうち反射角はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "c"
+                      },
+                      {
+                        "key": "b",
+                        "text": "a"
+                      },
+                      {
+                        "key": "c",
+                        "text": "b"
+                      },
+                      {
+                        "key": "d",
+                        "text": "d"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "c",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "c"
+                  }
+                }
+              },
+              "explanation": "反射角は反射光と法線の間の角です。図ではcがその角に当たります。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p093_angle_03",
+              "no": 3,
+              "text": "入射角が30°のとき、反射角は何度ですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "30°"
+                      },
+                      {
+                        "key": "b",
+                        "text": "15°"
+                      },
+                      {
+                        "key": "c",
+                        "text": "60°"
+                      },
+                      {
+                        "key": "d",
+                        "text": "90°"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "30°",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "30°",
+                    "accepted": [
+                      "30",
+                      "30度"
+                    ]
+                  }
+                }
+              },
+              "explanation": "反射の法則により、反射角は入射角と等しいので30°です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p093_angle_04",
+              "no": 4,
+              "text": "入射角が50°のとき、反射角は何度ですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "50°"
+                      },
+                      {
+                        "key": "b",
+                        "text": "25°"
+                      },
+                      {
+                        "key": "c",
+                        "text": "40°"
+                      },
+                      {
+                        "key": "d",
+                        "text": "100°"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "50°",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "50°",
+                    "accepted": [
+                      "50",
+                      "50度"
+                    ]
+                  }
+                }
+              },
+              "explanation": "反射の法則により、反射角＝入射角なので50°です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p093_angle_05",
+              "no": 5,
+              "text": "光が鏡などではね返ることを何といいますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射"
+                      },
+                      {
+                        "key": "b",
+                        "text": "屈折"
+                      },
+                      {
+                        "key": "c",
+                        "text": "直進"
+                      },
+                      {
+                        "key": "d",
+                        "text": "分散"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射"
+                  }
+                }
+              },
+              "explanation": "光が境界や物体の表面ではね返る現象を反射といいます。",
+              "uncertain": false
+            }
+          ],
+          "context": {
+            "text": "図では、鏡に垂直な法線を中心に、a〜dの角が示されている。"
+          },
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p93_angles_abcd.png",
+              "alt": "鏡、法線、入射光、反射光と角a〜dを示す図"
+            }
+          ]
+        },
+        {
+          "id": "sci_p093_draw",
+          "section": {
+            "no": 2,
+            "title": "光の反射：作図原理",
+            "category": "光の反射"
+          },
+          "prompt": {
+            "text": "図を見て、反射光の進み方を考えよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p093_draw_01",
+              "no": 1,
+              "text": "図(1)のように光が鏡へ入射したとき、反射光はどのように進みますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "法線をはさんで入射光と反対側へ、入射角と同じ角度で進む"
+                      },
+                      {
+                        "key": "b",
+                        "text": "入射光と同じ側へ同じ角度で戻る"
+                      },
+                      {
+                        "key": "c",
+                        "text": "鏡の面に沿って進む"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず法線上を進む"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "法線をはさんで入射光と反対側へ、入射角と同じ角度で進む",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "法線をはさんで入射光と反対側へ、入射角と同じ角度で進む"
+                  }
+                }
+              },
+              "explanation": "反射光の向きは、反射点に立てた法線を基準にして決めます。入射角と反射角が等しくなる方向が正しい反射光です。",
+              "uncertain": false,
+              "notes": "原問は方眼上に反射光を作図する問題。作図操作を、反射の法則を説明・選択する問題に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p093_draw_02",
+              "no": 2,
+              "text": "図(2)のように光が鏡へ入射したとき、反射光はどのように進みますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "法線をはさんで入射光と反対側へ、入射角と同じ角度で進む"
+                      },
+                      {
+                        "key": "b",
+                        "text": "入射光と同じ側へ同じ角度で戻る"
+                      },
+                      {
+                        "key": "c",
+                        "text": "鏡の面に沿って進む"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず法線上を進む"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "法線をはさんで入射光と反対側へ、入射角と同じ角度で進む",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "法線をはさんで入射光と反対側へ、入射角と同じ角度で進む"
+                  }
+                }
+              },
+              "explanation": "反射光の向きは、反射点に立てた法線を基準にして決めます。入射角と反射角が等しくなる方向が正しい反射光です。",
+              "uncertain": false,
+              "notes": "原問は方眼上に反射光を作図する問題。作図操作を、反射の法則を説明・選択する問題に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p093_draw_03",
+              "no": 3,
+              "text": "図(3)のように光が鏡へ入射したとき、反射光はどのように進みますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "法線をはさんで入射光と反対側へ、入射角と同じ角度で進む"
+                      },
+                      {
+                        "key": "b",
+                        "text": "入射光と同じ側へ同じ角度で戻る"
+                      },
+                      {
+                        "key": "c",
+                        "text": "鏡の面に沿って進む"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず法線上を進む"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "法線をはさんで入射光と反対側へ、入射角と同じ角度で進む",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "法線をはさんで入射光と反対側へ、入射角と同じ角度で進む"
+                  }
+                }
+              },
+              "explanation": "反射光の向きは、反射点に立てた法線を基準にして決めます。入射角と反射角が等しくなる方向が正しい反射光です。",
+              "uncertain": false,
+              "notes": "原問は方眼上に反射光を作図する問題。作図操作を、反射の法則を説明・選択する問題に置換。",
+              "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p93_reflection_examples.png",
+              "alt": "鏡に入射する光の向きが異なる3つの反射の図"
+            }
+          ]
+        },
+        {
+          "id": "sci_p093_image",
+          "section": {
+            "no": 3,
+            "title": "鏡に映って見える物体",
+            "category": "光の反射"
+          },
+          "prompt": {
+            "text": "像の位置と、鏡で反射して目へ届く光を考えよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p093_image_01",
+              "no": 1,
+              "text": "平面鏡に映る像は、鏡に対してどこにあるように見えますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "物体と鏡の面に対して線対称の位置"
+                      },
+                      {
+                        "key": "b",
+                        "text": "鏡の表面上"
+                      },
+                      {
+                        "key": "c",
+                        "text": "物体と同じ側"
+                      },
+                      {
+                        "key": "d",
+                        "text": "目の位置と同じ場所"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "物体と鏡の面に対して線対称の位置",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "物体と鏡の面に対して線対称の位置"
+                  }
+                }
+              },
+              "explanation": "像は鏡の奥に、鏡から物体までの距離と同じだけ離れた位置にあるように見えます。",
+              "uncertain": false,
+              "notes": "原問(1)は像の位置を図に作図する問題。位置関係を言葉で答える形式に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p093_image_02",
+              "no": 2,
+              "text": "像と物体の位置関係を簡単に表すとどうなりますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "鏡からの垂直距離が等しく、鏡の面に対して線対称"
+                      },
+                      {
+                        "key": "b",
+                        "text": "像の方が必ず鏡に近い"
+                      },
+                      {
+                        "key": "c",
+                        "text": "物体の方が必ず鏡に近い"
+                      },
+                      {
+                        "key": "d",
+                        "text": "距離には決まりがない"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "鏡からの垂直距離が等しく、鏡の面に対して線対称",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "鏡からの垂直距離が等しく、鏡の面に対して線対称"
+                  }
+                }
+              },
+              "explanation": "平面鏡では、物体と像は鏡の面を対称軸とした線対称の関係になります。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p093_image_03",
+              "no": 3,
+              "text": "物体から目までの反射光の道すじを作図するとき、まず何を利用すると考えやすいですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "鏡の奥の像と目を直線で結び、その線と鏡の交点を反射点にする"
+                      },
+                      {
+                        "key": "b",
+                        "text": "物体と目を鏡を無視して直線で結ぶ"
+                      },
+                      {
+                        "key": "c",
+                        "text": "鏡の端だけを反射点にする"
+                      },
+                      {
+                        "key": "d",
+                        "text": "反射点をランダムに選ぶ"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "鏡の奥の像と目を直線で結び、その線と鏡の交点を反射点にする",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "鏡の奥の像と目を直線で結び、その線と鏡の交点を反射点にする"
+                  }
+                }
+              },
+              "explanation": "反射した光を鏡の奥へ逆向きに延長すると像の位置から来たように見えます。目と像を結んだ線が鏡と交わる点が反射点になります。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p093_image_04",
+              "no": 4,
+              "text": "図で物体をB〜Eに置いたとき、像が見えない位置はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "E"
+                      },
+                      {
+                        "key": "b",
+                        "text": "B"
+                      },
+                      {
+                        "key": "c",
+                        "text": "C"
+                      },
+                      {
+                        "key": "d",
+                        "text": "D"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "E",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "E"
+                  }
+                }
+              },
+              "explanation": "像の位置と目を結んだ直線が有限の鏡の範囲を通る場合だけ像が見えます。Eの像と目を結ぶ線は鏡の範囲から外れます。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p093_image_05",
+              "no": 5,
+              "text": "光を出していない物体をいろいろな方向から見られる理由を、「光源」「乱反射」を使って説明しよう。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "光源からの光が物体の表面で乱反射し、その一部が目に届くから"
+                      },
+                      {
+                        "key": "b",
+                        "text": "物体自身がすべての方向へ光を出すから"
+                      },
+                      {
+                        "key": "c",
+                        "text": "光源からの光が物体を通り抜けるから"
+                      },
+                      {
+                        "key": "d",
+                        "text": "目から出た光が物体に当たるから"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "光源からの光が物体の表面で乱反射し、その一部が目に届くから",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "光源からの光が物体の表面で乱反射し、その一部が目に届くから"
+                  }
+                }
+              },
+              "explanation": "多くの物体の表面では、光源から来た光がさまざまな方向へ乱反射します。そのうち目の方向へ進んだ光が届くので、さまざまな位置から物体を見ることができます。",
+              "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p93_mirror_object_positions.png",
+              "alt": "鏡と目の位置、物体A〜Eの位置を示す方眼図"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 94,
+      "problems": [
+        {
+          "id": "sci_p094_reflect",
+          "section": {
+            "no": 1,
+            "title": "重点ドリル6：反射の法則",
+            "category": "光の反射"
+          },
+          "prompt": {
+            "text": "鏡の向きが変わっても使える反射の作図原理を確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p094_reflect_01",
+              "no": 1,
+              "text": "図(1)で反射光を作図するとき、正しい決め方はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射点に法線を引き、入射角と反射角が等しくなる方向を選ぶ"
+                      },
+                      {
+                        "key": "b",
+                        "text": "鏡の面との角度を必ず90°にする"
+                      },
+                      {
+                        "key": "c",
+                        "text": "入射光をそのまま直進させる"
+                      },
+                      {
+                        "key": "d",
+                        "text": "鏡の端へ向かうように引く"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射点に法線を引き、入射角と反射角が等しくなる方向を選ぶ",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射点に法線を引き、入射角と反射角が等しくなる方向を選ぶ"
+                  }
+                }
+              },
+              "explanation": "鏡の向きが水平・垂直・斜めのどれであっても、反射点で法線を立て、法線を基準に入射角＝反射角となるようにします。",
+              "uncertain": false,
+              "notes": "原問は3種類の鏡配置での作図。現行UIでは原理選択・説明に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p094_reflect_02",
+              "no": 2,
+              "text": "図(2)で反射光を作図するとき、正しい決め方はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射点に法線を引き、入射角と反射角が等しくなる方向を選ぶ"
+                      },
+                      {
+                        "key": "b",
+                        "text": "鏡の面との角度を必ず90°にする"
+                      },
+                      {
+                        "key": "c",
+                        "text": "入射光をそのまま直進させる"
+                      },
+                      {
+                        "key": "d",
+                        "text": "鏡の端へ向かうように引く"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射点に法線を引き、入射角と反射角が等しくなる方向を選ぶ",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射点に法線を引き、入射角と反射角が等しくなる方向を選ぶ"
+                  }
+                }
+              },
+              "explanation": "鏡の向きが水平・垂直・斜めのどれであっても、反射点で法線を立て、法線を基準に入射角＝反射角となるようにします。",
+              "uncertain": false,
+              "notes": "原問は3種類の鏡配置での作図。現行UIでは原理選択・説明に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p094_reflect_03",
+              "no": 3,
+              "text": "図(3)で反射光を作図するとき、正しい決め方はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射点に法線を引き、入射角と反射角が等しくなる方向を選ぶ"
+                      },
+                      {
+                        "key": "b",
+                        "text": "鏡の面との角度を必ず90°にする"
+                      },
+                      {
+                        "key": "c",
+                        "text": "入射光をそのまま直進させる"
+                      },
+                      {
+                        "key": "d",
+                        "text": "鏡の端へ向かうように引く"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射点に法線を引き、入射角と反射角が等しくなる方向を選ぶ",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射点に法線を引き、入射角と反射角が等しくなる方向を選ぶ"
+                  }
+                }
+              },
+              "explanation": "鏡の向きが水平・垂直・斜めのどれであっても、反射点で法線を立て、法線を基準に入射角＝反射角となるようにします。",
+              "uncertain": false,
+              "notes": "原問は3種類の鏡配置での作図。現行UIでは原理選択・説明に置換。",
+              "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p94_reflection_drill.png",
+              "alt": "鏡の向きや入射光が異なる反射の3つの図"
+            }
+          ]
+        },
+        {
+          "id": "sci_p094_image",
+          "section": {
+            "no": 2,
+            "title": "重点ドリル6：像の作図",
+            "category": "光の反射"
+          },
+          "prompt": {
+            "text": "有限の鏡でも使える像と光路の作図手順を確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p094_image_01",
+              "no": 1,
+              "text": "図(1)で像と反射光を作図するときの手順として正しいものはどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                      },
+                      {
+                        "key": "b",
+                        "text": "目を鏡に対して線対称にして物体とは結ばない"
+                      },
+                      {
+                        "key": "c",
+                        "text": "像を鏡の表面上に置く"
+                      },
+                      {
+                        "key": "d",
+                        "text": "物体と目を鏡を無視して一直線に結ぶだけ"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                  }
+                }
+              },
+              "explanation": "平面鏡では像を先に決めると、目に届く反射光を簡単に作図できます。像と目を結び、その線が鏡と交わる点を反射点とします。",
+              "uncertain": false,
+              "notes": "原問は6種類の方眼図で像と光路を作図する問題。同じ作図手順を問うデジタル問題に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p094_image_02",
+              "no": 2,
+              "text": "図(2)で像と反射光を作図するときの手順として正しいものはどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                      },
+                      {
+                        "key": "b",
+                        "text": "目を鏡に対して線対称にして物体とは結ばない"
+                      },
+                      {
+                        "key": "c",
+                        "text": "像を鏡の表面上に置く"
+                      },
+                      {
+                        "key": "d",
+                        "text": "物体と目を鏡を無視して一直線に結ぶだけ"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                  }
+                }
+              },
+              "explanation": "平面鏡では像を先に決めると、目に届く反射光を簡単に作図できます。像と目を結び、その線が鏡と交わる点を反射点とします。",
+              "uncertain": false,
+              "notes": "原問は6種類の方眼図で像と光路を作図する問題。同じ作図手順を問うデジタル問題に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p094_image_03",
+              "no": 3,
+              "text": "図(3)で像と反射光を作図するときの手順として正しいものはどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                      },
+                      {
+                        "key": "b",
+                        "text": "目を鏡に対して線対称にして物体とは結ばない"
+                      },
+                      {
+                        "key": "c",
+                        "text": "像を鏡の表面上に置く"
+                      },
+                      {
+                        "key": "d",
+                        "text": "物体と目を鏡を無視して一直線に結ぶだけ"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                  }
+                }
+              },
+              "explanation": "平面鏡では像を先に決めると、目に届く反射光を簡単に作図できます。像と目を結び、その線が鏡と交わる点を反射点とします。",
+              "uncertain": false,
+              "notes": "原問は6種類の方眼図で像と光路を作図する問題。同じ作図手順を問うデジタル問題に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p094_image_04",
+              "no": 4,
+              "text": "図(4)で像と反射光を作図するときの手順として正しいものはどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                      },
+                      {
+                        "key": "b",
+                        "text": "目を鏡に対して線対称にして物体とは結ばない"
+                      },
+                      {
+                        "key": "c",
+                        "text": "像を鏡の表面上に置く"
+                      },
+                      {
+                        "key": "d",
+                        "text": "物体と目を鏡を無視して一直線に結ぶだけ"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                  }
+                }
+              },
+              "explanation": "平面鏡では像を先に決めると、目に届く反射光を簡単に作図できます。像と目を結び、その線が鏡と交わる点を反射点とします。",
+              "uncertain": false,
+              "notes": "原問は6種類の方眼図で像と光路を作図する問題。同じ作図手順を問うデジタル問題に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p094_image_05",
+              "no": 5,
+              "text": "図(5)で像と反射光を作図するときの手順として正しいものはどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                      },
+                      {
+                        "key": "b",
+                        "text": "目を鏡に対して線対称にして物体とは結ばない"
+                      },
+                      {
+                        "key": "c",
+                        "text": "像を鏡の表面上に置く"
+                      },
+                      {
+                        "key": "d",
+                        "text": "物体と目を鏡を無視して一直線に結ぶだけ"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                  }
+                }
+              },
+              "explanation": "平面鏡では像を先に決めると、目に届く反射光を簡単に作図できます。像と目を結び、その線が鏡と交わる点を反射点とします。",
+              "uncertain": false,
+              "notes": "原問は6種類の方眼図で像と光路を作図する問題。同じ作図手順を問うデジタル問題に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p094_image_06",
+              "no": 6,
+              "text": "図(6)で像と反射光を作図するときの手順として正しいものはどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                      },
+                      {
+                        "key": "b",
+                        "text": "目を鏡に対して線対称にして物体とは結ばない"
+                      },
+                      {
+                        "key": "c",
+                        "text": "像を鏡の表面上に置く"
+                      },
+                      {
+                        "key": "d",
+                        "text": "物体と目を鏡を無視して一直線に結ぶだけ"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "物体を鏡に対して線対称に移して像を置き、像と目を結んで鏡との交点を反射点にする"
+                  }
+                }
+              },
+              "explanation": "平面鏡では像を先に決めると、目に届く反射光を簡単に作図できます。像と目を結び、その線が鏡と交わる点を反射点とします。",
+              "uncertain": false,
+              "notes": "原問は6種類の方眼図で像と光路を作図する問題。同じ作図手順を問うデジタル問題に置換。",
+              "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p94_mirror_image_drill.png",
+              "alt": "鏡と物体、目の位置を示す6つの方眼図"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 95,
+      "problems": [
+        {
+          "id": "sci_p095_visible",
+          "section": {
+            "no": 1,
+            "title": "鏡に映って見える範囲",
+            "category": "光の反射"
+          },
+          "prompt": {
+            "text": "有限の鏡で、どの物体の像が見えるかを考えよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p095_visible_01",
+              "no": 1,
+              "text": "物体A、Bのうち、Pから鏡に像が見えるのはどちらですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "B"
+                      },
+                      {
+                        "key": "b",
+                        "text": "A"
+                      },
+                      {
+                        "key": "c",
+                        "text": "AとBの両方"
+                      },
+                      {
+                        "key": "d",
+                        "text": "どちらも見えない"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "B",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "B"
+                  }
+                }
+              },
+              "explanation": "A・Bを鏡に対して線対称な位置へ移した像A′・B′を考え、Pとそれぞれの像を結びます。B′とPを結ぶ線は鏡の範囲を通りますが、A′側は鏡の左端から外れます。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p095_visible_02",
+              "no": 2,
+              "text": "物体C、Dのうち、Pから鏡に像が見えるのはどちらですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "C"
+                      },
+                      {
+                        "key": "b",
+                        "text": "D"
+                      },
+                      {
+                        "key": "c",
+                        "text": "CとDの両方"
+                      },
+                      {
+                        "key": "d",
+                        "text": "どちらも見えない"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "C",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "C"
+                  }
+                }
+              },
+              "explanation": "像C′・D′とPを結ぶと、C′への直線は鏡の範囲を通りますが、D′への直線は鏡の右端より外側を通ります。したがって見えるのはCです。",
+              "uncertain": false
+            }
+          ],
+          "notes": "原本p.95は重複スキャンが含まれていたため、このJSONでは1回分に統合。",
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p95_visible_range.png",
+              "alt": "鏡と観察者P、物体A〜Dの位置を示す方眼図"
+            }
+          ]
+        },
+        {
+          "id": "sci_p095_mirror",
+          "section": {
+            "no": 2,
+            "title": "必要な鏡の大きさ",
+            "category": "光の反射"
+          },
+          "prompt": {
+            "text": "全身を映すために必要な鏡の長さを考えよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p095_mirror_01",
+              "no": 1,
+              "text": "身長160cmのAさんが全身を見るため、足先から目へ届く光を考えるときの作図手順として正しいものはどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "足先の像と目を結び、鏡との交点を足先からの光の反射点にする"
+                      },
+                      {
+                        "key": "b",
+                        "text": "足先と目を鏡を無視して直線で結ぶ"
+                      },
+                      {
+                        "key": "c",
+                        "text": "鏡の最下端を必ず反射点にする"
+                      },
+                      {
+                        "key": "d",
+                        "text": "目の像と足先を結ぶ"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "足先の像と目を結び、鏡との交点を足先からの光の反射点にする",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "足先の像と目を結び、鏡との交点を足先からの光の反射点にする"
+                  }
+                }
+              },
+              "explanation": "平面鏡の問題では、物体の各点の像を鏡の奥に置き、その像と目を結ぶことで反射点を決められます。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p095_mirror_02",
+              "no": 2,
+              "text": "全身を映すのに必要な鏡の長さは、身長の何倍ですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "1/2"
+                      },
+                      {
+                        "key": "b",
+                        "text": "1/4"
+                      },
+                      {
+                        "key": "c",
+                        "text": "1倍"
+                      },
+                      {
+                        "key": "d",
+                        "text": "2倍"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "1/2",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "1/2",
+                    "accepted": [
+                      "0.5",
+                      "半分",
+                      "2分の1"
+                    ]
+                  }
+                }
+              },
+              "explanation": "頭頂と足先から目へ届く光の反射点の間隔は、身長の半分になります。目の高さや鏡までの距離によらず、必要な鏡の長さは身長の1/2です.",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p095_mirror_03",
+              "no": 3,
+              "text": "身長160cmのAさんの全身を映すのに必要な鏡の長さは何cmですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "80cm"
+                      },
+                      {
+                        "key": "b",
+                        "text": "40cm"
+                      },
+                      {
+                        "key": "c",
+                        "text": "160cm"
+                      },
+                      {
+                        "key": "d",
+                        "text": "320cm"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "80cm",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "80cm",
+                    "accepted": [
+                      "80",
+                      "80 cm",
+                      "80センチ"
+                    ]
+                  }
+                }
+              },
+              "explanation": "必要な鏡の長さは身長の1/2なので、160÷2＝80cmです。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p095_mirror_04",
+              "no": 4,
+              "text": "身長140cmのBさんの全身を映すのに必要な鏡の長さは何cmですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "70cm"
+                      },
+                      {
+                        "key": "b",
+                        "text": "35cm"
+                      },
+                      {
+                        "key": "c",
+                        "text": "140cm"
+                      },
+                      {
+                        "key": "d",
+                        "text": "280cm"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "70cm",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "70cm",
+                    "accepted": [
+                      "70",
+                      "70 cm",
+                      "70センチ"
+                    ]
+                  }
+                }
+              },
+              "explanation": "必要な鏡の長さは身長の1/2なので、140÷2＝70cmです。",
+              "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p95_required_mirror_A.png",
+              "alt": "身長160cmのAさんと鏡、物体と像の位置を示す図",
+              "caption": "PART 1"
+            },
+            {
+              "type": "image",
+              "src": "assets/p95_required_mirror_B.png",
+              "alt": "身長140cmのBさんと鏡の位置を示す図",
+              "caption": "PART 2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 96,
+      "problems": [
+        {
+          "id": "sci_p096_summary",
+          "section": {
+            "no": 1,
+            "title": "光が通りぬけるとき：要点",
+            "category": "光の屈折"
+          },
+          "prompt": {
+            "text": "屈折・全反射の基本用語を確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p096_summary_01",
+              "no": 1,
+              "text": "異なる物質へ光が斜めに入り、境界面で折れ曲がる現象を何といいますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "屈折"
+                      },
+                      {
+                        "key": "b",
+                        "text": "反射"
+                      },
+                      {
+                        "key": "c",
+                        "text": "直進"
+                      },
+                      {
+                        "key": "d",
+                        "text": "分散"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "屈折",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "屈折"
+                  }
+                }
+              },
+              "explanation": "光が異なる物質の境界で進む向きを変える現象を屈折といいます。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_summary_02",
+              "no": 2,
+              "text": "屈折して進む光を何といいますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "屈折光"
+                      },
+                      {
+                        "key": "b",
+                        "text": "入射光"
+                      },
+                      {
+                        "key": "c",
+                        "text": "反射光"
+                      },
+                      {
+                        "key": "d",
+                        "text": "白色光"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "屈折光",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "屈折光"
+                  }
+                }
+              },
+              "explanation": "境界で屈折した後に進む光を屈折光といいます。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_summary_03",
+              "no": 3,
+              "text": "法線と屈折光の間の角度を何といいますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "屈折角"
+                      },
+                      {
+                        "key": "b",
+                        "text": "入射角"
+                      },
+                      {
+                        "key": "c",
+                        "text": "反射角"
+                      },
+                      {
+                        "key": "d",
+                        "text": "臨界角"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "屈折角",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "屈折角"
+                  }
+                }
+              },
+              "explanation": "屈折角は、境界面に垂直な法線と屈折光の間の角度です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_summary_04",
+              "no": 4,
+              "text": "水やガラスから空気へ進む光が、境界ですべて反射する現象を何といいますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "全反射"
+                      },
+                      {
+                        "key": "b",
+                        "text": "乱反射"
+                      },
+                      {
+                        "key": "c",
+                        "text": "屈折"
+                      },
+                      {
+                        "key": "d",
+                        "text": "分散"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "全反射",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "全反射"
+                  }
+                }
+              },
+              "explanation": "密な物質側から空気側へ進むとき、入射角が十分大きいと光が外へ出ず、すべて反射します。これが全反射です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_summary_05",
+              "no": 5,
+              "text": "白色光をプリズムに通すと、色ごとに異なる角度でどうなりますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "屈折する"
+                      },
+                      {
+                        "key": "b",
+                        "text": "全反射する"
+                      },
+                      {
+                        "key": "c",
+                        "text": "消える"
+                      },
+                      {
+                        "key": "d",
+                        "text": "同じ角度で直進する"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "屈折する",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "屈折する"
+                  }
+                }
+              },
+              "explanation": "光の色によって屈折の程度が少し異なるため、白色光は色ごとに分かれて見えます。",
+              "uncertain": false
+            }
+          ]
+        },
+        {
+          "id": "sci_p096_exp",
+          "section": {
+            "no": 2,
+            "title": "空気と水の間での光の進み方",
+            "category": "光の屈折"
+          },
+          "prompt": {
+            "text": "実験結果から屈折の規則を読み取ろう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p096_exp_01",
+              "no": 1,
+              "text": "空気中から水面へ垂直に光を当てると、光はどう進みますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "折れ曲がらずそのまま直進する"
+                      },
+                      {
+                        "key": "b",
+                        "text": "必ず反射して戻る"
+                      },
+                      {
+                        "key": "c",
+                        "text": "90°曲がる"
+                      },
+                      {
+                        "key": "d",
+                        "text": "水面に沿って進む"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "折れ曲がらずそのまま直進する",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "折れ曲がらずそのまま直進する"
+                  }
+                }
+              },
+              "explanation": "境界面へ垂直に入射すると入射角は0°なので、進行方向は変わりません。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_exp_02",
+              "no": 2,
+              "text": "空気から水へ斜めに進むとき、角A（入射角）と角B（屈折角）の関係はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "角A＞角B"
+                      },
+                      {
+                        "key": "b",
+                        "text": "角A＝角B"
+                      },
+                      {
+                        "key": "c",
+                        "text": "角A＜角B"
+                      },
+                      {
+                        "key": "d",
+                        "text": "角A＋角B＝180°"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "角A＞角B",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "角A＞角B",
+                    "accepted": [
+                      "A>B",
+                      "角A > 角B"
+                    ]
+                  }
+                }
+              },
+              "explanation": "空気から水へ入ると、光は法線に近づく向きへ曲がるため、屈折角は入射角より小さくなります。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_exp_03",
+              "no": 3,
+              "text": "水中から水面へ垂直に光を当てると、光はどう進みますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "折れ曲がらずそのまま直進する"
+                      },
+                      {
+                        "key": "b",
+                        "text": "必ず全反射する"
+                      },
+                      {
+                        "key": "c",
+                        "text": "90°曲がる"
+                      },
+                      {
+                        "key": "d",
+                        "text": "水面に沿って進む"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "折れ曲がらずそのまま直進する",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "折れ曲がらずそのまま直進する"
+                  }
+                }
+              },
+              "explanation": "垂直入射では入射角が0°なので、水から空気へ出る場合でも方向は変わりません。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_exp_04",
+              "no": 4,
+              "text": "水から空気へ斜めに進むとき、角C（入射角）と角D（屈折角）の関係はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "角C＜角D"
+                      },
+                      {
+                        "key": "b",
+                        "text": "角C＝角D"
+                      },
+                      {
+                        "key": "c",
+                        "text": "角C＞角D"
+                      },
+                      {
+                        "key": "d",
+                        "text": "角C＋角D＝90°"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "角C＜角D",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "角C＜角D",
+                    "accepted": [
+                      "C<D",
+                      "角C < 角D"
+                    ]
+                  }
+                }
+              },
+              "explanation": "水から空気へ出ると、光は法線から離れる向きへ曲がるので、屈折角の方が大きくなります。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_exp_05",
+              "no": 5,
+              "text": "屈折角が90°になる境目を越えてさらに入射角を大きくすると、光はどうなりますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "境界面ですべて反射する"
+                      },
+                      {
+                        "key": "b",
+                        "text": "すべて空気中へ直進する"
+                      },
+                      {
+                        "key": "c",
+                        "text": "光が消える"
+                      },
+                      {
+                        "key": "d",
+                        "text": "屈折角が0°になる"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "境界面ですべて反射する",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "境界面ですべて反射する"
+                  }
+                }
+              },
+              "explanation": "水側から空気側へ進むとき、ある入射角を超えると屈折光がなくなり、すべての光が水中へ戻る全反射が起こります。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_exp_06",
+              "no": 6,
+              "text": "空気→水では屈折角は入射角よりどうなりますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "小さくなる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "大きくなる"
+                      },
+                      {
+                        "key": "c",
+                        "text": "必ず等しい"
+                      },
+                      {
+                        "key": "d",
+                        "text": "決まりがない"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "小さくなる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "小さくなる"
+                  }
+                }
+              },
+              "explanation": "空気から水へ入る光は法線側へ曲がるので、屈折角は入射角より小さくなります。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_exp_07",
+              "no": 7,
+              "text": "水→空気では屈折角は入射角よりどうなりますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "大きくなる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "小さくなる"
+                      },
+                      {
+                        "key": "c",
+                        "text": "必ず等しい"
+                      },
+                      {
+                        "key": "d",
+                        "text": "0°になる"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "大きくなる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "大きくなる"
+                  }
+                }
+              },
+              "explanation": "水から空気へ出る光は法線から離れるので、屈折角は入射角より大きくなります。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p096_exp_08",
+              "no": 8,
+              "text": "水→空気で入射角をさらに大きくすると、やがて光はすべてどうなりますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射する"
+                      },
+                      {
+                        "key": "b",
+                        "text": "吸収される"
+                      },
+                      {
+                        "key": "c",
+                        "text": "空気中へ出る"
+                      },
+                      {
+                        "key": "d",
+                        "text": "白色光に分かれる"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射する",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射する"
+                  }
+                }
+              },
+              "explanation": "臨界角を超えると全反射が起こり、光はすべて水中へ反射します。",
+              "uncertain": false
+            }
+          ],
+          "context": {
+            "text": "結果① 空気→水\n角A: 0°, 20°, 30°, 40°, 50°, 60°\n角B: 0°, 15°, 22°, 32°, 35°, 41°\n\n結果② 水→空気\n角C: 0°, 20°, 30°, 40°, 50°, 60°\n角D: 0°, 27°, 42°, 59°, 50°以降は境界面ですべて反射"
+          },
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p96_air_water_left.png",
+              "alt": "空気中から水面へ進む光と分度器を示す実験図",
+              "caption": "結果① 空気から水へ"
+            },
+            {
+              "type": "image",
+              "src": "assets/p96_air_water_right.png",
+              "alt": "水中から空気中へ進む光と分度器を示す実験図",
+              "caption": "結果② 水から空気へ"
+            },
+            {
+              "type": "image",
+              "src": "assets/p96_results_tables.png",
+              "alt": "空気と水の間での入射角と屈折角の実験結果表",
+              "caption": "実験結果"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 97,
+      "problems": [
+        {
+          "id": "sci_p097_coin",
+          "section": {
+            "no": 1,
+            "title": "水中のものの見え方",
+            "category": "光の屈折"
+          },
+          "prompt": {
+            "text": "屈折によって水中の物体が浮き上がって見える理由を考えよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p097_coin_01",
+              "no": 1,
+              "text": "水を入れると見えなかったコインが見えるようになるとき、コインから目へ届く光は水面でどうなりますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "水面で屈折して目に届く"
+                      },
+                      {
+                        "key": "b",
+                        "text": "水面で必ず全反射する"
+                      },
+                      {
+                        "key": "c",
+                        "text": "水中を円を描いて進む"
+                      },
+                      {
+                        "key": "d",
+                        "text": "水面で消える"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "水面で屈折して目に届く",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "水面で屈折して目に届く"
+                  }
+                }
+              },
+              "explanation": "コインで反射した光は水から空気へ出るときに屈折し、もともと目へ届かなかった光が目の方向へ進むようになります。",
+              "uncertain": false,
+              "notes": "原問(1)はP点から目までの光路作図。屈折の仕組みを答える形式に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p097_coin_02",
+              "no": 2,
+              "text": "水を入れるとコインが浮き上がって見えるのはなぜですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "コインで反射した光が水面で屈折して目に届き、目はその光を直線上から来たように感じるから"
+                      },
+                      {
+                        "key": "b",
+                        "text": "コイン自体が水中で上へ移動するから"
+                      },
+                      {
+                        "key": "c",
+                        "text": "水がコインを発光させるから"
+                      },
+                      {
+                        "key": "d",
+                        "text": "光が水面で全反射して目に届かなくなるから"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "コインで反射した光が水面で屈折して目に届き、目はその光を直線上から来たように感じるから",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "コインで反射した光が水面で屈折して目に届き、目はその光を直線上から来たように感じるから"
+                  }
+                }
+              },
+              "explanation": "目は届いた光を直線的に逆延長した位置に物体があると判断します。水面で屈折した光を逆延長すると、実物より浅い位置から来たように見えるためです。",
+              "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p97_coin.png",
+              "alt": "水中のコイン、目の位置、水槽内の光の道すじを示す図"
+            }
+          ]
+        },
+        {
+          "id": "sci_p097_lens",
+          "section": {
+            "no": 2,
+            "title": "ガラスを通る光",
+            "category": "光の屈折"
+          },
+          "prompt": {
+            "text": "半円形レンズの図から、入射・屈折・反射を確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p097_lens_01",
+              "no": 1,
+              "text": "半円形レンズの図で、aは何という角ですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "入射角"
+                      },
+                      {
+                        "key": "b",
+                        "text": "屈折角"
+                      },
+                      {
+                        "key": "c",
+                        "text": "反射角"
+                      },
+                      {
+                        "key": "d",
+                        "text": "臨界角"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "入射角",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "入射角"
+                  }
+                }
+              },
+              "explanation": "aは空気中の入射光と法線の間の角なので入射角です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p097_lens_02",
+              "no": 2,
+              "text": "半円形レンズの図で、bは何という角ですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "屈折角"
+                      },
+                      {
+                        "key": "b",
+                        "text": "入射角"
+                      },
+                      {
+                        "key": "c",
+                        "text": "反射角"
+                      },
+                      {
+                        "key": "d",
+                        "text": "臨界角"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "屈折角",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "屈折角"
+                  }
+                }
+              },
+              "explanation": "bはレンズ内の屈折光と法線の間の角なので屈折角です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p097_lens_03",
+              "no": 3,
+              "text": "半円形レンズの図で、cは何という角ですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "反射角"
+                      },
+                      {
+                        "key": "b",
+                        "text": "入射角"
+                      },
+                      {
+                        "key": "c",
+                        "text": "屈折角"
+                      },
+                      {
+                        "key": "d",
+                        "text": "臨界角"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "反射角",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "反射角"
+                  }
+                }
+              },
+              "explanation": "境界面では一部の光が反射することもあります。cは反射光と法線の間の角なので反射角です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p097_lens_04",
+              "no": 4,
+              "text": "a（入射角）とb（屈折角）の関係はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "a＞b"
+                      },
+                      {
+                        "key": "b",
+                        "text": "a＝b"
+                      },
+                      {
+                        "key": "c",
+                        "text": "a＜b"
+                      },
+                      {
+                        "key": "d",
+                        "text": "a＋b＝180°"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "a＞b",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "a＞b"
+                  }
+                }
+              },
+              "explanation": "空気からガラスへ入る光は法線に近づくので、屈折角bは入射角aより小さくなります。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p097_lens_05",
+              "no": 5,
+              "text": "点Yから点Oへ光を当てたとき、レンズから空気へ出た光はどの方向へ進みますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "点Xを通る方向"
+                      },
+                      {
+                        "key": "b",
+                        "text": "そのまま直進する"
+                      },
+                      {
+                        "key": "c",
+                        "text": "点Zを通る方向"
+                      },
+                      {
+                        "key": "d",
+                        "text": "法線に沿って進む"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "点Xを通る方向",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "点Xを通る方向"
+                  }
+                }
+              },
+              "explanation": "光の道すじには可逆性があります。X→O→Yと進む光の道すじを逆にたどれば、Y→O→Xとなります。",
+              "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p97_semicircle_lens.png",
+              "alt": "半円形レンズ、点X・Y・Z、角a・b・cを示す図"
+            }
+          ]
+        },
+        {
+          "id": "sci_p097_total",
+          "section": {
+            "no": 3,
+            "title": "水中から空気中への光",
+            "category": "全反射"
+          },
+          "prompt": {
+            "text": "入射角と全反射、光ファイバーの仕組みを確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p097_total_01",
+              "no": 1,
+              "text": "図のA→B→Cとなるにつれて、入射角はどうなっていますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "大きくなっている"
+                      },
+                      {
+                        "key": "b",
+                        "text": "小さくなっている"
+                      },
+                      {
+                        "key": "c",
+                        "text": "変わらない"
+                      },
+                      {
+                        "key": "d",
+                        "text": "0°になっている"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "大きくなっている",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "大きくなっている"
+                  }
+                }
+              },
+              "explanation": "図ではA、B、Cの順に光が法線から離れた向きで水面へ入射しており、入射角が大きくなっています。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p097_total_02",
+              "no": 2,
+              "text": "Cで光が水面ですべて反射して空気中へ出ない現象を何といいますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "全反射"
+                      },
+                      {
+                        "key": "b",
+                        "text": "乱反射"
+                      },
+                      {
+                        "key": "c",
+                        "text": "屈折"
+                      },
+                      {
+                        "key": "d",
+                        "text": "分散"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "blank"
+                  }
+                }
+              },
+              "answer": {
+                "display": "全反射",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "全反射"
+                  }
+                }
+              },
+              "explanation": "水から空気へ向かう光で、入射角がある値より大きくなるとすべて反射します。これが全反射です。",
+              "uncertain": false
+            },
+            {
+              "id": "sci_p097_total_03",
+              "no": 3,
+              "text": "光ファイバーが曲がっていても光が進める主な理由は何ですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "内部で全反射をくり返しながら進むから"
+                      },
+                      {
+                        "key": "b",
+                        "text": "光が曲線を自由に描けるから"
+                      },
+                      {
+                        "key": "c",
+                        "text": "光が途中で電気に変わるから"
+                      },
+                      {
+                        "key": "d",
+                        "text": "外側の空気が光を押すから"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "内部で全反射をくり返しながら進むから",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "内部で全反射をくり返しながら進むから"
+                  }
+                }
+              },
+              "explanation": "光ファイバーでは、内部の境界で全反射を繰り返すように設計されており、光が外へ逃げにくくなっています。",
+              "uncertain": false
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p97_water_to_air.png",
+              "alt": "水中から空気中へ進む光と点A・B・Cの位置を示す図"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 98,
+      "problems": [
+        {
+          "id": "sci_p098_normal",
+          "section": {
+            "no": 1,
+            "title": "境界面に垂直に入射する光",
+            "category": "光の屈折"
+          },
+          "prompt": {
+            "text": "物質が変わっても、垂直入射ではどのように進むか確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p098_normal_01",
+              "no": 1,
+              "text": "図(1)のように空気から水へ境界面に垂直に光を入射すると、光はどう進みますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "折れ曲がらず直進する"
+                      },
+                      {
+                        "key": "b",
+                        "text": "境界面に沿って進む"
+                      },
+                      {
+                        "key": "c",
+                        "text": "90°曲がる"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず全反射する"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "折れ曲がらず直進する",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "折れ曲がらず直進する"
+                  }
+                }
+              },
+              "explanation": "境界面に垂直な光は入射角0°です。屈折しても進行方向は変わらないため、そのまま直進します。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p098_normal_02",
+              "no": 2,
+              "text": "図(2)のように空気からガラスへ境界面に垂直に光を入射すると、光はどう進みますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "折れ曲がらず直進する"
+                      },
+                      {
+                        "key": "b",
+                        "text": "境界面に沿って進む"
+                      },
+                      {
+                        "key": "c",
+                        "text": "90°曲がる"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず全反射する"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "折れ曲がらず直進する",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "折れ曲がらず直進する"
+                  }
+                }
+              },
+              "explanation": "境界面に垂直な光は入射角0°です。屈折しても進行方向は変わらないため、そのまま直進します。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p098_normal_03",
+              "no": 3,
+              "text": "図(3)のように水から空気へ境界面に垂直に光を入射すると、光はどう進みますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "折れ曲がらず直進する"
+                      },
+                      {
+                        "key": "b",
+                        "text": "境界面に沿って進む"
+                      },
+                      {
+                        "key": "c",
+                        "text": "90°曲がる"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず全反射する"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "折れ曲がらず直進する",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "折れ曲がらず直進する"
+                  }
+                }
+              },
+              "explanation": "境界面に垂直な光は入射角0°です。屈折しても進行方向は変わらないため、そのまま直進します。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p98_perpendicular_incidence.png",
+              "alt": "異なる物質の境界へ垂直に入射する光を示す3つの図"
+            }
+          ]
+        },
+        {
+          "id": "sci_p098_refract",
+          "section": {
+            "no": 2,
+            "title": "光の屈折①",
+            "category": "光の屈折"
+          },
+          "prompt": {
+            "text": "境界でどちら側へ曲がるかを判断しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p098_refract_01",
+              "no": 1,
+              "text": "図(1)で、空気から水へ斜めに入る光の進み方として適切な説明はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "法線に近づく向きへ曲がる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "法線から離れる向きへ曲がる"
+                      },
+                      {
+                        "key": "c",
+                        "text": "折れ曲がらず直進する"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず全反射する"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "法線に近づく向きへ曲がる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "法線に近づく向きへ曲がる"
+                  }
+                }
+              },
+              "explanation": "屈折の向きは、空気側から水・ガラス側へ入るときは法線へ近づき、逆に水・ガラス側から空気へ出るときは法線から離れる、という規則で判断できます。",
+              "uncertain": false,
+              "notes": "原問は複数の破線候補から正しい光路をなぞる問題。光路の向きを言葉で判断する形式に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p098_refract_02",
+              "no": 2,
+              "text": "図(2)で、水から空気へ斜めに出る光の進み方として適切な説明はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "法線から離れる向きへ曲がる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "法線に近づく向きへ曲がる"
+                      },
+                      {
+                        "key": "c",
+                        "text": "折れ曲がらず直進する"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず境界面に沿って進む"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "法線から離れる向きへ曲がる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "法線から離れる向きへ曲がる"
+                  }
+                }
+              },
+              "explanation": "屈折の向きは、空気側から水・ガラス側へ入るときは法線へ近づき、逆に水・ガラス側から空気へ出るときは法線から離れる、という規則で判断できます。",
+              "uncertain": false,
+              "notes": "原問は複数の破線候補から正しい光路をなぞる問題。光路の向きを言葉で判断する形式に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p098_refract_03",
+              "no": 3,
+              "text": "図(3)で、ガラスから空気へ斜めに出る光の進み方として適切な説明はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "法線から離れる向きへ曲がる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "法線に近づく向きへ曲がる"
+                      },
+                      {
+                        "key": "c",
+                        "text": "折れ曲がらず直進する"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず境界面に沿って進む"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "法線から離れる向きへ曲がる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "法線から離れる向きへ曲がる"
+                  }
+                }
+              },
+              "explanation": "屈折の向きは、空気側から水・ガラス側へ入るときは法線へ近づき、逆に水・ガラス側から空気へ出るときは法線から離れる、という規則で判断できます。",
+              "uncertain": false,
+              "notes": "原問は複数の破線候補から正しい光路をなぞる問題。光路の向きを言葉で判断する形式に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p098_refract_04",
+              "no": 4,
+              "text": "図(4)で、空気から平行な面をもつガラス板へ斜めに入る光の進み方として適切な説明はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "入るとき法線へ近づき、出るとき法線から離れる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "どの境界でも全反射する"
+                      },
+                      {
+                        "key": "c",
+                        "text": "どの境界でも折れ曲がらない"
+                      },
+                      {
+                        "key": "d",
+                        "text": "入射する前と同じ場所へ戻る"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "入るとき法線へ近づき、出るとき法線から離れる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "入るとき法線へ近づき、出るとき法線から離れる"
+                  }
+                }
+              },
+              "explanation": "屈折の向きは、空気側から水・ガラス側へ入るときは法線へ近づき、逆に水・ガラス側から空気へ出るときは法線から離れる、という規則で判断できます。",
+              "uncertain": false,
+              "notes": "原問は複数の破線候補から正しい光路をなぞる問題。光路の向きを言葉で判断する形式に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p098_refract_05",
+              "no": 5,
+              "text": "図(5)で、空気からガラス板へ斜めに入って反対側から出る光の進み方として適切な説明はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "出射光は入射光とほぼ平行になるが、横にずれる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "どの境界でも全反射する"
+                      },
+                      {
+                        "key": "c",
+                        "text": "どの境界でも折れ曲がらない"
+                      },
+                      {
+                        "key": "d",
+                        "text": "入射する前と同じ場所へ戻る"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "出射光は入射光とほぼ平行になるが、横にずれる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "出射光は入射光とほぼ平行になるが、横にずれる"
+                  }
+                }
+              },
+              "explanation": "屈折の向きは、空気側から水・ガラス側へ入るときは法線へ近づき、逆に水・ガラス側から空気へ出るときは法線から離れる、という規則で判断できます。",
+              "uncertain": false,
+              "notes": "原問は複数の破線候補から正しい光路をなぞる問題。光路の向きを言葉で判断する形式に置換。",
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p098_refract_06",
+              "no": 6,
+              "text": "図(6)で、空気から三角プリズムへ入って再び空気へ出る光の進み方として適切な説明はどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "入射時は法線へ近づき、出射時は法線から離れる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "どの境界でも全反射する"
+                      },
+                      {
+                        "key": "c",
+                        "text": "どの境界でも折れ曲がらない"
+                      },
+                      {
+                        "key": "d",
+                        "text": "入射する前と同じ場所へ戻る"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "入射時は法線へ近づき、出射時は法線から離れる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "入射時は法線へ近づき、出射時は法線から離れる"
+                  }
+                }
+              },
+              "explanation": "屈折の向きは、空気側から水・ガラス側へ入るときは法線へ近づき、逆に水・ガラス側から空気へ出るときは法線から離れる、という規則で判断できます。",
+              "uncertain": false,
+              "notes": "原問は複数の破線候補から正しい光路をなぞる問題。光路の向きを言葉で判断する形式に置換。",
+              "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p98_refraction1_six.png",
+              "alt": "空気・水・ガラスの境界で光が進む6つの図"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 99,
+      "problems": [
+        {
+          "id": "sci_p099_path",
+          "section": {
+            "no": 1,
+            "title": "光の屈折②",
+            "category": "光の屈折"
+          },
+          "prompt": {
+            "text": "ガラスを通る光の作図に使う規則を確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p099_path_01",
+              "no": 1,
+              "text": "ガラスを通って目へ届く光の道すじを完成させるとき、空気からガラスへ入る部分はどう曲げますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "法線に近づく向きへ曲げる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "法線から離れる向きへ曲げる"
+                      },
+                      {
+                        "key": "c",
+                        "text": "必ず全反射させる"
+                      },
+                      {
+                        "key": "d",
+                        "text": "境界面に沿わせる"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "法線に近づく向きへ曲げる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "法線に近づく向きへ曲げる"
+                  }
+                }
+              },
+              "explanation": "空気からガラスへ入る光は、屈折によって法線に近づく向きへ曲がります。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p099_path_02",
+              "no": 2,
+              "text": "ガラスから空気へ出て目へ届く光の道すじを完成させるとき、光はどう曲がりますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "法線から離れる向きへ曲がる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "法線に近づく向きへ曲がる"
+                      },
+                      {
+                        "key": "c",
+                        "text": "必ず直進する"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず全反射する"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "法線から離れる向きへ曲がる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "法線から離れる向きへ曲がる"
+                  }
+                }
+              },
+              "explanation": "ガラスから空気へ出る光は、法線から離れる向きへ屈折します。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p099_path_03",
+              "no": 3,
+              "text": "平行な面をもつガラス板を斜めに通り抜ける光の特徴として適切なものはどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "出てきた光は入射光と平行になるが、横にずれる"
+                      },
+                      {
+                        "key": "b",
+                        "text": "出てきた光は必ず入射光と直角になる"
+                      },
+                      {
+                        "key": "c",
+                        "text": "光はガラス内で全反射し続ける"
+                      },
+                      {
+                        "key": "d",
+                        "text": "出てきた光は必ず入射点へ戻る"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "出てきた光は入射光と平行になるが、横にずれる",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "出てきた光は入射光と平行になるが、横にずれる"
+                  }
+                }
+              },
+              "explanation": "平行な2つの境界面で、入るときと出るときに逆向きの屈折が起こるため、最終的な進行方向は入射光と平行になります。ただし位置は横にずれます。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p99_refraction2_three.png",
+              "alt": "ガラスを通る光の道すじを示す3つの図"
+            }
+          ]
+        },
+        {
+          "id": "sci_p099_apparent",
+          "section": {
+            "no": 2,
+            "title": "光の屈折③：見かけの位置",
+            "category": "光の屈折"
+          },
+          "prompt": {
+            "text": "屈折による見かけの位置の変化を考えよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p099_apparent_01",
+              "no": 1,
+              "text": "水中の物体が実際より浅い位置に浮き上がって見えるのはなぜですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "水から空気へ出た光が屈折し、目が光を直線的に逆延長した位置に像を感じるから"
+                      },
+                      {
+                        "key": "b",
+                        "text": "物体自体が上へ移動するから"
+                      },
+                      {
+                        "key": "c",
+                        "text": "水が鏡のように必ず全反射するから"
+                      },
+                      {
+                        "key": "d",
+                        "text": "目から出た光が物体を押し上げるから"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "水から空気へ出た光が屈折し、目が光を直線的に逆延長した位置に像を感じるから",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "水から空気へ出た光が屈折し、目が光を直線的に逆延長した位置に像を感じるから"
+                  }
+                }
+              },
+              "explanation": "水から空気へ出る光は法線から離れる向きに屈折します。目は届いた光を直線上から来たと判断するため、実物より浅い位置にあるように見えます。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p099_apparent_02",
+              "no": 2,
+              "text": "水中の物体の見かけの位置を作図するとき、何を逆向きに延長しますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "空気中を目へ進んでくる光"
+                      },
+                      {
+                        "key": "b",
+                        "text": "水面そのもの"
+                      },
+                      {
+                        "key": "c",
+                        "text": "物体の影"
+                      },
+                      {
+                        "key": "d",
+                        "text": "法線だけ"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "空気中を目へ進んでくる光",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "空気中を目へ進んでくる光"
+                  }
+                }
+              },
+              "explanation": "目は空気中を進んできた光を直線的に逆延長して物体の位置を判断します。その逆延長線上に見かけの像を置きます。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p099_apparent_03",
+              "no": 3,
+              "text": "水に一部入った棒が境界で曲がって見える主な理由は何ですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "水中部分から来る光が水面で屈折し、見かけの位置がずれるから"
+                      },
+                      {
+                        "key": "b",
+                        "text": "棒が水で実際に折れるから"
+                      },
+                      {
+                        "key": "c",
+                        "text": "水面で光がすべて吸収されるから"
+                      },
+                      {
+                        "key": "d",
+                        "text": "空気中の部分だけが発光するから"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "水中部分から来る光が水面で屈折し、見かけの位置がずれるから",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "水中部分から来る光が水面で屈折し、見かけの位置がずれるから"
+                  }
+                }
+              },
+              "explanation": "水中部分から出た光は水面で屈折して目に届きます。水中部分の見かけの位置が実際とずれるため、空気中の部分とのつながりが曲がったように見えます。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p99_refraction3_three.png",
+              "alt": "水中の物体の見え方や棒の屈折を示す3つの図"
+            }
+          ]
+        },
+        {
+          "id": "sci_p099_total",
+          "section": {
+            "no": 3,
+            "title": "全反射",
+            "category": "全反射"
+          },
+          "prompt": {
+            "text": "全反射した光の道すじと、見える像の仕組みを確認しよう。"
+          },
+          "response": {
+            "type": "none"
+          },
+          "items": [
+            {
+              "id": "sci_p099_total_01",
+              "no": 1,
+              "text": "水面で全反射が起きている光は、境界面に当たったあとどう進みますか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "水中へ反射して戻る"
+                      },
+                      {
+                        "key": "b",
+                        "text": "空気中へそのまま直進する"
+                      },
+                      {
+                        "key": "c",
+                        "text": "境界で消える"
+                      },
+                      {
+                        "key": "d",
+                        "text": "必ず法線上へ進む"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "水中へ反射して戻る",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "水中へ反射して戻る"
+                  }
+                }
+              },
+              "explanation": "全反射では屈折光が空気側へ出ず、すべての光が水中へ反射します。反射後は入射角＝反射角です。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            },
+            {
+              "id": "sci_p099_total_02",
+              "no": 2,
+              "text": "水面に逆さに映った金魚が見える場合、その像を見るための光の説明として適切なものはどれですか。",
+              "response": {
+                "type": "mode_switch",
+                "defaultMode": "choice",
+                "modes": {
+                  "choice": {
+                    "type": "choice",
+                    "shuffle": true,
+                    "showKeys": false,
+                    "choices": [
+                      {
+                        "key": "a",
+                        "text": "金魚から来た光が水面で全反射して目に届く"
+                      },
+                      {
+                        "key": "b",
+                        "text": "目から出た光が金魚へ届く"
+                      },
+                      {
+                        "key": "c",
+                        "text": "金魚の像が水面の外に実在する"
+                      },
+                      {
+                        "key": "d",
+                        "text": "水面で光がすべて吸収される"
+                      }
+                    ]
+                  },
+                  "input": {
+                    "type": "free_text",
+                    "lines": 3
+                  }
+                }
+              },
+              "answer": {
+                "display": "金魚から来た光が水面で全反射して目に届く",
+                "modes": {
+                  "choice": {
+                    "value": "a"
+                  },
+                  "input": {
+                    "value": "金魚から来た光が水面で全反射して目に届く"
+                  }
+                }
+              },
+              "explanation": "水中から水面へ向かう光の入射角が十分大きい場所では水面が鏡のように働き、全反射した光が目へ届くため像が見えます。",
+              "uncertain": false,
+              "adaptedFrom": "drawing"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "image",
+              "src": "assets/p99_total_reflection.png",
+              "alt": "水面で全反射する光と水槽内の金魚を示す図"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # mintao-benkyo-tool-memo.d
 
-数学・英語・国語など複数教科の教材を、単一の静的Webアプリで表示・回答するリポジトリです。教材JSONを読み込み、回答入力、答え・解説表示、進捗管理、記憶データの入出力を行う共通ビューアを `app/` 配下で育てています。問題の描画は教科ではなく `response.type` に対応する共通UIを使います。
+数学・英語・国語・理科など複数教科の教材を、単一の静的Webアプリで表示・回答するリポジトリです。教材JSONを読み込み、回答入力、答え・解説表示、進捗管理、記憶データの入出力を行う共通ビューアを `app/` 配下で育てています。問題の描画は教科ではなく `response.type` に対応する共通UIを使います。
 
 ## 主な場所
 
@@ -17,6 +17,7 @@
 - `docs/english-learning-support.md`: 英語教材、回答モード切替、語順問題、操作型学習モードの仕様と運用
 - `docs/english-interaction-coverage.md` / `.json`: 英語JSON全itemの適用判定・coverage一覧
 - `docs/japanese-learning-support.md`: 国語の長文・改行表示、本文へ戻る操作、日本語入力の扱い
+- `docs/science-learning-support.md`: 理科教材の配置、同期、共通responseでの利用方法
 - `docs/reference-text-layout.md`: 本文参照型problemの通常・2カラム・モーダル表示
 - `docs/app-root-layout.md`: 単一アプリ前提のディレクトリ構成と更新手順
 - `docs/transfer-mode-poc.md`: 完了済み問題の転記モード POC と印刷フロー
@@ -43,7 +44,7 @@ python3 -m http.server 4173
 
 ツールバー下のページ進捗カード一覧は、ページ数の多い教材で画面を圧迫するため現在は一時的に非表示です。ページ選択欄の各ページ名には完了数が引き続き表示されます。
 
-新しい問題JSONは教科IDと同じ名前のフォルダへ置きます。例えば英語なら `app/src/data/english/lesson.json`、数学なら `app/src/data/math/problems.json`、国語なら `app/src/data/japanese/lesson.json` です。JSON本体に教科分類用フィールドを追加する必要はありません。
+新しい問題JSONは教科IDと同じ名前のフォルダへ置きます。例えば英語なら `app/src/data/english/lesson.json`、数学なら `app/src/data/math/problems.json`、国語なら `app/src/data/japanese/lesson.json`、理科なら `app/src/data/science/lesson.json` です。JSON本体に教科分類用フィールドを追加する必要はありません。
 
 問題JSONを追加・移動・削除したら、`app/src/data/` で次を実行してください。
 
@@ -64,7 +65,9 @@ python3 sync_index.py
 
 国語などの長文教材では、長い `context.text` を「本文・資料」として読みやすく表示し、各小問の `本文を見る` から本文へ戻れます。prompt・本文・小問文の改行を保持し、日本語IMEの変換中は入力値の確定処理を待ちます。国語も `mode_switch` など既存の共通responseで扱います。詳細は `docs/japanese-learning-support.md` を参照してください。
 
-長い本文・資料に複数設問が付く問題では、`通常`・`2カラム`・`モーダル`を切り替えられます。設定は教科共通で保存し、画面幅が狭い場合の2カラムは一時的に縦並びになります。詳細は `docs/reference-text-layout.md` を参照してください。
+理科教材も `science/` 配下へ配置し、既存の `mode_switch`・`choice`・入力UIと本文参照モードで扱います。教科表示は「理科」で、問題描画は教科専用rendererを追加せず既存 `response.type` に委譲します。教材例と更新手順は `docs/science-learning-support.md` を参照してください。
+
+長い本文・資料または共有画像に複数設問が付く問題では、参照資料を `通常`・`2カラム`・`モーダル`で表示できます。画像はproblemの `visuals` に `type: "image"` とdataset相対の `src` を指定します。設定は教科共通で保存し、画面幅が狭い場合の2カラムは一時的に縦並びになります。詳細は `docs/reference-text-layout.md` を参照してください。
 
 ## 転記モード POC
 

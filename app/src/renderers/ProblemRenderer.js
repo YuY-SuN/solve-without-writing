@@ -5,7 +5,7 @@ import {
   renderAnswer,
   renderExplanation,
 } from "./TextRenderer.js?v20261006-2";
-import { renderVisualList } from "./VisualRenderer.js?v20260617-1";
+import { renderVisualList } from "./VisualRenderer.js?v20261007-1";
 import { englishInteractionOverrides } from "../interactions/english.js?v20261006-5";
 import { inspectWordOrderPrefix } from "../interactions/word-order-feedback.js?v20261006-1";
 
@@ -29,7 +29,7 @@ function getItemResponseKey(problem, item) {
   return item.id ?? `${problem.id}-item-${item.no ?? "response"}`;
 }
 
-function appendAnswerVisuals(node, answerVisuals) {
+function appendAnswerVisuals(node, answerVisuals, options = {}) {
   if (!answerVisuals?.length) {
     return;
   }
@@ -44,7 +44,7 @@ function appendAnswerVisuals(node, answerVisuals) {
 
   const visuals = document.createElement("div");
   visuals.className = "problem-visuals answer-visuals";
-  renderVisualList(answerVisuals, visuals);
+  renderVisualList(answerVisuals, visuals, options);
   wrapper.appendChild(visuals);
 
   node.appendChild(wrapper);
@@ -608,7 +608,7 @@ function getInteractionCompletionValue(response, answer, currentValue) {
   return answer?.value;
 }
 
-function renderResponseFeedback(feedbackNode, stateClassNode, status, response, answer, value, explanation, answerVisuals) {
+function renderResponseFeedback(feedbackNode, stateClassNode, status, response, answer, value, explanation, answerVisuals, options = {}) {
   feedbackNode.innerHTML = "";
   stateClassNode.classList.remove("is-checked-correct", "is-checked-incorrect", "is-compare-open");
   if (!status) {
@@ -659,7 +659,7 @@ function renderResponseFeedback(feedbackNode, stateClassNode, status, response, 
     feedback.appendChild(renderExplanation(explanation));
   }
   if (answerVisuals?.length) {
-    appendAnswerVisuals(feedback, answerVisuals);
+    appendAnswerVisuals(feedback, answerVisuals, options);
   }
   feedbackNode.appendChild(feedback);
 }
@@ -874,6 +874,7 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
       currentValue,
       explanation,
       answerVisuals,
+      options,
     );
   }
 
@@ -914,15 +915,14 @@ const READING_VIEW_MODES = [
 ];
 
 function isReferenceProblem(problem) {
-  if (!problem.context?.text) {
-    return false;
-  }
-  if (problem.layout?.referenceText === true) {
-    return true;
-  }
+  const hasLongTextReference = isLongContextText(problem.context?.text);
+  const hasImageReference = (problem.visuals ?? []).some((visual) => visual?.type === "image");
+  const hasReferenceMaterial = Boolean(problem.context?.text) || (problem.visuals?.length ?? 0) > 0;
+  if (!hasReferenceMaterial) return false;
+  if (problem.layout?.referenceText === true) return true;
   const countResponses = (node) => Number(Boolean(node.response && node.response.type !== "none"))
     + (node.items ?? []).reduce((count, child) => count + countResponses(child), 0);
-  return isLongContextText(problem.context.text) && countResponses(problem) >= 2;
+  return (hasLongTextReference || hasImageReference) && countResponses(problem) >= 2;
 }
 
 function createReferenceViewControls(problem, selectedMode, onChange) {
@@ -930,11 +930,11 @@ function createReferenceViewControls(problem, selectedMode, onChange) {
   group.className = "reference-view-controls";
   group.dataset.problemId = problem.id;
   group.setAttribute("role", "group");
-  group.setAttribute("aria-label", "本文表示モード");
+  group.setAttribute("aria-label", "参照資料の表示モード");
 
   const label = document.createElement("span");
   label.className = "reference-view-label";
-  label.textContent = "本文表示";
+  label.textContent = "参照資料表示";
   group.appendChild(label);
 
   const buttons = document.createElement("div");
@@ -964,12 +964,12 @@ function createReferenceDialog(problem, referenceContent) {
   header.className = "reference-dialog-header";
   const title = document.createElement("h2");
   title.id = `reference-dialog-title-${safeId}`;
-  title.textContent = "本文・資料";
+  title.textContent = "参照資料";
   const closeButton = document.createElement("button");
   closeButton.type = "button";
   closeButton.className = "reference-dialog-close";
   closeButton.textContent = "閉じる";
-  closeButton.setAttribute("aria-label", "本文・資料を閉じる");
+  closeButton.setAttribute("aria-label", "参照資料を閉じる");
   header.append(title, closeButton);
 
   const body = document.createElement("div");
@@ -989,13 +989,18 @@ function createReferenceDialog(problem, referenceContent) {
       document.body.style.overflow = savedOverflow;
       document.body.style.paddingRight = savedPaddingRight;
     }
-    if (opener?.isConnected) {
-      opener.focus({ preventScroll: true });
-    }
-    if (typeof window !== "undefined") {
-      window.scrollTo(savedScrollX, savedScrollY);
-    }
+    const returnFocus = opener;
+    const scrollX = savedScrollX;
+    const scrollY = savedScrollY;
     opener = null;
+    // Run after the native dialog close algorithm so browser focus restoration
+    // cannot override the explicit return to the button that opened the dialog.
+    window.setTimeout(() => {
+      if (returnFocus?.isConnected) {
+        returnFocus.focus({ preventScroll: true });
+      }
+      window.scrollTo(scrollX, scrollY);
+    }, 0);
   }
 
   function open(button) {
@@ -1028,7 +1033,7 @@ function createReferenceDialog(problem, referenceContent) {
   return { dialog, open };
 }
 
-function createAnswerReveal(answer, explanation, answerVisuals = []) {
+function createAnswerReveal(answer, explanation, answerVisuals = [], options = {}) {
   if (!answer && !explanation && answerVisuals.length === 0) {
     return null;
   }
@@ -1048,7 +1053,7 @@ function createAnswerReveal(answer, explanation, answerVisuals = []) {
     content.appendChild(renderExplanation(explanation));
   }
   if (answerVisuals.length) {
-    appendAnswerVisuals(content, answerVisuals);
+    appendAnswerVisuals(content, answerVisuals, options);
   }
   button.addEventListener("click", () => {
     content.hidden = !content.hidden;
@@ -1058,7 +1063,7 @@ function createAnswerReveal(answer, explanation, answerVisuals = []) {
   return wrapper;
 }
 
-function renderItemNode(problem, item, options, depth = 0, inheritedExplanation = null, referenceId = null, openReference = null) {
+function renderItemNode(problem, item, options, depth = 0, inheritedExplanation = null, referenceId = null, openReference = null, referenceLabel = "本文を見る") {
   const itemNode = document.createElement("section");
   itemNode.className = "problem-item";
   itemNode.dataset.depth = String(depth);
@@ -1080,7 +1085,7 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
     const contextLink = document.createElement("button");
     contextLink.type = "button";
     contextLink.className = "problem-context-return";
-    contextLink.textContent = "本文を見る";
+    contextLink.textContent = referenceLabel;
     contextLink.addEventListener("click", () => openReference?.(contextLink));
     itemNode.appendChild(contextLink);
   }
@@ -1110,6 +1115,7 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
     const itemVisuals = document.createElement("div");
     itemVisuals.className = "problem-visuals";
     renderVisualList(item.visuals, itemVisuals, {
+      datasetUrl: options.datasetUrl,
       response: item.response,
       responseKey,
       value: responseKey ? options.responseValues?.[responseKey] ?? null : null,
@@ -1129,7 +1135,7 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
   if (responseUnit) {
     itemNode.appendChild(responseUnit.node);
   } else if (!hasResponseInTree(item)) {
-    const answerReveal = createAnswerReveal(item.answer, item.explanation, item.answerVisuals ?? []);
+    const answerReveal = createAnswerReveal(item.answer, item.explanation, item.answerVisuals ?? [], options);
     if (answerReveal) {
       itemNode.appendChild(answerReveal);
     }
@@ -1147,6 +1153,7 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
         item.explanation ?? inheritedExplanation,
         referenceId,
         openReference,
+        referenceLabel,
       ));
     }
     itemNode.appendChild(nestedItems);
@@ -1247,10 +1254,10 @@ function renderProblem(problem, options) {
 
   header.append(heading, headerSide);
 
-  const referenceId = isLongContextText(problem.context?.text)
-    ? `problem-context-${String(problem.id).replace(/[^a-zA-Z0-9_-]/g, "-")}`
-    : null;
   const hasReferenceLayout = isReferenceProblem(problem);
+  const referenceId = (hasReferenceLayout || isLongContextText(problem.context?.text))
+    ? `problem-reference-${String(problem.id).replace(/[^a-zA-Z0-9_-]/g, "-")}`
+    : null;
   const readingViewMode = ["default", "split", "modal"].includes(options.readingViewMode)
     ? options.readingViewMode
     : "default";
@@ -1264,14 +1271,29 @@ function renderProblem(problem, options) {
   let sourcePane = null;
   let questionPane = null;
   let referenceContent = null;
+  let referenceVisuals = null;
   let referenceDialog = null;
   let readingControls = null;
 
   if (hasReferenceLayout) {
-    referenceContent = renderPrompt(
-      { prompt: null, context: problem.context },
-      { contextId: referenceId },
-    );
+    referenceContent = document.createElement("div");
+    referenceContent.className = "reference-material-content";
+    referenceContent.id = referenceId;
+    referenceContent.tabIndex = -1;
+    if (problem.context?.text) {
+      referenceContent.appendChild(renderPrompt({ prompt: null, context: problem.context }));
+    }
+    if (!isLongContextText(problem.context?.text) && (problem.visuals?.length ?? 0) > 0) {
+      const label = document.createElement("p");
+      label.className = "reference-material-label";
+      label.textContent = "参照資料";
+      referenceContent.prepend(label);
+    }
+    if (problem.visuals?.length) {
+      referenceVisuals = document.createElement("div");
+      referenceVisuals.className = "problem-visuals reference-material-visuals";
+      referenceContent.appendChild(referenceVisuals);
+    }
     referenceLayout = document.createElement("div");
     referenceLayout.className = "reference-layout";
     referenceLayout.dataset.readingViewMode = readingViewMode;
@@ -1298,7 +1320,7 @@ function renderProblem(problem, options) {
       referenceDialog.open(opener);
       return;
     }
-    const context = referenceContent?.querySelector(".problem-context")
+    const context = referenceContent
       ?? prompt.querySelector(".problem-context");
     context?.scrollIntoView({ block: "start" });
     context?.focus({ preventScroll: true });
@@ -1325,7 +1347,8 @@ function renderProblem(problem, options) {
       )
     : null;
 
-  renderVisualList(problem.visuals ?? [], visuals, {
+  renderVisualList(problem.visuals ?? [], referenceVisuals ?? visuals, {
+    datasetUrl: options.datasetUrl,
     response: problem.response,
     responseKey: problemResponseKey,
     value: problemResponseKey ? options.responseValues?.[problemResponseKey] ?? null : null,
@@ -1345,7 +1368,7 @@ function renderProblem(problem, options) {
     items.appendChild(renderItemNode(problem, item, {
       ...options,
       onStatusChange: updateCompletionAfterResponse,
-    }, 0, problem.explanation, referenceId, openReference));
+    }, 0, problem.explanation, referenceId, openReference, hasReferenceLayout ? "参照資料を見る" : "本文を見る"));
   }
 
   article.append(header, prompt);
@@ -1357,11 +1380,13 @@ function renderProblem(problem, options) {
     article.appendChild(referenceLayout);
   }
   const problemContent = questionPane ?? article;
-  problemContent.appendChild(visuals);
+  if (!hasReferenceLayout) {
+    problemContent.appendChild(visuals);
+  }
   if (problemResponseUnit) {
     problemContent.appendChild(problemResponseUnit.node);
   } else if (!hasResponseInTree(problem)) {
-    const answerReveal = createAnswerReveal(problem.answer, problem.explanation, problem.answerVisuals ?? []);
+    const answerReveal = createAnswerReveal(problem.answer, problem.explanation, problem.answerVisuals ?? [], options);
     if (answerReveal) {
       problemContent.appendChild(answerReveal);
     }
