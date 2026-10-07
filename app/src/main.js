@@ -464,6 +464,7 @@ const SUBJECT_LABELS = {
   english: "英語",
   japanese: "国語",
   science: "理科",
+  social: "社会",
 };
 
 function getSubjectLabel(subject) {

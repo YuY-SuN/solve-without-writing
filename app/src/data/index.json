@@ -126,6 +126,12 @@
       "label": "中学1年 理科 光の反射・屈折（原本 p.92〜99）",
       "subject": "science",
       "path": "science/science_jhs1_light_reflection_refraction.json"
+    },
+    {
+      "id": "social-jhs1-ancient-europe-africa",
+      "label": "中学1年 社会 古代文明・ヨーロッパ州・アフリカ州",
+      "subject": "social",
+      "path": "social/social_jhs1_ancient_europe_africa.json"
     }
   ]
 }
