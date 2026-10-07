@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>勉強ツール</title>
-    <link rel="stylesheet" href="./src/styles/page.css?v20261007-1" />
+    <link rel="stylesheet" href="./src/styles/page.css?v20261008-2" />
   </head>
   <body>
     <div class="app-shell">
@@ -30,6 +30,7 @@
           <button id="clear-visible" type="button">表示中をクリア</button>
           <button id="undo-clear" type="button">ひとつもどる</button>
           <button id="redo-clear" type="button">ひとつすすむ</button>
+          <button id="management-exit" type="button" hidden>管理モード終了</button>
           <button id="toggle-transfer-mode" type="button">転記モード</button>
           <button id="toggle-transfer-content" type="button">転記内容: 入力内容</button>
           <button id="print-transfer" type="button">転記を印刷</button>
@@ -38,6 +39,21 @@
           <input id="import-storage-file" type="file" accept="application/json,.json" hidden />
         </div>
       </header>
+
+      <div id="management-dialog" class="management-dialog-backdrop" hidden>
+        <section class="management-dialog" role="dialog" aria-modal="true" aria-labelledby="management-title">
+          <form id="management-form">
+            <h2 id="management-title">管理モード</h2>
+            <label for="management-password">パスワード</label>
+            <input id="management-password" type="password" autocomplete="off" required />
+            <p id="management-message" class="management-message" aria-live="polite"></p>
+            <div class="management-dialog-actions">
+              <button type="submit">開始</button>
+              <button id="management-cancel" type="button" class="secondary-button">キャンセル</button>
+            </div>
+          </form>
+        </section>
+      </div>
 
       <p id="storage-transfer-status" class="toolbar-status" aria-live="polite"></p>
 
@@ -49,6 +65,6 @@
       </main>
     </div>
 
-    <script type="module" src="./src/main.js?v20261007-2"></script>
+    <script type="module" src="./src/main.js?v20261008-4"></script>
   </body>
 </html>
