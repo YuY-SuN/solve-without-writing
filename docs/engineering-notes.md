@@ -163,6 +163,7 @@
 - 起動時にresponse形式を検証し、読み込みに失敗したdatasetは一覧から除外して他datasetの利用を継続する
 - 英語教材の詳細仕様とサンプルは `docs/english-learning-support.md` を参照する
 - 国語教材の長文・改行・IME対応は `docs/japanese-learning-support.md` を参照する
+- 社会教材の地図・写真・グラフ画像と参照資料の更新手順は `docs/social-learning-support.md` を参照する
 - 本文参照型problemの3レイアウトと保存仕様は `docs/reference-text-layout.md` を参照する
 
 ## Lessons learned from recent work
