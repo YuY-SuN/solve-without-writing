@@ -24,6 +24,39 @@ function toGraphPointValue(value) {
   return value;
 }
 
+function createGuidedSolvedValue(response) {
+  const steps = response.steps ?? {};
+  const findPath = (stepId, path = [], selections = {}, outcomes = {}) => {
+    if (stepId === "finish") {
+      return { path: [...path, "finish"], selections, outcomes };
+    }
+    if (!steps[stepId] || path.includes(stepId)) return null;
+    const choices = steps[stepId].interaction?.choices ?? [];
+    const correctChoices = choices.filter((choice) => choice.correct === true);
+    if (!correctChoices.length) return null;
+    const correctKeys = correctChoices.map((choice) => choice.key);
+    for (const choice of correctChoices) {
+      const result = findPath(choice.next, [...path, stepId], {
+        ...selections,
+        [stepId]: steps[stepId].interaction.type === "multi_select" ? correctKeys : choice.key,
+      }, { ...outcomes, [stepId]: "correct" });
+      if (result) return result;
+    }
+    return null;
+  };
+  const result = findPath(response.start);
+  if (!result) return undefined;
+  return {
+    currentStep: "finish",
+    history: result.path,
+    selections: result.selections,
+    outcomes: result.outcomes,
+    orders: {},
+    notice: { kind: "success", text: "完了しました。" },
+    completed: true,
+  };
+}
+
 function createSolvedValue(response, answer) {
   if (!response || response.type === "none") {
     return undefined;
@@ -34,15 +67,25 @@ function createSolvedValue(response, answer) {
     const preferredMode = Object.hasOwn(modes, response.defaultMode)
       ? response.defaultMode
       : Object.keys(modes)[0];
-    const mode = [preferredMode, ...Object.keys(modes).filter((key) => key !== preferredMode)]
-      .find((key) => answer?.modes?.[key]?.value !== undefined);
+    const orderedModes = [preferredMode, ...Object.keys(modes).filter((key) => key !== preferredMode)];
+    const mode = orderedModes.find((key) => modes[key]?.type === "guided_steps"
+      ? createGuidedSolvedValue(modes[key]) !== undefined
+      : answer?.modes?.[key]?.value !== undefined);
     if (!mode) {
       return undefined;
     }
     return {
       mode,
-      values: { [mode]: createSolvedValue(modes[mode], answer.modes[mode]) },
+      values: {
+        [mode]: modes[mode]?.type === "guided_steps"
+          ? createGuidedSolvedValue(modes[mode])
+          : createSolvedValue(modes[mode], answer?.modes?.[mode]),
+      },
     };
+  }
+
+  if (response.type === "guided_steps") {
+    return createGuidedSolvedValue(response);
   }
 
   if (answer && Object.hasOwn(answer, "value")) {

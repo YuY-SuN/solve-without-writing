@@ -146,6 +146,11 @@
 - `choice.shuffle` の順序はrendererのdataset内responseオブジェクト単位でキャッシュし、DOM再描画中に変わらないようにする。再読み込み後は新しい順序になりうる
 - `choice.showKeys: false` は選択肢keyの表示だけを抑制する。省略時は既存どおりkeyを表示する
 - `mode_switch` の保存値は `{ mode, values: { [mode]: answerValue } }`。完了判定は選択中modeのresponseへ委譲する
+- `mode_switch` の表示順は `guided`, `choice`, `input` を優先し、guidedが定義された場合だけ「操作式」を表示する。defaultModeは教材JSONの値を尊重する
+- `guided_steps` は教科非依存のJSON状態遷移response。アプリは計算や途中式生成をせず、step display・choice・correct/feedback・nextを再生する。step state（currentStep/history/selections/outcomes/orders/completed）は既存のmode別回答値に保存し、managementMode中は既存の `persistJson` 制御で永続化しない
+- `guided_steps` は誤答で同じstepに留まり、correct edgeをたどってfinishへ進む。複数の正答choiceと別nextを表現できる。multi_selectはcorrect key集合との一致を確認し、correct choiceのnextは共通にする
+- guided_stepsのJSON validationはstart・参照先・正答key・finish到達をエラー検出し、到達不能step・correct edge cycleをwarningにする。fixtureは `tests/fixtures/guided-steps.json`、ブラウザ操作確認は `tests/guided-steps.html`。本番 `app/src/data/index.json` へfixtureを登録しない
+- guided_stepsとJSON例・更新手順の仕様書は `docs/guided-steps.md`。rendererは `app/src/renderers/GuidedStepsRenderer.js` に分離し、`TextRenderer.js` からresponse.typeで呼ぶ
 - `mode_switch` のmode内にある `multi_blank` の欄追加では、既存のmode別回答を保持し、不足キーだけ `answer.modes[mode].value` で補完する
 - `word_order` の回答値はtoken keyの配列。すべてのtokenを選ぶと入力済みとなり、答え合わせ操作では正答配列と順序込みで比較する
 - 実験的な英語操作型定義は `app/src/interactions/english.js` にitem/problem IDをキーとして置く。JSONを改変せず、subjectが `english` のときだけ表示する。明示定義がない英語 `word_order` にも共通prefix feedbackを提供し、それ以外の未定義問題には操作モードを出さない
@@ -247,6 +252,7 @@
 - `meta.subject` は教科分類の正本ではない。配置フォルダが分類を決めるため、JSON内にsubjectが含まれていても同期結果は親フォルダ名を使う
 - 教科固有でない教材メタデータ（例: `adaptedFrom`, `notes`）は現行表示で利用しない場合も、データファイルから削除せず保つ
 - 画像visualの `src` はdataset JSONファイルからの相対パスとする。`main.js` からdataset URLをrendererへ渡し、`new URL(src, datasetUrl)` で解決することでGitHub Pagesのrepository subpathを保つ。`/src/...` のroot相対URLにしない
+- 共通の「問題を見る」モーダルはproblem/itemの問題文・context・visualsだけを表示し、answer/explanationやresponse stateを参照しない。既存native dialogでフォーカスとwindow scrollを復帰し、画像は共通 `VisualRenderer` にdataset URLを渡して描画する。機能説明と数学データ配置は `docs/math-problem-modal.md` を参照
 - 問題データの修正では、`prompt` / `items[].text` と `answer` と `explanation` を同時に照合する
 - `choice` 問題で `key` を持たせた場合は、画面にもその `key` が見えるようにする。ア・イ・ウの表記を本文だけに埋め込まず、選択肢ラベルとして扱う
 - 行見出しつきの `table` は、列見出し側にも空の先頭セルを置いて、1行目だけ左へずれるデータを作らない

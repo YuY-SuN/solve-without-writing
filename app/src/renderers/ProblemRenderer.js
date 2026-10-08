@@ -4,7 +4,7 @@ import {
   renderResponse,
   renderAnswer,
   renderExplanation,
-} from "./TextRenderer.js?v20261006-2";
+} from "./TextRenderer.js?v20261009-1";
 import { renderVisualList } from "./VisualRenderer.js?v20261007-1";
 import { englishInteractionOverrides } from "../interactions/english.js?v20261006-5";
 import { inspectWordOrderPrefix } from "../interactions/word-order-feedback.js?v20261006-1";
@@ -669,6 +669,9 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
   let currentValue = initialValue;
   let checkState = options.checkedResponses?.[responseKey] ?? null;
   let refreshWordOrderFeedback = () => {};
+  let checkButton = null;
+  let feedbackNode = null;
+  let interactionModeSelected = false;
 
   function commitValue(nextValue) {
     const resolvedValue = typeof nextValue === "function" ? nextValue(currentValue) : nextValue;
@@ -680,13 +683,15 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
     refreshWordOrderFeedback();
     options.onResponseChange?.(responseKey, nextValue);
     options.onStatusChange?.();
-    renderFeedback();
-    updateCheckButton();
+    if (feedbackNode) renderFeedback();
+    if (checkButton) updateCheckButton();
   }
 
   const createResponseNode = () => renderResponse(response, {
     responseKey,
     value: currentValue,
+    answer,
+    explanation,
     onChange: commitValue,
   });
   const responseNode = createResponseNode();
@@ -705,9 +710,6 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
   let valueBeforeInteractionCompletion;
   let checkStateBeforeInteractionCompletion = null;
   let interactionCompletionSnapshot = null;
-  let checkButton = null;
-  let feedbackNode = null;
-  let interactionModeSelected = false;
   const responsePane = document.createElement("div");
   responsePane.className = "response-mode-pane";
   responsePane.appendChild(responseNode);
@@ -852,6 +854,7 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
 
   function updateCheckButton() {
     const active = getActiveResponse(response, answer, currentValue);
+    const guidedMode = active.response?.type === "guided_steps";
     const canAutoCheck = (
       active.response?.type === "choice"
       && active.answer?.value !== undefined
@@ -860,6 +863,8 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
       && Array.isArray(active.answer?.value)
     );
     checkButton.textContent = canAutoCheck ? "答え合わせ" : "見比べてみる";
+    checkButton.hidden = interactionModeSelected || guidedMode;
+    feedbackNode.hidden = interactionModeSelected || guidedMode;
     checkButton.disabled = (Boolean(checkState) && checkState !== "unanswered")
       || (options.isResponseComplete?.(response, currentValue, answer) === false);
   }
@@ -953,7 +958,7 @@ function createReferenceViewControls(problem, selectedMode, onChange) {
   return group;
 }
 
-function createReferenceDialog(problem, referenceContent) {
+function createReferenceDialog(problem) {
   const safeId = String(problem.id).replace(/[^a-zA-Z0-9_-]/g, "-");
   const dialog = document.createElement("dialog");
   dialog.className = "reference-dialog";
@@ -975,7 +980,6 @@ function createReferenceDialog(problem, referenceContent) {
   const body = document.createElement("div");
   body.className = "reference-dialog-body";
   body.tabIndex = -1;
-  body.appendChild(referenceContent);
   dialog.append(header, body);
 
   let opener = null;
@@ -985,6 +989,7 @@ function createReferenceDialog(problem, referenceContent) {
   let savedPaddingRight = "";
 
   function restorePage() {
+    dialog.classList.remove("problem-dialog");
     if (document.body?.style) {
       document.body.style.overflow = savedOverflow;
       document.body.style.paddingRight = savedPaddingRight;
@@ -1003,7 +1008,7 @@ function createReferenceDialog(problem, referenceContent) {
     }, 0);
   }
 
-  function open(button) {
+  function open(button, { title: nextTitle = "参照資料", content = null, problemModal = false } = {}) {
     opener = button;
     savedScrollX = window.scrollX;
     savedScrollY = window.scrollY;
@@ -1017,6 +1022,11 @@ function createReferenceDialog(problem, referenceContent) {
       }
       document.body.style.overflow = "hidden";
     }
+    title.textContent = nextTitle;
+    closeButton.setAttribute("aria-label", `${nextTitle}を閉じる`);
+    dialog.classList.toggle("problem-dialog", problemModal);
+    body.replaceChildren();
+    if (content) body.appendChild(content);
     dialog.showModal();
     closeButton.focus();
   }
@@ -1031,6 +1041,66 @@ function createReferenceDialog(problem, referenceContent) {
   });
 
   return { dialog, open };
+}
+
+function hasProblemModalContent(problem) {
+  let itemCount = 0;
+  let hasItemReference = false;
+  const inspectItems = (items = []) => {
+    for (const item of items) {
+      itemCount += 1;
+      hasItemReference ||= Boolean(item.context?.text)
+        || (item.visuals?.length ?? 0) > 0
+        || isLongContextText(item.text);
+      inspectItems(item.items);
+    }
+  };
+  inspectItems(problem.items);
+  return Boolean(problem.context?.text)
+    || (problem.visuals?.length ?? 0) > 0
+    || isLongContextText(problem.prompt?.text)
+    || itemCount > 1
+    || hasItemReference;
+}
+
+function createProblemModalContent(problem, item, options) {
+  const content = document.createElement("div");
+  content.className = "problem-modal-content";
+
+  const heading = document.createElement("h3");
+  heading.className = "problem-modal-section-title";
+  heading.textContent = problem.section?.title ?? "問題";
+  content.appendChild(heading);
+
+  if (problem.prompt?.text || problem.context?.text) {
+    content.appendChild(renderPrompt(problem));
+  }
+
+  if (problem.visuals?.length) {
+    const visuals = document.createElement("div");
+    visuals.className = "problem-visuals problem-modal-visuals";
+    renderVisualList(problem.visuals, visuals, { datasetUrl: options.datasetUrl });
+    content.appendChild(visuals);
+  }
+
+  if (item?.text) {
+    const itemText = document.createElement("p");
+    itemText.className = "problem-item-text problem-modal-item-text";
+    const itemLabel = [item.no, item.label].filter(Boolean).join(" ");
+    itemText.textContent = itemLabel ? `${itemLabel} ${item.text}` : item.text;
+    content.appendChild(itemText);
+  }
+
+  if (item?.context?.text) {
+    content.appendChild(renderPrompt({ prompt: null, context: item.context }));
+  }
+  if (item?.visuals?.length) {
+    const visuals = document.createElement("div");
+    visuals.className = "problem-visuals problem-modal-visuals";
+    renderVisualList(item.visuals, visuals, { datasetUrl: options.datasetUrl });
+    content.appendChild(visuals);
+  }
+  return content;
 }
 
 function createAnswerReveal(answer, explanation, answerVisuals = [], options = {}) {
@@ -1063,7 +1133,7 @@ function createAnswerReveal(answer, explanation, answerVisuals = [], options = {
   return wrapper;
 }
 
-function renderItemNode(problem, item, options, depth = 0, inheritedExplanation = null, referenceId = null, openReference = null, referenceLabel = "本文を見る") {
+function renderItemNode(problem, item, options, depth = 0, inheritedExplanation = null, referenceId = null, openReference = null, referenceLabel = "本文を見る", problemDialog = null, showProblemModal = false) {
   const itemNode = document.createElement("section");
   itemNode.className = "problem-item";
   itemNode.dataset.depth = String(depth);
@@ -1079,6 +1149,21 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
     itemText.className = "problem-item-text";
     itemText.textContent = item.text;
     itemNode.appendChild(itemText);
+  }
+
+  if (showProblemModal && problemDialog) {
+    const problemButton = document.createElement("button");
+    problemButton.type = "button";
+    problemButton.className = "problem-context-return problem-modal-open";
+    problemButton.textContent = "問題を見る";
+    problemButton.addEventListener("click", () => {
+      problemDialog.open(problemButton, {
+        title: "問題",
+        content: createProblemModalContent(problem, item, options),
+        problemModal: true,
+      });
+    });
+    itemNode.appendChild(problemButton);
   }
 
   if (referenceId) {
@@ -1154,6 +1239,8 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
         referenceId,
         openReference,
         referenceLabel,
+        problemDialog,
+        showProblemModal,
       ));
     }
     itemNode.appendChild(nestedItems);
@@ -1255,6 +1342,7 @@ function renderProblem(problem, options) {
   header.append(heading, headerSide);
 
   const hasReferenceLayout = isReferenceProblem(problem);
+  const showProblemModal = hasProblemModalContent(problem);
   const referenceId = (hasReferenceLayout || isLongContextText(problem.context?.text))
     ? `problem-reference-${String(problem.id).replace(/[^a-zA-Z0-9_-]/g, "-")}`
     : null;
@@ -1308,7 +1396,7 @@ function renderProblem(problem, options) {
     );
 
     if (readingViewMode === "modal") {
-      referenceDialog = createReferenceDialog(problem, referenceContent);
+      referenceDialog = createReferenceDialog(problem);
     } else {
       sourcePane.appendChild(referenceContent);
     }
@@ -1317,7 +1405,7 @@ function renderProblem(problem, options) {
 
   const openReference = (opener) => {
     if (hasReferenceLayout && readingViewMode === "modal" && referenceDialog) {
-      referenceDialog.open(opener);
+      referenceDialog.open(opener, { title: "参照資料", content: referenceContent });
       return;
     }
     const context = referenceContent
@@ -1325,6 +1413,10 @@ function renderProblem(problem, options) {
     context?.scrollIntoView({ block: "start" });
     context?.focus({ preventScroll: true });
   };
+
+  if (!referenceDialog && showProblemModal) {
+    referenceDialog = createReferenceDialog(problem);
+  }
 
   const updateCompletionAfterResponse = () => {
     updateCompletionUi();
@@ -1368,7 +1460,7 @@ function renderProblem(problem, options) {
     items.appendChild(renderItemNode(problem, item, {
       ...options,
       onStatusChange: updateCompletionAfterResponse,
-    }, 0, problem.explanation, referenceId, openReference, hasReferenceLayout ? "参照資料を見る" : "本文を見る"));
+    }, 0, problem.explanation, referenceId, openReference, hasReferenceLayout ? "参照資料を見る" : "本文を見る", referenceDialog, showProblemModal));
   }
 
   article.append(header, prompt);

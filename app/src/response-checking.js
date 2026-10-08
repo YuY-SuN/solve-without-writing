@@ -23,6 +23,12 @@ export function evaluateResponseCheck(response, answer, value, isResponseComplet
     activeValue = value?.values?.[mode];
   }
 
+  if (activeResponse?.type === "guided_steps") {
+    return activeValue?.completed === true && activeValue?.currentStep === "finish"
+      ? "correct"
+      : "unanswered";
+  }
+
   if (activeResponse?.type === "choice" && activeAnswer?.value !== undefined) {
     if (activeResponse.multiple) {
       return isSameUnorderedSelection(activeValue, activeAnswer.value) ? "correct" : "incorrect";

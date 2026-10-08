@@ -1,8 +1,8 @@
-import { renderProblems } from "./renderers/ProblemRenderer.js?v20261007-1";
+import { renderProblems } from "./renderers/ProblemRenderer.js?v20261009-2";
 import { renderVisualList } from "./renderers/VisualRenderer.js?v20261007-1";
-import { validateDatasetResponses } from "./response-validation.js?v20261003-1";
-import { evaluateResponseCheck } from "./response-checking.js?v20261004-1";
-import { createAnswerFromSolution } from "./solved-answer.js?v20261008-1";
+import { validateDatasetResponses, validateDatasetResponseWarnings } from "./response-validation.js?v20261009-3";
+import { evaluateResponseCheck } from "./response-checking.js?v20261009-1";
+import { createAnswerFromSolution } from "./solved-answer.js?v20261009-1";
 
 const RESPONSE_STORAGE_KEY = "benkyo-tool-prompt01:response-values:v1";
 const HISTORY_STORAGE_KEY = "benkyo-tool-prompt01:response-history:v1";
@@ -922,6 +922,10 @@ function isResponseComplete(response, value, answer) {
     return modeResponse ? isResponseComplete(modeResponse, modeValue, answer?.modes?.[mode]) : false;
   }
 
+  if (response.type === "guided_steps") {
+    return value?.completed === true && value?.currentStep === "finish";
+  }
+
   if (response.type === "word_order") {
     return Array.isArray(value) && value.length === (response.tokens ?? []).length;
   }
@@ -1311,6 +1315,13 @@ function formatTransferResponseValue(response, rawValue, answer = null, answerVi
       answer?.modes?.[mode],
       answerVisuals,
     );
+  }
+
+  if (response.type === "guided_steps") {
+    if (rawValue?.currentStep === "finish") {
+      return response.finish?.display ?? "完了";
+    }
+    return `途中: ${response.steps?.[rawValue?.currentStep]?.display ?? "開始前"}`;
   }
 
   if (response.type === "word_order") {
@@ -1787,6 +1798,9 @@ async function bootstrap() {
       const issues = validateDatasetResponses(dataset, entry.id);
       if (issues.length > 0) {
         throw new Error(issues.join("; "));
+      }
+      for (const warning of validateDatasetResponseWarnings(dataset, entry.id)) {
+        console.warn(`[dataset warning] ${warning}`);
       }
       return {
         entry: {

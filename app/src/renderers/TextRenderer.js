@@ -1,3 +1,5 @@
+import { renderGuidedSteps } from "./GuidedStepsRenderer.js?v20261009-2";
+
 const choiceOrderCache = new WeakMap();
 const tokenOrderCache = new WeakMap();
 
@@ -177,6 +179,8 @@ function createModeSwitch(response, options) {
     const activeControl = renderResponse(activeResponse, {
       responseKey: `${options.responseKey ?? "response"}-${activeMode}`,
       value: modeValue[activeMode] ?? null,
+      answer: options.answer?.modes?.[activeMode],
+      explanation: options.explanation,
       onChange: (nextValue) => {
         options.onChange?.((currentValue) => {
           const current = currentValue && typeof currentValue === "object" ? currentValue : {};
@@ -196,15 +200,24 @@ function createModeSwitch(response, options) {
     }
   }
 
-  for (const modeName of Object.keys(modes)) {
+  const preferredModes = ["guided", "choice", "input"];
+  const modeNames = Object.keys(modes).sort((left, right) => {
+    const leftOrder = preferredModes.indexOf(left);
+    const rightOrder = preferredModes.indexOf(right);
+    return (leftOrder < 0 ? preferredModes.length : leftOrder)
+      - (rightOrder < 0 ? preferredModes.length : rightOrder);
+  });
+  for (const modeName of modeNames) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "mode-switch-button";
     button.textContent = modeName === "choice"
       ? "選択式"
       : modeName === "input"
-        ? "記入式"
-        : modeName;
+        ? "入力式"
+        : modeName === "guided"
+          ? "操作式"
+          : modeName;
     button.addEventListener("click", () => {
       activeMode = modeName;
       options.onChange?.({
@@ -392,6 +405,16 @@ export function renderResponse(response, options = {}) {
 
   if (response.type === "mode_switch") {
     wrapper.appendChild(createModeSwitch(response, { ...options, responseKey, value, onChange }));
+    return wrapper;
+  }
+
+  if (response.type === "guided_steps") {
+    wrapper.appendChild(renderGuidedSteps(response, {
+      value,
+      onChange,
+      answerContent: options.answer ? renderAnswer(options.answer) : null,
+      explanationContent: options.explanation ? renderExplanation(options.explanation) : null,
+    }));
     return wrapper;
   }
 

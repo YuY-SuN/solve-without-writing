@@ -20,6 +20,8 @@
 - `docs/science-learning-support.md`: 理科教材の配置、同期、共通responseでの利用方法
 - `docs/social-learning-support.md`: 社会教材の配置、資料画像、参照資料表示の利用方法
 - `docs/reference-text-layout.md`: 本文参照型problemの通常・2カラム・モーダル表示
+- `docs/math-problem-modal.md`: 数学2610 p.43以降の教材と「問題を見る」モーダル
+- `docs/guided-steps.md`: JSON定義の操作式モード、状態遷移・保存・fixtureの仕様
 - `docs/app-root-layout.md`: 単一アプリ前提のディレクトリ構成と更新手順
 - `docs/transfer-mode-poc.md`: 完了済み問題の転記モード POC と印刷フロー
 - `docs/management-mode.md`: PC限定の一時管理モードと正答の回答stateへの投入
@@ -61,7 +63,7 @@ python3 sync_index.py
 
 ## 問題カードの操作
 
-回答UIを持つ問題・小問ごとに、その場で `答え合わせ` または `見比べてみる` を押せます。choice / word_order と mode_switch の選択式は自動判定し、文字入力や自由作文は正誤を断定せず、自分の回答・解答例・解説を並べて表示します。通常モードの `完了` は従来どおり問題カード単位で管理します。操作型モードはgoal到達時に回答を自動判定し、カード内の全回答がそろった場合に完了進捗へ反映します。
+回答UIを持つ問題・小問ごとに、その場で `答え合わせ` または `見比べてみる` を押せます。choice / word_order と mode_switch の選択式は自動判定し、文字入力や自由作文は正誤を断定せず、自分の回答・解答例・解説を並べて表示します。通常モードの `完了` は従来どおり問題カード単位で管理します。英語教材の操作型モードとJSON定義の `guided_steps` は、一手ずつ操作してfinishへ進みます。guided_stepsの途中状態は既存回答localStorageへ保存し、管理モード中は保存しません。
 
 英語教材では `choice`、選択式／記入式切替、`word_order` を利用できます。2つの英語datasetにある432 itemを判定し、53 itemにtransform / repair / conversation / role_change / expandを、54 itemすべてのword_orderに途中prefixフィードバックを適用しています。1問（`eng_p65_b2_3`）は既存transformを保ったままword_order feedbackも追加しており、対象は重複を除いて106 itemです。残る326 itemは語彙、読解、自由作文、短い確認など理由を記録して従来形式を維持します。操作型はgoal到達時に答え合わせを求めず、既存の回答判定・完了進捗へ自動反映します。途中状態は保存しません。静的な操作定義は `app/src/interactions/english.js`、全件の判断・answer・explanation・context・distractor情報は `docs/english-interaction-coverage.json`、レビュー用一覧は `docs/english-interaction-coverage.md` にあります。catalogとJSONの整合確認・一覧再生成には `node scripts/english-interaction-coverage.mjs --write` を使います。通常モードの答え合わせ動作は `docs/answer-checking.md` を参照してください。
 
@@ -72,6 +74,10 @@ python3 sync_index.py
 社会教材は `social/` 配下へ配置し、既存の `mode_switch`・`choice`・入力UIと参照資料モードで扱います。地図・写真・グラフ等は `visuals[].type: "image"` でdataset JSONから相対参照します。現行の社会2610教材は清書版再生成バンドルを反映しています。詳しくは `docs/social-learning-support.md` を参照してください。
 
 長い本文・資料または共有画像に複数設問が付く問題では、参照資料を `通常`・`2カラム`・`モーダル`で表示できます。画像はproblemの `visuals` に `type: "image"` とdataset相対の `src` を指定します。設定は教科共通で保存し、画面幅が狭い場合の2カラムは一時的に縦並びになります。詳細は `docs/reference-text-layout.md` を参照してください。
+
+参照情報がある問題では、小問の `問題を見る` から問題共通の問題文・条件・図表と、現在の小問文を共通モーダルで確認できます。閉じると回答位置へ戻り、入力値・選択・採点結果・現在の回答モードは変わりません。数学2610の原本p.43〜79データは `app/src/data/math/math_jhs1_p43_p79.json` にあり、画像はJSONからの相対パスで `math/assets/` に置きます。詳しくは `docs/math-problem-modal.md` を参照してください。
+
+教材JSONは `mode_switch.modes.guided` に `guided_steps` を定義すると「操作式」を提供できます。数学的な操作と四則演算をどこまで分けるか、各stepの表示・選択肢・正誤・遷移先はJSON側で定義します。アプリは計算や途中式を生成しません。数学2610 p.43〜79教材では、p.43〜47の一部小問に操作式を追加しています。教材JSON更新時は同じ教材ファイルを置き換え、`app/src/data/` で `python3 sync_index.py` を実行します。形式とfixtureの更新手順は `docs/guided-steps.md` を参照してください。
 
 ## 転記モード POC
 
