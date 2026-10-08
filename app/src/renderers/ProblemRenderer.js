@@ -4,7 +4,7 @@ import {
   renderResponse,
   renderAnswer,
   renderExplanation,
-} from "./TextRenderer.js?v20261008-1";
+} from "./TextRenderer.js?v20261009-1";
 import { renderVisualList } from "./VisualRenderer.js?v20261007-1";
 import { englishInteractionOverrides } from "../interactions/english.js?v20261006-5";
 import { inspectWordOrderPrefix } from "../interactions/word-order-feedback.js?v20261006-1";
@@ -687,6 +687,8 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
   const createResponseNode = () => renderResponse(response, {
     responseKey,
     value: currentValue,
+    answer,
+    explanation,
     onChange: commitValue,
   });
   const responseNode = createResponseNode();
@@ -852,6 +854,7 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
 
   function updateCheckButton() {
     const active = getActiveResponse(response, answer, currentValue);
+    const guidedMode = active.response?.type === "guided_steps";
     const canAutoCheck = (
       active.response?.type === "choice"
       && active.answer?.value !== undefined
@@ -860,6 +863,8 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
       && Array.isArray(active.answer?.value)
     );
     checkButton.textContent = canAutoCheck ? "答え合わせ" : "見比べてみる";
+    checkButton.hidden = interactionModeSelected || guidedMode;
+    feedbackNode.hidden = interactionModeSelected || guidedMode;
     checkButton.disabled = (Boolean(checkState) && checkState !== "unanswered")
       || (options.isResponseComplete?.(response, currentValue, answer) === false);
   }

@@ -9,6 +9,7 @@ const BASE_RESPONSE_TYPES = new Set([
   "draw_point",
   "none",
   "word_order",
+  "guided_steps",
 ]);
 
 function addIssue(issues, problemId, message) {
@@ -46,6 +47,139 @@ function validateChoice(response, issues, problemId, path) {
   }
 }
 
+function validateGuidedSteps(response, issues, problemId, path) {
+  const steps = response.steps;
+  if (!steps || typeof steps !== "object" || Array.isArray(steps) || Object.keys(steps).length === 0) {
+    addIssue(issues, problemId, `${path}.steps must be a non-empty object`);
+    return;
+  }
+  if (!response.finish || typeof response.finish !== "object" || Array.isArray(response.finish)) {
+    addIssue(issues, problemId, `${path}.finish must be an object`);
+  } else {
+    if (typeof response.finish.display !== "string") {
+      addIssue(issues, problemId, `${path}.finish.display must be a string`);
+    }
+    if (response.finish.summary !== undefined && typeof response.finish.summary !== "string") {
+      addIssue(issues, problemId, `${path}.finish.summary must be a string`);
+    }
+  }
+  if (typeof response.start !== "string" || !Object.hasOwn(steps, response.start)) {
+    addIssue(issues, problemId, `${path}.start must name a step`);
+  }
+
+  const targets = new Map();
+  for (const [stepId, step] of Object.entries(steps)) {
+    const stepPath = `${path}.steps.${stepId}`;
+    if (!step || typeof step !== "object" || Array.isArray(step)) {
+      addIssue(issues, problemId, `${stepPath} must be an object`);
+      continue;
+    }
+    if (typeof step.display !== "string") {
+      addIssue(issues, problemId, `${stepPath}.display must be a string`);
+    }
+    if (typeof step.prompt !== "string") {
+      addIssue(issues, problemId, `${stepPath}.prompt must be a string`);
+    }
+    if (step.progress !== undefined && (!step.progress
+      || !Number.isInteger(step.progress.current)
+      || !Number.isInteger(step.progress.total)
+      || step.progress.current < 1
+      || step.progress.total < step.progress.current)) {
+      addIssue(issues, problemId, `${stepPath}.progress must have integer current/total with 1 <= current <= total`);
+    }
+    const interaction = step.interaction;
+    if (!interaction || !["choice", "multi_select"].includes(interaction.type)) {
+      addIssue(issues, problemId, `${stepPath}.interaction.type must be choice or multi_select`);
+      continue;
+    }
+    if (interaction.shuffle !== undefined && typeof interaction.shuffle !== "boolean") {
+      addIssue(issues, problemId, `${stepPath}.interaction.shuffle must be a boolean`);
+    }
+    if (!Array.isArray(interaction.choices) || interaction.choices.length === 0) {
+      addIssue(issues, problemId, `${stepPath}.interaction.choices must be a non-empty array`);
+      continue;
+    }
+    const keys = new Set();
+    let correctCount = 0;
+    const stepTargets = [];
+    for (const [index, choice] of interaction.choices.entries()) {
+      const choicePath = `${stepPath}.interaction.choices[${index}]`;
+      if (!choice || typeof choice !== "object") {
+        addIssue(issues, problemId, `${choicePath} must be an object`);
+        continue;
+      }
+      if (typeof choice.key !== "string" || !choice.key) {
+        addIssue(issues, problemId, `${choicePath}.key must be a non-empty string`);
+      } else if (keys.has(choice.key)) {
+        addIssue(issues, problemId, `${stepPath}.interaction.choices has duplicate key "${choice.key}"`);
+      } else {
+        keys.add(choice.key);
+      }
+      if (typeof choice.text !== "string") {
+        addIssue(issues, problemId, `${choicePath}.text must be a string`);
+      }
+      if (typeof choice.correct !== "boolean") {
+        addIssue(issues, problemId, `${choicePath}.correct must be a boolean`);
+      }
+      if (choice.feedback !== undefined && typeof choice.feedback !== "string") {
+        addIssue(issues, problemId, `${choicePath}.feedback must be a string`);
+      }
+      if (choice.correct === true) {
+        correctCount += 1;
+        if (typeof choice.next !== "string" || !choice.next) {
+          addIssue(issues, problemId, `${choicePath}.next is required for a correct choice`);
+        }
+        if (typeof choice.next === "string") stepTargets.push(choice.next);
+      } else if (choice.next !== undefined) {
+        if (typeof choice.next !== "string" || !choice.next) {
+          addIssue(issues, problemId, `${choicePath}.next must be a non-empty string`);
+        } else {
+          stepTargets.push(choice.next);
+        }
+      }
+    }
+    if (correctCount === 0) {
+      addIssue(issues, problemId, `${stepPath} must have at least one correct choice`);
+    }
+    if (interaction.type === "multi_select") {
+      const correctTargets = new Set(interaction.choices
+        .filter((choice) => choice.correct === true)
+        .map((choice) => choice.next));
+      if (correctTargets.size > 1) {
+        addIssue(issues, problemId, `${stepPath}.interaction multi_select correct choices must share one next target`);
+      }
+    }
+    targets.set(stepId, stepTargets);
+  }
+
+  for (const [stepId, stepTargets] of targets) {
+    for (const target of stepTargets) {
+      if (target !== "finish" && !Object.hasOwn(steps, target)) {
+        addIssue(issues, problemId, `${path}.steps.${stepId} references unknown next step "${target}"`);
+      } else if (target === "finish" && (!response.finish || typeof response.finish !== "object")) {
+        addIssue(issues, problemId, `${path}.steps.${stepId} points to finish but ${path}.finish is missing`);
+      }
+    }
+  }
+
+  if (typeof response.start === "string" && Object.hasOwn(steps, response.start)) {
+    const visited = new Set();
+    const queue = [response.start];
+    let reachesFinish = false;
+    while (queue.length) {
+      const stepId = queue.shift();
+      if (visited.has(stepId)) continue;
+      visited.add(stepId);
+      for (const choice of steps[stepId]?.interaction?.choices ?? []) {
+        if (choice.correct !== true) continue;
+        if (choice.next === "finish") reachesFinish = true;
+        else if (typeof choice.next === "string" && Object.hasOwn(steps, choice.next)) queue.push(choice.next);
+      }
+    }
+    if (!reachesFinish) addIssue(issues, problemId, `${path} has no correct-choice route from start to finish`);
+  }
+}
+
 function validateResponse(response, answer, issues, problemId, path = "response") {
   if (!response || typeof response !== "object" || typeof response.type !== "string") {
     addIssue(issues, problemId, `${path}.type is required`);
@@ -54,6 +188,11 @@ function validateResponse(response, answer, issues, problemId, path = "response"
 
   if (response.type === "choice") {
     validateChoice(response, issues, problemId, path);
+    return;
+  }
+
+  if (response.type === "guided_steps") {
+    validateGuidedSteps(response, issues, problemId, path);
     return;
   }
 
@@ -160,4 +299,70 @@ export function validateDatasetResponses(dataset, datasetId = "dataset") {
     }
   }
   return issues;
+}
+
+function collectResponseNodes(node, visit, fallbackId) {
+  if (!node || typeof node !== "object") return;
+  const problemId = node.id ?? fallbackId;
+  if (node.response) visit(node.response, problemId, "response");
+  for (const [modeName, response] of Object.entries(node.response?.modes ?? {})) {
+    visit(response, problemId, `response.modes.${modeName}`);
+  }
+  for (const [index, item] of (node.items ?? []).entries()) {
+    collectResponseNodes(item, visit, `${problemId}/item-${index + 1}`);
+  }
+}
+
+function collectGuidedWarnings(response, problemId, path) {
+  if (response?.type !== "guided_steps" || !response.steps || typeof response.steps !== "object") return [];
+  const warnings = [];
+  const steps = response.steps;
+  const reachable = new Set();
+  const queue = typeof response.start === "string" ? [response.start] : [];
+  while (queue.length) {
+    const stepId = queue.shift();
+    if (reachable.has(stepId) || !Object.hasOwn(steps, stepId)) continue;
+    reachable.add(stepId);
+    for (const choice of steps[stepId]?.interaction?.choices ?? []) {
+      if (choice.correct !== true || typeof choice.next !== "string" || choice.next === "finish") continue;
+      queue.push(choice.next);
+    }
+  }
+  const unreachable = Object.keys(steps).filter((stepId) => !reachable.has(stepId));
+  if (unreachable.length) {
+    warnings.push(`${problemId}: ${path} has unreachable steps: ${unreachable.join(", ")}`);
+  }
+
+  const visiting = new Set();
+  const visited = new Set();
+  let hasCycle = false;
+  const inspect = (stepId) => {
+    if (visiting.has(stepId)) {
+      hasCycle = true;
+      return;
+    }
+    if (visited.has(stepId) || !Object.hasOwn(steps, stepId)) return;
+    visiting.add(stepId);
+    for (const choice of steps[stepId]?.interaction?.choices ?? []) {
+      if (choice.correct !== true || typeof choice.next !== "string" || choice.next === "finish") continue;
+      inspect(choice.next);
+    }
+    visiting.delete(stepId);
+    visited.add(stepId);
+  };
+  inspect(response.start);
+  if (hasCycle) warnings.push(`${problemId}: ${path} has a cycle in its correct-choice graph; check that learners can still reach finish.`);
+  return warnings;
+}
+
+export function validateDatasetResponseWarnings(dataset, datasetId = "dataset") {
+  const warnings = [];
+  for (const [pageIndex, page] of (dataset?.pages ?? []).entries()) {
+    for (const [problemIndex, problem] of (page?.problems ?? []).entries()) {
+      collectResponseNodes(problem, (response, problemId, path) => {
+        warnings.push(...collectGuidedWarnings(response, problemId, path));
+      }, `${datasetId}/page-${pageIndex + 1}/problem-${problemIndex + 1}`);
+    }
+  }
+  return warnings;
 }

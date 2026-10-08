@@ -34,7 +34,7 @@
 
 `pages[].page` は数値として扱うのが安全です。ページ選択肢は番号順に並びます。問題オブジェクトに別途 `page` が書かれた実例もありますが、表示・集計時には**外側の `pages[].page` で上書き**されます。`meta` と `pages`、各ページの `problems` は正常な画面表示に実質必須です。
 
-JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/src/response-validation.js` が新形式を含むresponse構造を起動時に検証します。仕様はこの検証処理とJavaScriptの分岐で決まります。`index.json` の更新ツールは `app/src/data/sync_index.py` です。同ツールはdata以下を再帰走査し、トップレベルに `meta` オブジェクトと `pages` 配列を持つ問題JSONだけを登録します。index自身や管理用JSONは対象外です。教科選択UIと英語responseの詳細は [english-learning-support.md](english-learning-support.md) を参照してください。
+JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/src/response-validation.js` がresponse構造を起動時に検証します。guided_stepsではstart・next参照・finish到達・choice key・正答の有無をエラーとして確認し、到達不能step・正答edgeのcycleをwarningにします。仕様は検証処理とJavaScriptの分岐で決まります。`index.json` の更新ツールは `app/src/data/sync_index.py` です。同ツールはdata以下を再帰走査し、トップレベルに `meta` オブジェクトと `pages` 配列を持つ問題JSONだけを登録します。index自身や管理用JSONは対象外です。教科選択UIと英語responseの詳細は [english-learning-support.md](english-learning-support.md) を参照してください。
 
 ## 2. 問題・小問の共通構造
 
@@ -95,9 +95,12 @@ JSON Schema、TypeScriptの型・interface、dataclassはありません。`app/
 | `draw_point` | 数直線へラベル付きの点を配置 | `{ラベル: 数値}` | `answer.value` の全キーに値がある |
 | `none` | 回答欄なし | なし | 常に入力済み扱い |
 | `word_order` | `tokens:[{key,text}]`。任意の `shuffle`。tokenをクリックして順序を作る | token keyの配列 | 全tokenを選択 |
-| `mode_switch` | `defaultMode` と `modes` にresponse形式を指定 | `{"mode":"...","values":{"mode名": mode別回答}}` | 現在のmodeのresponse形式に委譲 |
+| `mode_switch` | `defaultMode` と `modes` にresponse形式を指定。`guided` / `choice` / `input` は「操作式」/「選択式」/「入力式」と表示 | `{"mode":"...","values":{"mode名": mode別回答}}` | 現在のmodeのresponse形式に委譲 |
+| `guided_steps` | `start`, `steps` map, `finish`; 各stepは `display`, `prompt`, `interaction` と選択肢を持つ | step ID、履歴、選択key、結果、表示順、完了状態を含むobject | `currentStep: "finish"` かつ `completed: true` |
 
 `choice` の保存値は `choice.key ?? choice.text ?? ""` で決まります。`showKeys:false` を指定するとkeyを隠し、省略時は従来どおり表示します。`shuffle:true` は表示順をresponseオブジェクト単位で固定し、DOM再描画で順序が変わらないようにします。選択肢配列の順序が通常の表示順です。`multiple` を省略すると単一選択です。`answer.value` が選択肢のキーと対応する実例がありますが、アプリはその一致を判定しません。
+
+`guided_steps` はresponseの汎用状態遷移です。`steps` は `{stepId: {display, prompt, interaction}}`、`interaction.type` は `choice` または `multi_select`、選択肢は `{key,text,correct,feedback?,next?}` です。任意の `progress:{current,total}` でstep進行を表示できます。correct選択肢は複数置け、各 `next` を別stepへ指定できます。誤答はそのstepに留まりfeedbackを表示します。`finish.display` は完了時だけ表示し、任意の `finish.summary` と既存 `answer` / `explanation` も完了後に参照できます。`multi_select` は正答key全体との一致で判定し、correct choicesは共通nextへ進みます。数学を計算する機能はなく、必要な四則演算まで含めた分解粒度はJSON側で決めます。詳しいJSON例と運用は [guided-steps.md](guided-steps.md) を参照してください。
 
 `draw_graph` は**図の種類で `answer.value` の形が変わります**。数直線の実例には数値・`{type:"fraction",numerator,denominator}` を含む配列と、`{points:[...]}` の両方があります。ただし現在の完了判定が対応するのは配列、または `{bins:[...]}` です。`{points:[...]}` は転記表示では扱われますが、**完了判定では未対応**です。数直線UIは点を目盛り幅へ丸め、値を昇順で保存し、同じ座標への点の重複追加はできません。`draw_point` では `answer.value` のキーの列挙順が、画面上で追加する点ラベルの順序になります。
 
@@ -141,7 +144,7 @@ IDに厳密な命名検証はありません。収録データには `p006_q08`�
 - `draw_graph` の `{points:[...]}` は実データにありますが、現在の完了判定に合いません。
 - 幾何図形や展開図は用意された形のCanvas描画です。任意の画像・任意の図形構成・図上での幾何操作をJSONだけで指定する一般的な仕組みはありません。
 - 図中の `question` や `answer`、`notes`、`uncertain` など、収録データにあっても現在のUIが解釈しないフィールドがあります。
-- 問題JSONの構造検証がないため、必要フィールドの欠落やキーの不一致を読み込み時に一括検出しません。
+- guided_steps以外の既存responseでは、対応する必須フィールドやanswer keyを網羅的に検証しません。
 
 ## 最小JSON例
 

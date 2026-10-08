@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>guided_steps renderer test</title>
+    <link rel="stylesheet" href="../app/src/styles/page.css?guided=2" />
+    <style>
+      body { padding: 16px; }
+      #fixtures { display: grid; gap: 20px; }
+      .fixture-case { padding: 12px; border: 1px solid #ccd4e0; border-radius: 8px; }
+      #result[data-status="pass"] { color: #17652b; }
+      #result[data-status="fail"] { color: #a11; }
+    </style>
+  </head>
+  <body>
+    <h1>guided_steps renderer test</h1>
+    <pre id="result">実行中…</pre>
+    <main id="fixtures"></main>
+    <script type="module">
+      import { renderResponse } from "../app/src/renderers/TextRenderer.js";
+      import { renderProblems } from "../app/src/renderers/ProblemRenderer.js";
+      import { validateDatasetResponses, validateDatasetResponseWarnings } from "../app/src/response-validation.js";
+      import { createAnswerFromSolution } from "../app/src/solved-answer.js";
+      import { evaluateResponseCheck } from "../app/src/response-checking.js";
+
+      const result = document.querySelector("#result");
+      const fixtureRoot = document.querySelector("#fixtures");
+      const assert = (condition, message) => { if (!condition) throw new Error(message); };
+      const clickChoice = (root, key) => {
+        const button = [...root.querySelectorAll("[data-choice-key]")]
+          .find((candidate) => candidate.dataset.choiceKey === key);
+        assert(button, `選択肢 ${key} が見つかる`);
+        button.click();
+      };
+      const mount = (problem, valueHolder) => renderResponse(problem.response, {
+        value: valueHolder.value,
+        answer: problem.answer,
+        explanation: problem.explanation,
+        onChange: (next) => {
+          valueHolder.value = typeof next === "function" ? next(valueHolder.value) : next;
+        },
+      });
+
+      try {
+        const response = await fetch("./fixtures/guided-steps.json?v=3");
+        assert(response.ok, "fixture JSONを読み込める");
+        const dataset = await response.json();
+        assert(validateDatasetResponses(dataset).length === 0, "fixtureがresponse validationを通る");
+        assert(validateDatasetResponseWarnings(dataset).length === 0, "fixtureに到達不能stepやcycleがない");
+
+        const problems = dataset.pages.flatMap((page) => page.problems);
+        const solvedGuided = createAnswerFromSolution(problems[0].response, problems[0].answer);
+        assert(solvedGuided.mode === "guided" && solvedGuided.values.guided.completed, "管理モード用solverがcorrect edgeからguided finishを作る");
+        const solvedCheck = evaluateResponseCheck(problems[0].response, problems[0].answer, solvedGuided,
+          (responseNode, value) => responseNode.type === "mode_switch"
+            ? value.mode === "guided" && value.values.guided.completed
+            : value?.completed === true && value?.currentStep === "finish");
+        assert(solvedCheck === "correct", "guided finishを既存response checkへ接続する");
+        for (const problem of problems) {
+          const holder = { value: null };
+          const card = document.createElement("section");
+          card.className = "fixture-case";
+          const title = document.createElement("h2");
+          title.textContent = problem.id;
+          card.append(title);
+          const view = mount(problem, holder);
+          card.append(view);
+          fixtureRoot.append(card);
+
+          if (problem.response.type === "mode_switch") {
+            const modeButtons = [...view.querySelectorAll(".mode-switch-button")];
+            assert(modeButtons.map((button) => button.textContent).join("/") === "操作式/選択式/入力式", "3モードを規定順で表示");
+            assert(modeButtons[0].getAttribute("aria-pressed") === "true", "defaultMode=guidedを尊重する");
+            assert(view.querySelector(".response-check-button") === null, "renderer単体では問題外の答え合わせUIを作らない");
+          }
+          if (problem.id === "guided-equation") {
+            assert(view.querySelector(".guided-progress")?.textContent === "1 / 3", `JSONに指定したstep進行を表示する (actual: ${view.querySelector(".guided-progress")?.textContent})`);
+          }
+
+          const guided = problem.response.type === "mode_switch"
+            ? problem.response.modes.guided
+            : problem.response;
+          const initialStep = guided.start;
+          assert(!view.textContent.includes(problem.answer?.display ?? "__no-answer__"), "完了前に最終答えを表示しない");
+          if (problem.id === "guided-like-terms") {
+            assert(Array.isArray(holder.value?.orders?.terms), "shuffle順をguided stateへ保存する");
+          }
+
+          if (problem.id === "guided-equation") {
+            const inputButton = [...view.querySelectorAll(".mode-switch-button")]
+              .find((button) => button.textContent === "入力式");
+            inputButton.click();
+            const input = view.querySelector("input.response-input");
+            assert(input, "入力式にtext inputを表示する");
+            input.value = "x = 2";
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+            const guidedButton = [...view.querySelectorAll(".mode-switch-button")]
+              .find((button) => button.textContent === "操作式");
+            guidedButton.click();
+            assert(view.querySelector(".guided-current-state")?.textContent === "3x + 9 = 15", "modeを戻してもguided開始状態を保つ");
+            const nextInputButton = [...view.querySelectorAll(".mode-switch-button")]
+              .find((button) => button.textContent === "入力式");
+            nextInputButton.click();
+            assert(view.querySelector("input.response-input")?.value === "x = 2", "modeを戻してもinput値を保つ");
+            [...view.querySelectorAll(".mode-switch-button")].find((button) => button.textContent === "選択式").click();
+            const choiceInput = [...view.querySelectorAll(".choice-input")].find((input) => input.value === "two");
+            assert(choiceInput, "選択式modeにchoice controlを表示する");
+            choiceInput.click();
+            assert(holder.value.values.choice === "two", "choice選択をmode別に保存する");
+            [...view.querySelectorAll(".mode-switch-button")].find((button) => button.textContent === "操作式").click();
+            [...view.querySelectorAll(".mode-switch-button")].find((button) => button.textContent === "選択式").click();
+            assert(view.querySelector(".choice-input[value='two']")?.checked, `guidedとの切替後もchoice選択を保つ (state=${JSON.stringify(holder.value)})`);
+            [...view.querySelectorAll(".mode-switch-button")].find((button) => button.textContent === "操作式").click();
+          }
+
+          const readGuidedValue = () => problem.response.type === "mode_switch"
+            ? holder.value?.values?.guided
+            : holder.value;
+          const visited = new Set();
+          while ((readGuidedValue()?.currentStep ?? guided.start) !== "finish") {
+            const state = readGuidedValue() ?? { currentStep: guided.start };
+            const stepId = state.currentStep;
+            assert(!visited.has(stepId), `${problem.id} correct routeが循環しない`);
+            visited.add(stepId);
+            const step = guided.steps[stepId];
+            const wrong = step.interaction.choices.find((choice) => !choice.correct);
+            if (wrong) {
+              clickChoice(view, wrong.key);
+              const afterWrong = holder.value?.values?.guided ?? holder.value;
+              assert(afterWrong.currentStep === stepId, "誤答後も同じstepに留まる");
+              assert(view.querySelector(".guided-feedback[data-kind='hint']")?.textContent.includes(wrong.feedback), "誤答feedbackを表示する");
+              if (problem.id === "guided-like-terms" && stepId === "terms") {
+                assert(JSON.stringify(afterWrong.orders.terms) === JSON.stringify(holder.value.orders.terms), "shuffle順を同じ試行中に保つ");
+              }
+            }
+            const correct = step.interaction.choices.find((choice) => choice.correct);
+            clickChoice(view, correct.key);
+            const afterCorrect = holder.value?.values?.guided ?? holder.value;
+            assert(afterCorrect.currentStep === correct.next, "JSONのnextへ遷移する");
+          }
+
+          const completedState = holder.value?.values?.guided ?? holder.value;
+          assert(completedState.completed && completedState.currentStep === "finish", "finish到達を完了として保持する");
+          assert(view.querySelector(".guided-current-state")?.textContent === guided.finish.display, "finish表示だけに最終状態を表示する");
+          if (problem.id === "guided-equation") {
+            assert(holder.value.values.input === "x = 2", "guided操作中もinput値を保持する");
+          }
+          if (problem.id === "guided-like-terms") {
+            assert(view.textContent.includes("同類項なので係数を足し"), "完了後にexplanationを表示する");
+          }
+          const storageKey = "benkyo-tool-prompt01:response-values:v1";
+          const savedValues = { [problem.id]: holder.value };
+          localStorage.setItem(storageKey, JSON.stringify(savedValues));
+          const loadedValues = JSON.parse(localStorage.getItem(storageKey));
+          const reloadedHolder = { value: loadedValues[problem.id] };
+          const reloadedView = mount(problem, reloadedHolder);
+          const reloadedGuided = problem.response.type === "mode_switch"
+            ? reloadedHolder.value.values.guided
+            : reloadedHolder.value;
+          assert(reloadedGuided.completed && reloadedView.querySelector(".guided-current-state")?.textContent === guided.finish.display, "既存response-valuesのJSON保存・読込で完了stepを復元");
+          localStorage.removeItem(storageKey);
+          const back = view.querySelector(".guided-back");
+          back.click();
+          assert((holder.value?.values?.guided ?? holder.value).currentStep !== "finish", "ひとつ戻るで直前stepへ戻る");
+          const restart = view.querySelector(".guided-restart");
+          restart.click();
+          assert((holder.value?.values?.guided ?? holder.value).currentStep === guided.start, "最初からでstartへ戻る");
+
+          const restored = mount(problem, { value: holder.value });
+          if (problem.response.type === "mode_switch") {
+            const restoredGuided = restored.querySelector(".guided-current-state");
+            assert(restoredGuided?.textContent === guided.steps[guided.start].display, "保存state形状から再描画できる");
+          }
+        }
+
+        // Two correct branches may lead to separate valid routes.
+        const routeFixture = {
+          type: "guided_steps", start: "a",
+          steps: {
+            a: { display: "2(x+3)=10", prompt: "解き方を選ぶ", interaction: { type: "choice", choices: [
+              { key: "expand", text: "かっこを外す", correct: true, next: "b" },
+              { key: "divide", text: "先に2で割る", correct: true, next: "c" },
+            ] } },
+            b: { display: "2x+6=10", prompt: "finishへ", interaction: { type: "choice", choices: [{ key: "done", text: "進む", correct: true, next: "finish" }] } },
+            c: { display: "x+3=5", prompt: "finishへ", interaction: { type: "choice", choices: [{ key: "done", text: "進む", correct: true, next: "finish" }] } },
+          },
+          finish: { display: "x=2" },
+        };
+        for (const firstRoute of ["expand", "divide"]) {
+          const valueHolder = { value: null };
+          const view = renderResponse(routeFixture, { value: null, onChange: (next) => { valueHolder.value = typeof next === "function" ? next(valueHolder.value) : next; } });
+          clickChoice(view, firstRoute);
+          assert(valueHolder.value?.currentStep === (firstRoute === "expand" ? "b" : "c"), `複数の正答route ${firstRoute} を扱える (actual: ${JSON.stringify(valueHolder.value)})`);
+        }
+
+        const multiSelectResponse = {
+          type: "guided_steps", start: "terms",
+          steps: { terms: { display: "3x + 2x", prompt: "同類項を選ぶ", interaction: { type: "multi_select", choices: [
+            { key: "3x", text: "3x", correct: true, next: "finish" },
+            { key: "2x", text: "+2x", correct: true, next: "finish" },
+            { key: "none", text: "どちらでもない", correct: false, feedback: "xの係数に注目します。" },
+          ] } } }, finish: { display: "5x" },
+        };
+        const multiValue = { value: null };
+        const multiView = renderResponse(multiSelectResponse, { onChange: (next) => { multiValue.value = next; } });
+        clickChoice(multiView, "3x");
+        clickChoice(multiView, "none");
+        multiView.querySelector(".guided-submit").click();
+        assert(multiValue.value.currentStep === "terms", "multi_selectの不正解はstep内に留まる");
+        clickChoice(multiView, "none");
+        clickChoice(multiView, "2x");
+        multiView.querySelector(".guided-submit").click();
+        assert(multiValue.value.currentStep === "finish", "multi_selectは全correct keyの一致で進む");
+
+        const invalidDataset = { pages: [{ problems: [{ id: "bad-guided", response: {
+          type: "guided_steps", start: "start", steps: {
+            start: { display: "x", prompt: "選択", interaction: { type: "choice", choices: [
+              { key: "same", text: "a", correct: true, next: "missing" },
+              { key: "same", text: "b", correct: false },
+            ] } },
+            orphan: { display: "y", prompt: "到達不能", interaction: { type: "choice", choices: [{ key: "end", text: "終わり", correct: true, next: "finish" }] } },
+          }, finish: { display: "done" },
+        } }] }] };
+        const invalidIssues = validateDatasetResponses(invalidDataset, "invalid");
+        const invalidWarnings = validateDatasetResponseWarnings(invalidDataset, "invalid");
+        assert(invalidIssues.some((issue) => issue.includes("duplicate key"))
+          && invalidIssues.some((issue) => issue.includes("unknown next step")), "duplicate keyとunknown nextをerrorにする");
+        assert(invalidWarnings.some((warning) => warning.includes("orphan")), "到達不能stepをwarningにする");
+
+        const cycleDataset = { pages: [{ problems: [{ id: "cycle-guided", response: {
+          type: "guided_steps", start: "a", steps: {
+            a: { display: "a", prompt: "選ぶ", interaction: { type: "choice", choices: [
+              { key: "loop", text: "bへ", correct: true, next: "b" },
+              { key: "finish", text: "完了へ", correct: true, next: "finish" },
+            ] } },
+            b: { display: "b", prompt: "戻る", interaction: { type: "choice", choices: [{ key: "back", text: "aへ", correct: true, next: "a" }] } },
+          }, finish: { display: "done" },
+        } }] }] };
+        assert(validateDatasetResponses(cycleDataset).length === 0, "cycle warningだけではdatasetを拒否しない");
+        assert(validateDatasetResponseWarnings(cycleDataset).some((warning) => warning.includes("cycle")), "correct edgeのcycleをwarningにする");
+
+        const legacyModes = renderResponse({
+          type: "mode_switch", defaultMode: "choice", modes: {
+            choice: { type: "choice", choices: [{ key: "a", text: "A" }] },
+            input: { type: "blank" },
+          },
+        });
+        assert([...legacyModes.querySelectorAll(".mode-switch-button")].map((button) => button.textContent).join("/") === "選択式/入力式", "guidedがない既存mode_switchは従来の2モード表示");
+        assert(legacyModes.querySelector(".mode-switch-button[aria-pressed='true']")?.textContent === "選択式", "JSON defaultMode=choiceを尊重する");
+
+        const modalProblem = {
+          id: "guided-modal-item",
+          page: 1,
+          section: { no: 1, title: "問題モーダル連携", category: "文章題" },
+          prompt: { text: "共通条件を確認しながら操作式を進めます。" },
+          context: { text: "あめとチョコレートを買ったときの条件です。" },
+          visuals: [{ type: "table", columns: ["品物", "金額"], rows: [["チョコ", "200円"]] }],
+          items: [{
+            id: "guided-modal-item-q1", no: "(1)", text: "あめ1個の値段を求めましょう。",
+            response: problems[0].response,
+            answer: problems[0].answer,
+            explanation: problems[0].explanation,
+          }],
+        };
+        const modalValues = {};
+        const isComplete = (responseNode, value) => {
+          if (responseNode.type === "mode_switch") {
+            const mode = value?.mode ?? responseNode.defaultMode;
+            return isComplete(responseNode.modes[mode], value?.values?.[mode]);
+          }
+          if (responseNode.type === "guided_steps") return value?.completed === true && value?.currentStep === "finish";
+          if (responseNode.type === "choice") return value !== null && value !== undefined;
+          return typeof value === "string" && value.trim() !== "";
+        };
+        const modalMount = document.createElement("div");
+        document.body.append(modalMount);
+        renderProblems(modalMount, [modalProblem], {
+          readingViewMode: "default",
+          responseValues: modalValues,
+          isResponseComplete: isComplete,
+          onCheckResponse: (_key, responseNode, answer, value) => evaluateResponseCheck(responseNode, answer, value, isComplete),
+          onResponseChange: (key, next) => {
+            const previous = modalValues[key] ?? null;
+            modalValues[key] = typeof next === "function" ? next(previous) : next;
+          },
+        });
+        const modalCard = modalMount.querySelector(".problem-card");
+        const modalOpen = modalCard.querySelector(".problem-modal-open");
+        assert(modalOpen, "guided itemに問題を見るボタンを出す");
+        const modalCheck = modalCard.querySelector(".response-check-button");
+        assert(modalCheck.hidden, "guided modeでは答え合わせUIを隠す");
+        clickChoice(modalCard, "subtract");
+        assert(modalValues["guided-modal-item-q1"].values.guided.currentStep === "s2", "モーダルを開く前のguided stateを回答保存形式へ反映");
+        [...modalCard.querySelectorAll(".mode-switch-button")].find((button) => button.textContent === "選択式").click();
+        assert(!modalCheck.hidden && modalCheck.textContent === "答え合わせ", "choice modeでは既存の自動採点ボタンを使う");
+        [...modalCard.querySelectorAll(".choice-input")].find((input) => input.value === "one").click();
+        assert(!modalCheck.disabled, "選択式の回答後に答え合わせを有効にする");
+        modalCheck.click();
+        assert(modalCard.querySelector(".response-unit").classList.contains("is-checked-incorrect")
+          && modalCard.querySelector(".response-check-status")?.textContent === "△ 確認してみよう", "不正解は既存の確認表示で示す");
+        [...modalCard.querySelectorAll(".choice-input")].find((input) => input.value === "two").click();
+        modalCheck.click();
+        assert(modalCard.querySelector(".response-unit").classList.contains("is-checked-correct")
+          && modalCard.querySelector(".response-check-status")?.textContent === "✓ 正解", "choice modeで正解keyに基づき既存採点を行う");
+        [...modalCard.querySelectorAll(".mode-switch-button")].find((button) => button.textContent === "入力式").click();
+        assert(!modalCheck.hidden && modalCheck.textContent === "見比べてみる", "input modeでは既存の見比べボタンを使う");
+        const compareInput = modalCard.querySelector("input.response-input");
+        compareInput.value = "x = 3";
+        compareInput.dispatchEvent(new Event("input", { bubbles: true }));
+        modalCheck.click();
+        const compareResult = modalCard.querySelector(".response-check-result");
+        assert(modalCard.querySelector(".response-unit").classList.contains("is-compare-open")
+          && compareResult.textContent.includes("x = 3")
+          && compareResult.textContent.includes("x = 2")
+          && compareResult.textContent.includes("両辺から9を引き"), "input modeは自動正誤を付けず回答・正答・解説を見比べる");
+        [...modalCard.querySelectorAll(".mode-switch-button")].find((button) => button.textContent === "操作式").click();
+        assert(modalCheck.hidden && modalValues["guided-modal-item-q1"].values.guided.currentStep === "s2", "mode切替でguided進行を保つ");
+        window.scrollTo(0, Math.max(0, modalOpen.getBoundingClientRect().top + window.scrollY - 40));
+        const savedScrollY = window.scrollY;
+        modalOpen.focus();
+        modalOpen.click();
+        const dialog = modalMount.querySelector("dialog[open]");
+        assert(dialog?.textContent.includes("共通条件") && dialog.textContent.includes("(1) あめ1個"), "共通条件と現在のitem文を同じ問題モーダルに表示");
+        assert(dialog.querySelector("table"), "問題モーダル内で既存table visual rendererを使う");
+        dialog.querySelector(".reference-dialog-close").click();
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        assert(modalCard.querySelector(".guided-current-state")?.textContent === "3x = 6", "モーダルを閉じて同じguided stepへ戻る");
+        assert(modalValues["guided-modal-item-q1"].values.guided.currentStep === "s2", "モーダル開閉で保存値を変えない");
+        assert(document.activeElement === modalOpen && window.scrollY === savedScrollY, `モーダルを閉じてフォーカスとスクロール位置を戻す (focus=${document.activeElement?.className}, scroll=${window.scrollY}/${savedScrollY})`);
+        if (window.innerWidth <= 760) {
+          const phoneChoice = fixtureRoot.querySelector(".guided-choice");
+          const choiceList = phoneChoice.closest(".guided-choice-list");
+          assert(Number.parseFloat(getComputedStyle(phoneChoice).minHeight) >= 48, `スマートフォンで選択ボタンの高さを48px以上にする (width=${window.innerWidth}, minHeight=${getComputedStyle(phoneChoice).minHeight})`);
+          assert(phoneChoice.getBoundingClientRect().right <= choiceList.getBoundingClientRect().right + 1, "スマートフォンで選択肢が横にはみ出さない");
+        }
+
+        const appFrame = document.createElement("iframe");
+        appFrame.title = "existing subject smoke test";
+        appFrame.style.cssText = "position:absolute;width:1280px;height:900px;left:-10000px";
+        document.body.append(appFrame);
+        appFrame.src = "../app/index.html";
+        const waitFor = async (check, label) => {
+          for (let attempt = 0; attempt < 100; attempt += 1) {
+            if (check()) return;
+            await new Promise((resolve) => setTimeout(resolve, 50));
+          }
+          throw new Error(`${label} (timeout)`);
+        };
+        await waitFor(() => appFrame.contentDocument?.querySelectorAll("#subject-select option").length >= 4, "既存subject一覧をロードする");
+        const appDocument = appFrame.contentDocument;
+        for (const subject of ["english", "japanese", "science", "social"]) {
+          const selector = appDocument.querySelector("#subject-select");
+          selector.value = subject;
+          selector.dispatchEvent(new Event("change", { bubbles: true }));
+          await waitFor(() => selector.value === subject
+            && appDocument.querySelector("#dataset-select option")
+            && appDocument.querySelector(".problem-card"), `${subject} datasetを表示する`);
+        }
+        appFrame.remove();
+
+        result.dataset.status = "pass";
+        result.textContent = `PASS: ${problems.length} fixture families, graph routes, incorrect feedback, mode state, back/restart, completion/restore, problem modal, and English/Japanese/Science/Social dataset smoke tests`;
+      } catch (error) {
+        result.dataset.status = "fail";
+        result.textContent = `FAIL: ${error.stack ?? error}`;
+        throw error;
+      }
+    </script>
+  </body>
+</html>

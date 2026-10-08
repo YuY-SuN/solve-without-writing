@@ -1,0 +1,214 @@
+{
+  "meta": {
+    "id": "guided-steps-fixture",
+    "title": "操作式 renderer fixture"
+  },
+  "pages": [
+    {
+      "page": 1,
+      "problems": [
+        {
+          "id": "guided-equation",
+          "prompt": { "text": "3x + 9 = 15 を解きましょう。" },
+          "response": {
+            "type": "mode_switch",
+            "defaultMode": "guided",
+            "modes": {
+              "guided": {
+                "type": "guided_steps",
+                "start": "s1",
+                "steps": {
+                  "s1": {
+                    "display": "3x + 9 = 15",
+                    "prompt": "次に何をする？",
+                    "progress": { "current": 1, "total": 3 },
+                    "interaction": {
+                      "type": "choice",
+                      "choices": [
+                        { "key": "subtract", "text": "両辺から9を引く", "correct": true, "next": "s2" },
+                        { "key": "add", "text": "両辺に9を足す", "correct": false, "feedback": "+9をなくす逆の操作を考えましょう。" },
+                        { "key": "divide", "text": "両辺を3で割る", "correct": false, "feedback": "先に+9をなくすと式が単純になります。" }
+                      ]
+                    }
+                  },
+                  "s2": {
+                    "display": "3x = 6",
+                    "prompt": "xを1個分にするには？",
+                    "progress": { "current": 2, "total": 3 },
+                    "interaction": {
+                      "type": "choice",
+                      "choices": [
+                        { "key": "divide", "text": "両辺を3で割る", "correct": true, "next": "s3" },
+                        { "key": "subtract", "text": "両辺から3を引く", "correct": false, "feedback": "3xはxが3個分です。" }
+                      ]
+                    }
+                  },
+                  "s3": {
+                    "display": "x = 6 ÷ 3",
+                    "prompt": "6 ÷ 3 は？",
+                    "progress": { "current": 3, "total": 3 },
+                    "interaction": {
+                      "type": "choice",
+                      "choices": [
+                        { "key": "one", "text": "1", "correct": false, "feedback": "3が何個で6になるか考えましょう。" },
+                        { "key": "two", "text": "2", "correct": true, "next": "finish" },
+                        { "key": "three", "text": "3", "correct": false, "feedback": "3が何個で6になるか考えましょう。" },
+                        { "key": "six", "text": "6", "correct": false, "feedback": "6を3つに分けます。" }
+                      ]
+                    }
+                  }
+                },
+                "finish": { "display": "x = 2", "summary": "両辺に同じ操作をして、最後に6÷3を計算しました。" }
+              },
+              "choice": { "type": "choice", "choices": [
+                { "key": "one", "text": "x=1" },
+                { "key": "two", "text": "x=2" }
+              ] },
+              "input": { "type": "blank" }
+            }
+          },
+          "answer": { "display": "x = 2", "modes": { "choice": { "value": "two", "display": "x = 2" } } },
+          "explanation": "両辺から9を引き、両辺を3で割ります。"
+        },
+        {
+          "id": "guided-like-terms",
+          "prompt": { "text": "3x + 2x を簡単にしましょう。" },
+          "response": {
+            "type": "guided_steps", "start": "terms",
+            "steps": {
+              "terms": {
+                "display": "3x + 2x",
+                "prompt": "係数だけを見ると？",
+                "interaction": {
+                  "type": "choice",
+                  "shuffle": true,
+                  "choices": [
+                    { "key": "coefficients", "text": "3 + 2", "correct": true, "next": "sum" },
+                    { "key": "variables", "text": "x + x", "correct": false, "feedback": "同類項では係数を計算します。" }
+                  ]
+                }
+              },
+              "sum": {
+                "display": "3 + 2",
+                "prompt": "3 + 2 は？",
+                "interaction": {
+                  "type": "choice",
+                  "choices": [
+                    { "key": "four", "text": "4", "correct": false, "feedback": "3から数えて2つ進みます。" },
+                    { "key": "five", "text": "5", "correct": true, "next": "finish" },
+                    { "key": "six", "text": "6", "correct": false, "feedback": "3から数えて2つ進みます。" }
+                  ]
+                }
+              }
+            },
+            "finish": { "display": "5x" }
+          },
+          "answer": { "display": "5x" },
+          "explanation": "同類項なので係数を足し、xはそのまま残します。"
+        },
+        {
+          "id": "guided-distribution",
+          "prompt": { "text": "3(x - 2) を展開しましょう。" },
+          "response": {
+            "type": "guided_steps", "start": "spread",
+            "steps": {
+              "spread": {
+                "display": "3(x - 2)",
+                "prompt": "外側の3はどこにかける？",
+                "interaction": {
+                  "type": "choice",
+                  "choices": [
+                    { "key": "both", "text": "かっこの中の両方", "correct": true, "next": "product-x" },
+                    { "key": "first", "text": "xだけ", "correct": false, "feedback": "分配法則ではかっこの中の両方にかけます。" }
+                  ]
+                }
+              },
+              "product-x": {
+                "display": "3 × x",
+                "prompt": "3 × x は？",
+                "interaction": {
+                  "type": "choice",
+                  "choices": [
+                    { "key": "3x", "text": "3x", "correct": true, "next": "sign" },
+                    { "key": "x3", "text": "x + 3", "correct": false, "feedback": "3とxは掛け算です。" }
+                  ]
+                }
+              },
+              "sign": {
+                "display": "3 × (-2)",
+                "prompt": "積の符号は？",
+                "interaction": {
+                  "type": "choice",
+                  "choices": [
+                    { "key": "plus", "text": "+", "correct": false, "feedback": "正の数と負の数の積は負です。" },
+                    { "key": "minus", "text": "−", "correct": true, "next": "magnitude" }
+                  ]
+                }
+              },
+              "magnitude": {
+                "display": "3 × 2",
+                "prompt": "3 × 2 は？",
+                "interaction": {
+                  "type": "choice",
+                  "choices": [
+                    { "key": "five", "text": "5", "correct": false, "feedback": "3を2回たします。" },
+                    { "key": "six", "text": "6", "correct": true, "next": "finish" },
+                    { "key": "eight", "text": "8", "correct": false, "feedback": "3を2回たします。" }
+                  ]
+                }
+              }
+            },
+            "finish": { "display": "3x − 6" }
+          },
+          "answer": { "display": "3x − 6" },
+          "explanation": "3をxと−2の両方にかけます。"
+        },
+        {
+          "id": "guided-proportion",
+          "prompt": { "text": "2 : 5 = 6 : x を解きましょう。" },
+          "response": {
+            "type": "guided_steps", "start": "cross",
+            "steps": {
+              "cross": {
+                "display": "2 : 5 = 6 : x",
+                "prompt": "比例式の外項どうしを掛けると？",
+                "interaction": {
+                  "type": "choice",
+                  "choices": [
+                    { "key": "outer", "text": "2 × x", "correct": true, "next": "inner" },
+                    { "key": "same-side", "text": "2 × 5", "correct": false, "feedback": "外項は比例式の両端にある数です。" }
+                  ]
+                }
+              },
+              "inner": {
+                "display": "2x = 5 × 6",
+                "prompt": "5 × 6 は？",
+                "interaction": {
+                  "type": "choice",
+                  "choices": [
+                    { "key": "thirty", "text": "30", "correct": true, "next": "divide" },
+                    { "key": "eleven", "text": "11", "correct": false, "feedback": "5を6回たします。" }
+                  ]
+                }
+              },
+              "divide": {
+                "display": "x = 30 ÷ 2",
+                "prompt": "30 ÷ 2 は？",
+                "interaction": {
+                  "type": "choice",
+                  "choices": [
+                    { "key": "fifteen", "text": "15", "correct": true, "next": "finish" },
+                    { "key": "sixty", "text": "60", "correct": false, "feedback": "30を2つに分けます。" }
+                  ]
+                }
+              }
+            },
+            "finish": { "display": "x = 15" }
+          },
+          "answer": { "display": "x = 15" },
+          "explanation": "外項どうし、内項どうしの積が等しいことを使います。"
+        }
+      ]
+    }
+  ]
+}
