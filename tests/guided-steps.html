@@ -357,10 +357,116 @@
             && appDocument.querySelector("#dataset-select option")
             && appDocument.querySelector(".problem-card"), `${subject} datasetを表示する`);
         }
+        const mathSubject = appDocument.querySelector("#subject-select");
+        mathSubject.value = "math";
+        mathSubject.dispatchEvent(new Event("change", { bubbles: true }));
+        const mathDatasetId = "math-jhs1-p43-p79";
+        await waitFor(() => [...appDocument.querySelectorAll("#dataset-select option")]
+          .some((option) => option.value === mathDatasetId), "数学datasetをcatalogから選べる");
+        const mathDatasetSelect = appDocument.querySelector("#dataset-select");
+        mathDatasetSelect.value = mathDatasetId;
+        mathDatasetSelect.dispatchEvent(new Event("change", { bubbles: true }));
+        await waitFor(() => [...appDocument.querySelectorAll("#page-filter option")]
+          .some((option) => option.value === `${mathDatasetId}::43`), "数学p.43を選択できる");
+        const mathPageFilter = appDocument.querySelector("#page-filter");
+        mathPageFilter.value = `${mathDatasetId}::43`;
+        mathPageFilter.dispatchEvent(new Event("change", { bubbles: true }));
+        await waitFor(() => appDocument.querySelector(".guided-steps"), "アプリでp.43のguidedを描画する");
+        const appP43Guided = appDocument.querySelector(".guided-steps");
+        const appP43Modes = [...appP43Guided.closest(".mode-switch-active").parentElement
+          .querySelectorAll(".mode-switch-button")];
+        assert(appP43Modes.map((button) => button.textContent).join("/") === "操作式/選択式/入力式"
+          && appP43Modes[0].getAttribute("aria-pressed") === "true", "アプリでp.43のdefaultMode=guidedと3 modeを確認する");
+        assert(appDocument.querySelectorAll(".guided-steps").length === 9, "p.43のguided小問をすべてアプリで描画する");
+        for (const [page, expectedGuidedCount] of [[44, 12], [45, 9], [46, 12], [47, 9]]) {
+          mathPageFilter.value = `${mathDatasetId}::${page}`;
+          mathPageFilter.dispatchEvent(new Event("change", { bubbles: true }));
+          await waitFor(() => appDocument.querySelectorAll(".guided-steps").length === expectedGuidedCount,
+            `アプリでp.${page}のguided小問${expectedGuidedCount}件を描画する`);
+        }
+        mathPageFilter.value = `${mathDatasetId}::45`;
+        mathPageFilter.dispatchEvent(new Event("change", { bubbles: true }));
+        await waitFor(() => [...appDocument.querySelectorAll(".problem-visuals img")]
+          .some((image) => image.getAttribute("src")?.endsWith("p45_magnets.png")), "アプリでp.45画像を描画する");
+        const appMagnetImage = [...appDocument.querySelectorAll(".problem-visuals img")]
+          .find((image) => image.getAttribute("src")?.endsWith("p45_magnets.png"));
+        const appMagnetCard = appMagnetImage.closest(".problem-card");
+        appMagnetCard.querySelector(".problem-modal-open").click();
+        assert(appMagnetCard.querySelector("dialog[open]")?.querySelector("img")
+          ?.getAttribute("src")?.endsWith("p45_magnets.png"), "アプリのp.45問題モーダルでも画像を表示する");
+        appMagnetCard.querySelector(".reference-dialog-close").click();
+        const mathDatasetUrl = new URL("../app/src/data/math/math_jhs1_p43_p79.json", document.baseURI);
+        const mathResponse = await fetch(mathDatasetUrl);
+        assert(mathResponse.ok, "更新した数学datasetを読み込める");
+        const mathDataset = await mathResponse.json();
+        const p43GuidedItems = [];
+        const collectGuided = (node, page) => {
+          const guidedMode = node.response?.type === "mode_switch" ? node.response.modes?.guided : null;
+          if (page >= 43 && page <= 47 && guidedMode?.type === "guided_steps") {
+            p43GuidedItems.push({ ...node, response: node.response, page });
+          }
+          for (const item of node.items ?? []) collectGuided(item, page);
+        };
+        for (const page of mathDataset.pages) {
+          for (const problem of page.problems ?? []) collectGuided(problem, page.page);
+        }
+        assert(p43GuidedItems.length > 0, "p.43〜47の更新教材にguided問題がある");
+        const firstP43Guided = p43GuidedItems.find((item) => item.page === 43);
+        assert(firstP43Guided, "p.43にguided問題がある");
+        const p43Holder = { value: null };
+        const p43View = renderResponse(firstP43Guided.response, {
+          value: null,
+          answer: firstP43Guided.answer,
+          onChange: (next) => { p43Holder.value = typeof next === "function" ? next(p43Holder.value) : next; },
+        });
+        const p43ModeButtons = [...p43View.querySelectorAll(".mode-switch-button")];
+        assert(p43ModeButtons.map((button) => button.textContent).join("/") === "操作式/選択式/入力式"
+          && p43ModeButtons[0].getAttribute("aria-pressed") === "true", "p.43のdefaultMode=guidedで3モードを表示する");
+        const actualGuided = firstP43Guided.response.modes.guided;
+        const actualStep = actualGuided.steps[actualGuided.start];
+        const actualWrong = actualStep.interaction.choices.find((choice) => !choice.correct);
+        if (actualWrong) {
+          clickChoice(p43View, actualWrong.key);
+          assert(p43View.querySelector(".guided-feedback[data-kind='hint']")?.textContent.includes(actualWrong.feedback), "実教材の誤答feedbackを表示する");
+        }
+        const actualCorrect = actualStep.interaction.choices.find((choice) => choice.correct);
+        clickChoice(p43View, actualCorrect.key);
+        assert(p43View.querySelector(".guided-current-state")?.textContent === actualGuided.steps[actualCorrect.next]?.display,
+          "実教材のcorrect/next定義どおり次stepへ進む");
+        p43ModeButtons.find((button) => button.textContent === "選択式").click();
+        assert(p43View.querySelector(".choice-input"), "実教材の選択式modeを描画する");
+        p43View.querySelector(".choice-input").click();
+        p43ModeButtons.find((button) => button.textContent === "入力式").click();
+        const p43AnswerInput = p43View.querySelector(".response-input");
+        assert(p43AnswerInput, "実教材の入力式modeを描画する");
+        p43AnswerInput.value = "-2.9x";
+        p43AnswerInput.dispatchEvent(new Event("input", { bubbles: true }));
+        p43ModeButtons.find((button) => button.textContent === "操作式").click();
+        assert(p43View.querySelector(".guided-current-state")?.textContent === actualGuided.steps[actualCorrect.next]?.display,
+          "実教材でmodeを切り替えてもguided進行を保つ");
+        p43ModeButtons.find((button) => button.textContent === "入力式").click();
+        assert(p43View.querySelector(".response-input")?.value === "-2.9x", "実教材でmodeを切り替えてもinput値を保つ");
+
+        const p45Problem = mathDataset.pages.find((page) => page.page === 45)?.problems
+          .find((problem) => problem.visuals?.some((visual) => visual.src?.endsWith("p45_magnets.png")));
+        assert(p45Problem, "p.45のマグネット画像を含むproblemがある");
+        const p45Root = document.createElement("div");
+        document.body.append(p45Root);
+        renderProblems(p45Root, [{ ...p45Problem, page: 45 }], { datasetUrl: mathDatasetUrl.href });
+        const p45Image = p45Root.querySelector(".problem-visuals img");
+        await waitFor(() => p45Image?.complete && p45Image.naturalWidth > 0, "p.45のマグネット画像を解決する");
+        const problemOpen = p45Root.querySelector(".problem-modal-open");
+        assert(problemOpen, "p.45の問題を見るボタンを表示する");
+        problemOpen.click();
+        const problemDialog = p45Root.querySelector("dialog[open]");
+        assert(problemDialog?.querySelector("img")?.getAttribute("src")?.endsWith("p45_magnets.png"),
+          `p.45画像を問題モーダルでも表示する (dialog=${Boolean(problemDialog)}, img=${problemDialog?.querySelector("img")?.getAttribute("src") ?? "none"})`);
+        problemDialog.querySelector(".reference-dialog-close").click();
+        p45Root.remove();
         appFrame.remove();
 
         result.dataset.status = "pass";
-        result.textContent = `PASS: ${problems.length} fixture families, graph routes, incorrect feedback, mode state, back/restart, completion/restore, problem modal, and English/Japanese/Science/Social dataset smoke tests`;
+        result.textContent = `PASS: ${problems.length} fixture families, graph routes, incorrect feedback, mode state, back/restart, completion/restore, problem modal, English/Japanese/Science/Social smoke tests, and production math p.43 guided + p.45 modal image`;
       } catch (error) {
         result.dataset.status = "fail";
         result.textContent = `FAIL: ${error.stack ?? error}`;

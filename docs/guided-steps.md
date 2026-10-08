@@ -108,6 +108,8 @@ finishに到達するまでは最終結果を表示しません。finishでは�
 
 ## 検証と更新手順
 
+現在の数学2610 p.43〜79教材（`app/src/data/math/math_jhs1_p43_p79.json`）では、p.43〜47の一部小問に操作式を収録しています。p.48〜79は従来の教材内容を維持しています。p.43〜47すべての小問にguidedがあるわけではなく、guidedを持たない問題ではJSONに定義された他の回答modeだけを表示します。
+
 起動時のresponse validationは次を確認し、不正なdatasetを読み込み対象から外します。
 
 - `start` が存在する。
@@ -118,20 +120,20 @@ finishに到達するまでは最終結果を表示しません。finishでは�
 
 到達不能stepとcorrect edgeのcycleは読み込みを止めず、console warningとして出します。複数ルートに対応し、一本道を前提とした検証はしません。
 
-新しいguided教材を追加するときは、教科folder内の問題JSONでresponseを定義し、各小さい計算と数学的判断をstepに分けます。JSONの問題文、選択肢、正答、feedback、遷移は教材作成側で確認してください。配置後は `python3 app/src/data/sync_index.py` を実行してindexを更新し、次のfixtureページを開いて操作確認します。
+guidedを含む既存教材の更新では、同じ教材のJSONを既存のファイル名へ置き換えます。別名のJSONを追加するとindexに重複登録される可能性があります。新しいguided教材を追加するときは、教科folder内の問題JSONでresponseを定義し、各小さい計算と数学的判断をstepに分けます。JSONの問題文、選択肢、正答、feedback、遷移は教材作成側で確認してください。配置後は `app/src/data/` で `python3 sync_index.py` を実行してindexを更新し、次のfixtureページを開いて操作確認します。
 
 ```text
 tests/guided-steps.html
 tests/fixtures/guided-steps.json
 ```
 
-fixtureは本番教材indexへ登録しません。rendererとJSON構造の変更時は、fixtureにある方程式・同類項・分配法則・比例式を含めて確認してください。
+fixtureは本番教材indexへ登録しません。rendererとJSON構造の変更時は、fixtureにある方程式・同類項・分配法則・比例式を含めて確認してください。testページは本番の数学JSONも読み、p.43〜47のguided itemをアプリで描画し、p.43のmode切替とp.45問題モーダル内の画像を確認します。
 
 ## 実装ファイル
 
 - `app/src/renderers/GuidedStepsRenderer.js`: state遷移、誤答案内、back/restart、完了表示。
 - `app/src/renderers/TextRenderer.js`: `guided_steps` とmode switchの共通描画。
-- `app/src/renderers/ProblemRenderer.js`: 完了状態とguided中の答え合わせUI制御、問題モーダルとの共存。
+- `app/src/renderers/ProblemRenderer.js`: 完了状態とguided中の答え合わせUI制御、問題モーダルとの共存。guidedのshuffle順を初回描画で保存するcallbackがresponse unit初期化前に発生しても安全に処理します。
 - `app/src/main.js`: 回答保存、完了判定、読み込み時warning、管理モード用answer反映、転記表示。
 - `app/src/response-validation.js`: 構造エラーと非致命warning。
 - `app/src/response-checking.js`, `app/src/solved-answer.js`: 既存答え合わせ・管理モードとの共通接続。

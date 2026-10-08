@@ -669,6 +669,9 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
   let currentValue = initialValue;
   let checkState = options.checkedResponses?.[responseKey] ?? null;
   let refreshWordOrderFeedback = () => {};
+  let checkButton = null;
+  let feedbackNode = null;
+  let interactionModeSelected = false;
 
   function commitValue(nextValue) {
     const resolvedValue = typeof nextValue === "function" ? nextValue(currentValue) : nextValue;
@@ -680,8 +683,8 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
     refreshWordOrderFeedback();
     options.onResponseChange?.(responseKey, nextValue);
     options.onStatusChange?.();
-    renderFeedback();
-    updateCheckButton();
+    if (feedbackNode) renderFeedback();
+    if (checkButton) updateCheckButton();
   }
 
   const createResponseNode = () => renderResponse(response, {
@@ -707,9 +710,6 @@ function createResponseUnit(response, answer, explanation, responseKey, options,
   let valueBeforeInteractionCompletion;
   let checkStateBeforeInteractionCompletion = null;
   let interactionCompletionSnapshot = null;
-  let checkButton = null;
-  let feedbackNode = null;
-  let interactionModeSelected = false;
   const responsePane = document.createElement("div");
   responsePane.className = "response-mode-pane";
   responsePane.appendChild(responseNode);
