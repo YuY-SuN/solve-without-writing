@@ -26,6 +26,12 @@
       "path": "math/geometry-focus.json"
     },
     {
+      "id": "math-jhs1-p43-p79",
+      "label": "中学1年 数学 原本p.43以降（文字式・方程式・関数）",
+      "subject": "math",
+      "path": "math/math_jhs1_p43_p79.json"
+    },
+    {
       "id": "math-textbook-page-26-27",
       "label": "数の世界のひろがり・計算練習",
       "subject": "math",

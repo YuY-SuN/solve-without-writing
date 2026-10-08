@@ -203,7 +203,7 @@ function createModeSwitch(response, options) {
     button.textContent = modeName === "choice"
       ? "選択式"
       : modeName === "input"
-        ? "記入式"
+        ? "入力式"
         : modeName;
     button.addEventListener("click", () => {
       activeMode = modeName;

@@ -20,6 +20,7 @@
 - `docs/science-learning-support.md`: 理科教材の配置、同期、共通responseでの利用方法
 - `docs/social-learning-support.md`: 社会教材の配置、資料画像、参照資料表示の利用方法
 - `docs/reference-text-layout.md`: 本文参照型problemの通常・2カラム・モーダル表示
+- `docs/math-problem-modal.md`: 数学2610 p.43以降の教材と「問題を見る」モーダル
 - `docs/app-root-layout.md`: 単一アプリ前提のディレクトリ構成と更新手順
 - `docs/transfer-mode-poc.md`: 完了済み問題の転記モード POC と印刷フロー
 - `docs/management-mode.md`: PC限定の一時管理モードと正答の回答stateへの投入
@@ -72,6 +73,8 @@ python3 sync_index.py
 社会教材は `social/` 配下へ配置し、既存の `mode_switch`・`choice`・入力UIと参照資料モードで扱います。地図・写真・グラフ等は `visuals[].type: "image"` でdataset JSONから相対参照します。現行の社会2610教材は清書版再生成バンドルを反映しています。詳しくは `docs/social-learning-support.md` を参照してください。
 
 長い本文・資料または共有画像に複数設問が付く問題では、参照資料を `通常`・`2カラム`・`モーダル`で表示できます。画像はproblemの `visuals` に `type: "image"` とdataset相対の `src` を指定します。設定は教科共通で保存し、画面幅が狭い場合の2カラムは一時的に縦並びになります。詳細は `docs/reference-text-layout.md` を参照してください。
+
+参照情報がある問題では、小問の `問題を見る` から問題共通の問題文・条件・図表と、現在の小問文を共通モーダルで確認できます。閉じると回答位置へ戻り、入力値・選択・採点結果・現在の回答モードは変わりません。数学2610の原本p.43〜79データは `app/src/data/math/math_jhs1_p43_p79.json` にあり、画像はJSONからの相対パスで `math/assets/` に置きます。詳しくは `docs/math-problem-modal.md` を参照してください。
 
 ## 転記モード POC
 

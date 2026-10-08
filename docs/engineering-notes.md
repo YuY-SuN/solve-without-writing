@@ -247,6 +247,7 @@
 - `meta.subject` は教科分類の正本ではない。配置フォルダが分類を決めるため、JSON内にsubjectが含まれていても同期結果は親フォルダ名を使う
 - 教科固有でない教材メタデータ（例: `adaptedFrom`, `notes`）は現行表示で利用しない場合も、データファイルから削除せず保つ
 - 画像visualの `src` はdataset JSONファイルからの相対パスとする。`main.js` からdataset URLをrendererへ渡し、`new URL(src, datasetUrl)` で解決することでGitHub Pagesのrepository subpathを保つ。`/src/...` のroot相対URLにしない
+- 共通の「問題を見る」モーダルはproblem/itemの問題文・context・visualsだけを表示し、answer/explanationやresponse stateを参照しない。既存native dialogでフォーカスとwindow scrollを復帰し、画像は共通 `VisualRenderer` にdataset URLを渡して描画する。機能説明と数学データ配置は `docs/math-problem-modal.md` を参照
 - 問題データの修正では、`prompt` / `items[].text` と `answer` と `explanation` を同時に照合する
 - `choice` 問題で `key` を持たせた場合は、画面にもその `key` が見えるようにする。ア・イ・ウの表記を本文だけに埋め込まず、選択肢ラベルとして扱う
 - 行見出しつきの `table` は、列見出し側にも空の先頭セルを置いて、1行目だけ左へずれるデータを作らない
