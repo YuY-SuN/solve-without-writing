@@ -26,6 +26,7 @@
 
       const result = document.querySelector("#result");
       const fixtureRoot = document.querySelector("#fixtures");
+      let managementStorageVerified = null;
       const assert = (condition, message) => { if (!condition) throw new Error(message); };
       const clickChoice = (root, key) => {
         const button = [...root.querySelectorAll("[data-choice-key]")]
@@ -337,7 +338,7 @@
 
         const appFrame = document.createElement("iframe");
         appFrame.title = "existing subject smoke test";
-        appFrame.style.cssText = "position:absolute;width:1280px;height:900px;left:-10000px";
+        appFrame.style.cssText = `position:absolute;width:${Math.max(320, Math.min(window.innerWidth, 1280))}px;height:900px;left:-10000px`;
         document.body.append(appFrame);
         appFrame.src = "../app/index.html";
         const waitFor = async (check, label) => {
@@ -361,6 +362,30 @@
         mathSubject.value = "math";
         mathSubject.dispatchEvent(new Event("change", { bubbles: true }));
         const mathDatasetId = "math-jhs1-p43-p79";
+        const mathDatasetUrl = new URL("../app/src/data/math/math_jhs1_p43_p79.json", document.baseURI);
+        const mathResponse = await fetch(mathDatasetUrl);
+        assert(mathResponse.ok, "更新した数学datasetを読み込める");
+        const mathDataset = await mathResponse.json();
+        const guidedItems = [];
+        const guidedCountsByPage = new Map();
+        let totalItemCount = 0;
+        const collectGuided = (node, page) => {
+          for (const item of node.items ?? []) {
+            totalItemCount += 1;
+            const guidedMode = item.response?.type === "mode_switch" ? item.response.modes?.guided : null;
+            if (guidedMode?.type === "guided_steps") {
+              guidedItems.push({ ...item, page });
+              guidedCountsByPage.set(page, (guidedCountsByPage.get(page) ?? 0) + 1);
+            }
+            collectGuided(item, page);
+          }
+        };
+        for (const page of mathDataset.pages) {
+          for (const problem of page.problems ?? []) collectGuided(problem, page.page);
+        }
+        assert(totalItemCount === 373, `数学datasetに373 itemがある (actual=${totalItemCount})`);
+        assert(guidedItems.length === 370, `guided itemが370件ある (actual=${guidedItems.length})`);
+        assert(totalItemCount - guidedItems.length === 3, "guided非対応の3 itemを許容する");
         await waitFor(() => [...appDocument.querySelectorAll("#dataset-select option")]
           .some((option) => option.value === mathDatasetId), "数学datasetをcatalogから選べる");
         const mathDatasetSelect = appDocument.querySelector("#dataset-select");
@@ -378,11 +403,12 @@
         assert(appP43Modes.map((button) => button.textContent).join("/") === "操作式/選択式/入力式"
           && appP43Modes[0].getAttribute("aria-pressed") === "true", "アプリでp.43のdefaultMode=guidedと3 modeを確認する");
         assert(appDocument.querySelectorAll(".guided-steps").length === 9, "p.43のguided小問をすべてアプリで描画する");
-        for (const [page, expectedGuidedCount] of [[44, 12], [45, 9], [46, 12], [47, 9]]) {
-          mathPageFilter.value = `${mathDatasetId}::${page}`;
+        for (const page of mathDataset.pages.filter((entry) => entry.page >= 44)) {
+          const expectedGuidedCount = guidedCountsByPage.get(page.page) ?? 0;
+          mathPageFilter.value = `${mathDatasetId}::${page.page}`;
           mathPageFilter.dispatchEvent(new Event("change", { bubbles: true }));
           await waitFor(() => appDocument.querySelectorAll(".guided-steps").length === expectedGuidedCount,
-            `アプリでp.${page}のguided小問${expectedGuidedCount}件を描画する`);
+            `アプリでp.${page.page}のguided小問${expectedGuidedCount}件を描画する`);
         }
         mathPageFilter.value = `${mathDatasetId}::45`;
         mathPageFilter.dispatchEvent(new Event("change", { bubbles: true }));
@@ -395,22 +421,57 @@
         assert(appMagnetCard.querySelector("dialog[open]")?.querySelector("img")
           ?.getAttribute("src")?.endsWith("p45_magnets.png"), "アプリのp.45問題モーダルでも画像を表示する");
         appMagnetCard.querySelector(".reference-dialog-close").click();
-        const mathDatasetUrl = new URL("../app/src/data/math/math_jhs1_p43_p79.json", document.baseURI);
-        const mathResponse = await fetch(mathDatasetUrl);
-        assert(mathResponse.ok, "更新した数学datasetを読み込める");
-        const mathDataset = await mathResponse.json();
-        const p43GuidedItems = [];
-        const collectGuided = (node, page) => {
-          const guidedMode = node.response?.type === "mode_switch" ? node.response.modes?.guided : null;
-          if (page >= 43 && page <= 47 && guidedMode?.type === "guided_steps") {
-            p43GuidedItems.push({ ...node, response: node.response, page });
-          }
-          for (const item of node.items ?? []) collectGuided(item, page);
-        };
-        for (const page of mathDataset.pages) {
-          for (const problem of page.problems ?? []) collectGuided(problem, page.page);
+        for (const [page, asset] of [[68, "p68_candy.png"], [70, "p70_chase.png"]]) {
+          mathPageFilter.value = `${mathDatasetId}::${page}`;
+          mathPageFilter.dispatchEvent(new Event("change", { bubbles: true }));
+          await waitFor(() => [...appDocument.querySelectorAll(".problem-visuals img")]
+            .some((image) => image.getAttribute("src")?.endsWith(asset)), `アプリでp.${page}の画像を描画する`);
+          const image = [...appDocument.querySelectorAll(".problem-visuals img")]
+            .find((candidate) => candidate.getAttribute("src")?.endsWith(asset));
+          const card = image.closest(".problem-card");
+          card.querySelector(".problem-modal-open").click();
+          assert(card.querySelector("dialog[open]")?.querySelector("img")
+            ?.getAttribute("src")?.endsWith(asset), `p.${page}問題モーダル内で${asset}を表示する`);
+          card.querySelector(".reference-dialog-close").click();
         }
-        assert(p43GuidedItems.length > 0, "p.43〜47の更新教材にguided問題がある");
+        if (appFrame.contentWindow.innerWidth >= 900) {
+          const frameWindow = appFrame.contentWindow;
+          const originalMatchMedia = frameWindow.matchMedia.bind(frameWindow);
+          frameWindow.matchMedia = (query) => ["(pointer: fine)", "(hover: hover)"].includes(query)
+            ? { matches: true, media: query }
+            : originalMatchMedia(query);
+          mathPageFilter.value = `${mathDatasetId}::43`;
+          mathPageFilter.dispatchEvent(new Event("change", { bubbles: true }));
+          await waitFor(() => appDocument.querySelector(".guided-choice"), "管理モード用にp.43 guidedを表示する");
+          const responseStorageKey = "benkyo-tool-prompt01:response-values:v1";
+          const responseStorageBefore = localStorage.getItem(responseStorageKey);
+          for (const key of "manage") {
+            appDocument.dispatchEvent(new appFrame.contentWindow.KeyboardEvent("keydown", { key, bubbles: true }));
+          }
+          await waitFor(() => !appDocument.querySelector("#management-dialog").hidden, "管理モードのpassword dialogを開く");
+          appDocument.querySelector("#management-password").value = "hogepiyo123";
+          appDocument.querySelector("#management-form").dispatchEvent(
+            new appFrame.contentWindow.Event("submit", { bubbles: true, cancelable: true }),
+          );
+          await waitFor(() => !appDocument.querySelector("#management-exit").hidden, "管理モードへ入る");
+          assert(localStorage.getItem(responseStorageKey) === responseStorageBefore, "管理モード開始時に回答storageを変更しない");
+          appDocument.querySelector(".guided-choice").click();
+          assert(localStorage.getItem(responseStorageKey) === responseStorageBefore, "管理モード中のguided操作を回答storageへ保存しない");
+          appDocument.querySelector("#management-exit").click();
+          await waitFor(() => appDocument.querySelector("#management-exit").hidden, "管理モードを終了する");
+          assert(localStorage.getItem(responseStorageKey) === responseStorageBefore, "管理モード終了後も元の回答storageを保つ");
+          managementStorageVerified = true;
+        }
+        if (window.innerWidth <= 760) {
+          const phoneChoice = appDocument.querySelector(".guided-choice");
+          const choiceList = phoneChoice.closest(".guided-choice-list");
+          assert(Number.parseFloat(appFrame.contentWindow.getComputedStyle(phoneChoice).minHeight) >= 48,
+            "数学アプリのスマートフォン操作ボタンは48px以上");
+          assert(phoneChoice.getBoundingClientRect().right <= choiceList.getBoundingClientRect().right + 1,
+            "数学アプリの操作候補はスマートフォン画面内に収まる");
+        }
+        const p43GuidedItems = guidedItems.filter((item) => item.page >= 43 && item.page <= 47);
+        assert(p43GuidedItems.length === 51, `p.43〜47のguided itemは51件 (actual=${p43GuidedItems.length})`);
         const firstP43Guided = p43GuidedItems.find((item) => item.page === 43);
         assert(firstP43Guided, "p.43にguided問題がある");
         const p43Holder = { value: null };
@@ -447,6 +508,54 @@
         p43ModeButtons.find((button) => button.textContent === "入力式").click();
         assert(p43View.querySelector(".response-input")?.value === "-2.9x", "実教材でmodeを切り替えてもinput値を保つ");
 
+        const representativeGuidedIds = [
+          "math_p49_calc_03", "math_p50_drill_01", "math_p52_equal_01", "math_p52_ineq_01",
+          "math_p61_solve_01", "math_p62_paren_01", "math_p62_frac_01", "math_p65_a2_01",
+          "math_p66_eq_01", "math_p68_candy_01", "math_p68_oranges_01", "math_p70_chase_01",
+          "math_p74_eq_05", "math_p76_pattern_01", "math_p78_func_01", "math_p78_domain_01",
+        ];
+        const guidedIds = new Set(guidedItems.map((item) => item.id));
+        assert(representativeGuidedIds.every((id) => guidedIds.has(id)), "p.48〜79の式・不等式・方程式・文章題・速さ・規則性・関数・変域代表問題を選べる");
+        const findCorrectRoute = (guided) => {
+          const queue = [{ stepId: guided.start, route: [] }];
+          const visited = new Set();
+          while (queue.length > 0) {
+            const current = queue.shift();
+            if (visited.has(current.stepId)) continue;
+            visited.add(current.stepId);
+            const choices = guided.steps[current.stepId].interaction.choices;
+            for (const choice of choices.filter((entry) => entry.correct === true)) {
+              const route = [...current.route, { stepId: current.stepId, choice }];
+              if (choice.next === "finish") return route;
+              if (!visited.has(choice.next)) queue.push({ stepId: choice.next, route });
+            }
+          }
+          return null;
+        };
+        let traversedGuidedSteps = 0;
+        for (const item of guidedItems) {
+          const guided = item.response.modes.guided;
+          const route = findCorrectRoute(guided);
+          assert(route, `${item.id}: correct routeからfinishへ到達できる`);
+          const holder = { value: null };
+          const view = renderResponse(item.response, {
+            value: null,
+            answer: item.answer,
+            onChange: (next) => { holder.value = typeof next === "function" ? next(holder.value) : next; },
+          });
+          for (const edge of route) {
+            const currentStep = holder.value?.values?.guided?.currentStep ?? guided.start;
+            assert(currentStep === edge.stepId, `${item.id}: ${edge.stepId}を現在stepとして表示する`);
+            clickChoice(view, edge.choice.key);
+            assert(holder.value?.values?.guided?.currentStep === edge.choice.next,
+              `${item.id}: correct choiceから${edge.choice.next}へ進む`);
+            traversedGuidedSteps += 1;
+          }
+          const completed = holder.value?.values?.guided;
+          assert(completed?.completed === true && completed.currentStep === "finish",
+            `${item.id}: finishを完了状態として保持する`);
+        }
+
         const p45Problem = mathDataset.pages.find((page) => page.page === 45)?.problems
           .find((problem) => problem.visuals?.some((visual) => visual.src?.endsWith("p45_magnets.png")));
         assert(p45Problem, "p.45のマグネット画像を含むproblemがある");
@@ -466,7 +575,7 @@
         appFrame.remove();
 
         result.dataset.status = "pass";
-        result.textContent = `PASS: ${problems.length} fixture families, graph routes, incorrect feedback, mode state, back/restart, completion/restore, problem modal, English/Japanese/Science/Social smoke tests, and production math p.43 guided + p.45 modal image`;
+        result.textContent = `PASS: ${problems.length} fixture families, all ${guidedItems.length} production guided routes (${traversedGuidedSteps} transitions), p.43-79 page rendering, representative math categories, p.43 modes, p.45/p.68/p.70 modal images, management storage=${managementStorageVerified ? "verified" : "skipped"}, and English/Japanese/Science/Social regression`;
       } catch (error) {
         result.dataset.status = "fail";
         result.textContent = `FAIL: ${error.stack ?? error}`;

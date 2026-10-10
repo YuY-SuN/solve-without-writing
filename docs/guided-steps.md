@@ -108,7 +108,7 @@ finishに到達するまでは最終結果を表示しません。finishでは�
 
 ## 検証と更新手順
 
-現在の数学2610 p.43〜79教材（`app/src/data/math/math_jhs1_p43_p79.json`）では、p.43〜47の一部小問に操作式を収録しています。p.48〜79は従来の教材内容を維持しています。p.43〜47すべての小問にguidedがあるわけではなく、guidedを持たない問題ではJSONに定義された他の回答modeだけを表示します。
+現在の数学2610 p.43〜79教材（`app/src/data/math/math_jhs1_p43_p79.json`）では、373小問中370小問に操作式を収録しています。残る3小問は複数回答などの性質からguided非対応とし、選択式・入力式を維持します。guidedの有無はJSONで決まり、アプリは数学だからという理由で追加しません。
 
 起動時のresponse validationは次を確認し、不正なdatasetを読み込み対象から外します。
 
@@ -127,7 +127,7 @@ tests/guided-steps.html
 tests/fixtures/guided-steps.json
 ```
 
-fixtureは本番教材indexへ登録しません。rendererとJSON構造の変更時は、fixtureにある方程式・同類項・分配法則・比例式を含めて確認してください。testページは本番の数学JSONも読み、p.43〜47のguided itemをアプリで描画し、p.43のmode切替とp.45問題モーダル内の画像を確認します。
+fixtureは本番教材indexへ登録しません。rendererとJSON構造の変更時は、fixtureにある方程式・同類項・分配法則・比例式を含めて確認してください。testページは本番の数学JSONも読み、p.43〜79のguided itemをアプリで描画し、全guided itemのcorrect route再生、p.43のmode切替、p.45・p.68・p.70の問題モーダル画像を確認します。幅390pxのスマートフォン表示と、デスクトップ管理モード中にguided回答をlocalStorageへ書き込まないこともチェックします。
 
 ## 実装ファイル
 
