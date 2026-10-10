@@ -77,7 +77,7 @@ python3 sync_index.py
 
 参照情報がある問題では、小問の `問題を見る` から問題共通の問題文・条件・図表と、現在の小問文を共通モーダルで確認できます。閉じると回答位置へ戻り、入力値・選択・採点結果・現在の回答モードは変わりません。数学2610の原本p.43〜79データは `app/src/data/math/math_jhs1_p43_p79.json` にあり、画像はJSONからの相対パスで `math/assets/` に置きます。詳しくは `docs/math-problem-modal.md` を参照してください。
 
-教材JSONは `mode_switch.modes.guided` に `guided_steps` を定義すると「操作式」を提供できます。数学的な操作と四則演算をどこまで分けるか、各stepの表示・選択肢・正誤・遷移先はJSON側で定義します。アプリは計算や途中式を生成しません。数学2610 p.43〜79教材では、p.43〜47の一部小問に操作式を追加しています。教材JSON更新時は同じ教材ファイルを置き換え、`app/src/data/` で `python3 sync_index.py` を実行します。形式とfixtureの更新手順は `docs/guided-steps.md` を参照してください。
+教材JSONは `mode_switch.modes.guided` に `guided_steps` を定義すると「操作式」を提供できます。数学的な操作と四則演算をどこまで分けるか、各stepの表示・選択肢・正誤・遷移先はJSON側で定義します。アプリは計算や途中式を生成しません。数学2610 p.43〜79教材では373小問中370小問に操作式を収録し、3小問は従来形式を維持しています。教材JSON更新時は同じ教材ファイルを置き換え、`app/src/data/` で `python3 sync_index.py` を実行します。形式とfixtureの更新手順は `docs/guided-steps.md` を参照してください。
 
 ## 転記モード POC
 
