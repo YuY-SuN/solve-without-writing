@@ -96,6 +96,8 @@
 - splitは幅900px以下でCSS上1カラムにするが、保存値はsplitのまま維持する
 - mode切替でProblemRenderer全体を再描画するため、回答・完了・checked stateを保持する既存main stateを利用し、ページscrollとmodeボタンfocusを復元する
 - modal本文はdialog内の共有本文node一つを表示する。ネイティブdialogで背景を操作不能にし、本文内scroll、Escape、close時のfocusとscroll復元を行う
+- 数学は `isReferenceProblem()` に該当しないproblemにも同じ表示切替を出す。数学のsplitでは共通問題文・条件・図表を左ペイン、小問文・式を左側の小問参照欄、回答操作を右側に置く。回答DOMは再利用せず一つだけ描画し、mode切替時の回答・guided_steps・採点状態はmain stateから復元する
+- splitの参照ペインは900px幅以下で通常フローの縦並びに戻す。数学2カラムの仕様と教材確認対象は `docs/math-problem-modal.md` を参照
 - 印刷時に本文が閉じたdialog内へ隠れないよう、print CSSでdialog本文を通常フローへ出す
 
 ### Visuals

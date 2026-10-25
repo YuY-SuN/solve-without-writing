@@ -410,6 +410,25 @@ button:disabled {
   overscroll-behavior: contain;
 }
 
+.reference-layout[data-reading-view-mode="split"] .math-split-item {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(0, 1.3fr);
+  gap: 16px;
+  align-items: start;
+  padding: 16px 0;
+  border-bottom: 1px solid #dbe3ef;
+}
+
+.math-item-reference,
+.math-item-response {
+  min-width: 0;
+}
+
+.math-item-reference > :first-child,
+.math-item-response > :first-child {
+  margin-top: 0;
+}
+
 .reference-layout[data-reading-view-mode="modal"] .reference-source-pane {
   display: none;
 }
@@ -766,6 +785,10 @@ pre {
     position: static;
     max-height: none;
     overflow: visible;
+  }
+
+  .reference-layout[data-reading-view-mode="split"] .math-split-item {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
