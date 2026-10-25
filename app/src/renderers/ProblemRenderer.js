@@ -930,12 +930,12 @@ function isReferenceProblem(problem) {
   return (hasLongTextReference || hasImageReference) && countResponses(problem) >= 2;
 }
 
-function createReferenceViewControls(problem, selectedMode, onChange) {
+function createReferenceViewControls(problem, selectedMode, onChange, groupLabel = "参照資料の表示モード") {
   const group = document.createElement("div");
   group.className = "reference-view-controls";
   group.dataset.problemId = problem.id;
   group.setAttribute("role", "group");
-  group.setAttribute("aria-label", "参照資料の表示モード");
+  group.setAttribute("aria-label", groupLabel);
 
   const label = document.createElement("span");
   label.className = "reference-view-label";
@@ -1138,17 +1138,26 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
   itemNode.className = "problem-item";
   itemNode.dataset.depth = String(depth);
 
+  const splitItem = options.mathSplitLayout === true;
+  const itemReferencePane = splitItem ? document.createElement("div") : null;
+  const itemResponsePane = splitItem ? document.createElement("div") : null;
+  if (splitItem) {
+    itemNode.classList.add("math-split-item");
+    itemReferencePane.className = "math-item-reference";
+    itemResponsePane.className = "math-item-response";
+  }
+
   if (item.label || item.no) {
     const itemTitle = document.createElement("h3");
     itemTitle.textContent = [item.no, item.label].filter(Boolean).join(" ");
-    itemNode.appendChild(itemTitle);
+    (itemReferencePane ?? itemNode).appendChild(itemTitle);
   }
 
   if (item.text) {
     const itemText = document.createElement("p");
     itemText.className = "problem-item-text";
     itemText.textContent = item.text;
-    itemNode.appendChild(itemText);
+    (itemReferencePane ?? itemNode).appendChild(itemText);
   }
 
   if (showProblemModal && problemDialog) {
@@ -1163,7 +1172,7 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
         problemModal: true,
       });
     });
-    itemNode.appendChild(problemButton);
+    (itemResponsePane ?? itemNode).appendChild(problemButton);
   }
 
   if (referenceId) {
@@ -1172,11 +1181,11 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
     contextLink.className = "problem-context-return";
     contextLink.textContent = referenceLabel;
     contextLink.addEventListener("click", () => openReference?.(contextLink));
-    itemNode.appendChild(contextLink);
+    (itemResponsePane ?? itemNode).appendChild(contextLink);
   }
 
   if (item.context?.text) {
-    itemNode.appendChild(renderPrompt({ prompt: null, context: item.context }));
+    (itemReferencePane ?? itemNode).appendChild(renderPrompt({ prompt: null, context: item.context }));
   }
 
   const responseKey = item.response && item.response.type !== "none"
@@ -1214,15 +1223,15 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
       answer: item.answer,
       answerVisuals: item.answerVisuals ?? [],
     });
-    itemNode.appendChild(itemVisuals);
+    (itemResponsePane ?? itemNode).appendChild(itemVisuals);
   }
 
   if (responseUnit) {
-    itemNode.appendChild(responseUnit.node);
+    (itemResponsePane ?? itemNode).appendChild(responseUnit.node);
   } else if (!hasResponseInTree(item)) {
     const answerReveal = createAnswerReveal(item.answer, item.explanation, item.answerVisuals ?? [], options);
     if (answerReveal) {
-      itemNode.appendChild(answerReveal);
+      (itemResponsePane ?? itemNode).appendChild(answerReveal);
     }
   }
 
@@ -1243,8 +1252,10 @@ function renderItemNode(problem, item, options, depth = 0, inheritedExplanation 
         showProblemModal,
       ));
     }
-    itemNode.appendChild(nestedItems);
+    (itemResponsePane ?? itemNode).appendChild(nestedItems);
   }
+
+  if (splitItem) itemNode.append(itemReferencePane, itemResponsePane);
 
   return itemNode;
 }
@@ -1341,7 +1352,8 @@ function renderProblem(problem, options) {
 
   header.append(heading, headerSide);
 
-  const hasReferenceLayout = isReferenceProblem(problem);
+  const isMathProblem = options.subjectId === "math";
+  const hasReferenceLayout = isReferenceProblem(problem) || isMathProblem;
   const showProblemModal = hasProblemModalContent(problem);
   const referenceId = (hasReferenceLayout || isLongContextText(problem.context?.text))
     ? `problem-reference-${String(problem.id).replace(/[^a-zA-Z0-9_-]/g, "-")}`
@@ -1349,6 +1361,7 @@ function renderProblem(problem, options) {
   const readingViewMode = ["default", "split", "modal"].includes(options.readingViewMode)
     ? options.readingViewMode
     : "default";
+  const mathSplitLayout = isMathProblem && readingViewMode === "split";
   const prompt = hasReferenceLayout
     ? renderPrompt({ ...problem, context: null })
     : renderPrompt(problem, { contextId: referenceId });
@@ -1368,10 +1381,10 @@ function renderProblem(problem, options) {
     referenceContent.className = "reference-material-content";
     referenceContent.id = referenceId;
     referenceContent.tabIndex = -1;
-    if (problem.context?.text) {
+    if (problem.context?.text && (isMathProblem || !isLongContextText(problem.context.text))) {
       referenceContent.appendChild(renderPrompt({ prompt: null, context: problem.context }));
     }
-    if (!isLongContextText(problem.context?.text) && (problem.visuals?.length ?? 0) > 0) {
+    if ((isMathProblem || !isLongContextText(problem.context?.text)) && (problem.visuals?.length ?? 0) > 0) {
       const label = document.createElement("p");
       label.className = "reference-material-label";
       label.textContent = "参照資料";
@@ -1393,11 +1406,13 @@ function renderProblem(problem, options) {
       problem,
       readingViewMode,
       options.onReadingViewModeChange,
+      isMathProblem ? "問題の表示モード" : "参照資料の表示モード",
     );
 
     if (readingViewMode === "modal") {
       referenceDialog = createReferenceDialog(problem);
     } else {
+      if (mathSplitLayout) referenceContent.appendChild(prompt);
       sourcePane.appendChild(referenceContent);
     }
     referenceLayout.append(sourcePane, questionPane);
@@ -1459,11 +1474,13 @@ function renderProblem(problem, options) {
   for (const item of problem.items ?? []) {
     items.appendChild(renderItemNode(problem, item, {
       ...options,
+      mathSplitLayout,
       onStatusChange: updateCompletionAfterResponse,
     }, 0, problem.explanation, referenceId, openReference, hasReferenceLayout ? "参照資料を見る" : "本文を見る", referenceDialog, showProblemModal));
   }
 
-  article.append(header, prompt);
+  article.append(header);
+  if (!mathSplitLayout) article.appendChild(prompt);
   if (readingControls) {
     article.appendChild(readingControls);
   }
